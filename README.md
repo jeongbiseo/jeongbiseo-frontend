@@ -1,4 +1,4 @@
-# 🚀 이니로 동방 예약 웹앱 (React + Vite + TypeScript)
+# 🚀 정비서 웹앱 (React + Vite + TypeScript)
 
 이니로 동방 예약 서비스 Front-end 레포지토리입니다. Vite 기반의 React + TypeScript 프로젝트이며, 폼/검증, 라우팅, 스타일링을 위한 최소 스택으로 구성되어 있습니다.
 
