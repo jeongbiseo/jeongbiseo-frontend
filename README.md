@@ -11,18 +11,21 @@
 
 ## 🛠️ 기술 스택
 
-- **Main**: React + Vite (TypeScript, SWC)
-- **State Management**: Justand
+- **Main**: React + Vite (TypeScript)
+- **State Management**: Zustand
 - **Routing**: react-router-dom
 - **Styling**: Tailwind CSS
 - **Forms**: react-hook-form, Zod, @hookform/resolvers
+- **HTTP Client**: axios
+- **Auth/Storage**: js-cookie
+- **UI**: react-calendar
 - **Linting & Formatting**: ESLint, Prettier, Husky, lint-staged
 
 ## 🏃 빠른 시작
 
 **사전 요구사항**
 
-- Node.js 18 이상 권장
+- Node.js 20.19 이상 (또는 22.12 이상) — Vite 8 최소 요구사항
 - npm 설치 및 실행
 
 ```bash
@@ -40,30 +43,30 @@ npm run lint
 
 # 프로덕션 빌드 미리보기
 npm run preview
-
-# Husky 설정 (자동 실행됨)
-npm run prepare
 ```
+
+> Husky는 `npm install` 시 `prepare` 스크립트를 통해 자동 설정됩니다.
 
 ## 💻 개발 환경 설정 (필수!)
 
 프로젝트의 코드 품질과 일관성을 위해 모든 팀원은 아래 개발 환경을 반드시 설정해야 합니다.
 
--   1. **VS Code 확장 프로그램 설치**
-       VS Code의 'Extensions' 탭에서 아래 두 개의 확장 프로그램을 검색하여 설치합니다.
-       ESLint (게시자: Microsoft)
-       Prettier - Code formatter (게시자: Prettier)
+1. **VS Code 확장 프로그램 설치**
+   VS Code의 'Extensions' 탭에서 아래 두 개의 확장 프로그램을 검색하여 설치합니다.
+    - ESLint (게시자: Microsoft)
+    - Prettier - Code formatter (게시자: Prettier)
 
--   2. **VS Code 설정 적용**
-       이 프로젝트에는 .vscode/settings.json 파일이 포함되어 있습니다.
-       VS Code가 "이 작업 영역의 설정을 신뢰합니까?"라고 물으면 **'예(Yes)'**를 선택하세요. 이 파일을 통해 모든 팀원에게 아래 설정이 자동으로 적용됩니다.
-       파일 저장 시 Prettier로 자동 포맷 (editor.formatOnSave)
-       ESLint/Prettier 규칙 자동 인식
+2. **VS Code 설정 적용**
+   이 프로젝트에는 `.vscode/settings.json` 파일이 포함되어 있습니다.
+   VS Code가 "이 작업 영역의 설정을 신뢰합니까?"라고 물으면 **'예(Yes)'**를 선택하세요. 이 파일을 통해 모든 팀원에게 아래 설정이 자동으로 적용됩니다.
+    - 파일 저장 시 Prettier로 자동 포맷 (`editor.formatOnSave`)
+    - ESLint/Prettier 규칙 자동 인식
 
--   3. **설정 파일 (참고)**
-       .prettierrc: 우리 팀의 코드 스타일 규칙 (들여쓰기, 따옴표 등)이 정의되어 있습니다.
-       eslint.config.js: 우리 팀의 코드 품질 규칙 (버그 방지, React 훅 규칙 등)이 정의되어 있습니다.
-       결론: 팀원은 1번의 확장 프로그램 2개만 설치하면, .vscode/settings.json과 프로젝트 설정 파일(eslint.config.js, .prettierrc)에 의해 모든 규칙이 자동으로 적용됩니다.
+3. **설정 파일 (참고)**
+    - `.prettierrc`: 우리 팀의 코드 스타일 규칙 (들여쓰기, 따옴표 등)
+    - `eslint.config.js`: 우리 팀의 코드 품질 규칙 (버그 방지, React 훅 규칙 등)
+
+    결론: 팀원은 1번의 확장 프로그램 2개만 설치하면, `.vscode/settings.json`과 프로젝트 설정 파일에 의해 모든 규칙이 자동으로 적용됩니다.
 
 ## 📜 프로젝트 규약 (Conventions)
 
@@ -72,16 +75,16 @@ npm run prepare
 ```bash
    main: 배포용 브랜치 (안정 버전)
    dev: 개발 메인 브랜치 (다음 배포 버전)
-   feat/[기능이름]: 기능 개발 브랜치 (예: feature/login)
+   feat/[기능이름]: 기능 개발 브랜치 (예: feat/login)
    fix/[수정내용]: 버그 수정 브랜치 (예: fix/button-layout)
    chore/[작업내용]: 설정 및 환경 구성 브랜치 (예: chore/setup-eslint)
 ```
 
 - **작업 순서:**
 
-1. dev 브랜치에서 feature/[기능이름] 브랜치를 생성합니다.
-2. 기능 개발 완료 후, develop 브랜치로 Pull Request (PR)를 생성합니다.
-3. 코드 리뷰 후 develop 브랜치에 병합(Merge)합니다.
+1. `dev` 브랜치에서 `feat/[기능이름]` 브랜치를 생성합니다.
+2. 기능 개발 완료 후, `dev` 브랜치로 Pull Request (PR)를 생성합니다.
+3. 코드 리뷰 후 `dev` 브랜치에 병합(Merge)합니다.
 
 - **커밋 메시지 컨벤션**
     1. 커밋 메시지는 Conventional Commits 규칙을 따릅니다.
@@ -93,32 +96,33 @@ npm run prepare
    style: 코드 스타일 수정 (포맷팅, 세미콜론 등 로직 변경 없음)
    refactor: 코드 리팩토링
    chore: 빌드 설정, 패키지 매니저 설정 등 (코드 로직 변경 없음)
-   예시: "feat: 로그인 페이지 UI 구현, fix: 메인페이지 레이아웃 깨짐 수정"
+   예시: "feat: 로그인 페이지 UI 구현", "fix: 메인페이지 레이아웃 깨짐 수정"
 ```
 
 - **디렉토리 구조**
 
 ```bash
 src/
-├── api/ # API 요청 함수
-├── assets/ # 이미지, 폰트 등 정적 파일
+├── api/          # API 요청 함수 (axios 인스턴스 포함)
+├── assets/       # 이미지, 폰트 등 정적 파일
 ├── components/
-│ ├── common/ # 1. 공통 컴포넌트 (Button, Input, Modal...)
-│ └── feature/ # 2. 특정 기능(도메인) 컴포넌트
-├── constants/ # 공통 상수 (API URL, 키 값 등)
-├── hooks/ # 공통 커스텀 훅 (useToggle, useDebounce...)
-├── pages/ # 라우팅되는 페이지 컴포넌트 (`react-router-dom` 연동)
-├── styles/ # 전역 CSS, tailwind.css
-└── utils/ # 순수 유틸 함수 (formatDate, validators...)
+│   ├── common/   # 1. 공통 컴포넌트 (Button, Input, Modal...)
+│   └── feature/  # 2. 특정 기능(도메인) 컴포넌트
+├── constants/    # 공통 상수 (API URL, 키 값 등)
+├── hooks/        # 공통 커스텀 훅 (useToggle, useDebounce...)
+├── pages/        # 라우팅되는 페이지 컴포넌트 (react-router-dom 연동)
+├── stores/       # Zustand 스토어
+├── styles/       # 전역 CSS, tailwind.css
+└── utils/        # 순수 유틸 함수 (formatDate, validators...)
 ```
 
 - **네이밍 컨벤션**
-    1. 컴포넌트: PascalCase (예: MyButton.tsx)
-    2. 그 외 (훅, 유틸, 변수): camelCase (예: useMyHook.ts, formatDate.ts)
+    1. 컴포넌트: PascalCase (예: `MyButton.tsx`)
+    2. 그 외 (훅, 유틸, 변수): camelCase (예: `useMyHook.ts`, `formatDate.ts`)
 
 - **절대 경로**
-    1. '상대경로 중첩'(../../...)을 방지하기 위해 절대 경로를 사용합니다.
-    2. @/는 src/ 폴더를 가리킵니다.
+    1. '상대경로 중첩'(`../../...`)을 방지하기 위해 절대 경로를 사용합니다.
+    2. `@/`는 `src/` 폴더를 가리킵니다.
     3. 예시: `import Button from '@/components/common/Button';`
 
 ## 🔒 Git Hooks (자동 코드 검사)
