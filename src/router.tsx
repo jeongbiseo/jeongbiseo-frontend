@@ -11,6 +11,7 @@
 import App from "@/App";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
+import Onboarding from "@/pages/Onboarding";
 import Terms from "@/pages/Terms";
 import { createBrowserRouter } from "react-router-dom";
 
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
             {
                 path: "terms",
                 element: <Terms />,
+            },
+            {
+                path: "onboarding",
+                element: <Onboarding />,
             },
         ],
     },

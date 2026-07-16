@@ -199,6 +199,7 @@ const Terms = () => {
                         className="mt-auto mb-[clamp(32px,11.9svh,112px)] h-[55px] w-full max-w-[325px] cursor-pointer self-center rounded-[15px] bg-[#10b981] text-[20px] leading-none font-bold text-white shadow-[3px_11px_8.15px_#bfebe1] transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#0f2942] active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-[#d9d9d9] disabled:shadow-none disabled:hover:brightness-100"
                         type="button"
                         disabled={!requiredAgreed}
+                        onClick={() => navigate("/onboarding")}
                     >
                         동의하고 시작하기
                     </button>
