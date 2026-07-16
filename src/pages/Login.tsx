@@ -1,9 +1,12 @@
 import googleSymbol from "@/assets/login/google-symbol.png";
 import kakaoSymbol from "@/assets/login/kakao-symbol.svg";
 import supportIllustration from "@/assets/login/support-illustration.svg";
+import { useNavigate } from "react-router-dom";
 
 // 로그인 페이지 ('/login')
 const Login = () => {
+    const navigate = useNavigate();
+
     return (
         <main className="flex min-h-svh justify-center bg-[#ededed]">
             <section className="flex min-h-svh w-full max-w-[390px] flex-col items-center bg-[#f9f9f9] px-6 pt-[clamp(48px,11svh,104px)] pb-8">
@@ -28,6 +31,7 @@ const Login = () => {
                     <button
                         className="flex h-[70px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-[15px] bg-[#fee500] text-[20px] font-bold text-[#191919] transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#191919] active:scale-[0.99]"
                         type="button"
+                        onClick={() => navigate("/terms")}
                     >
                         <img
                             className="h-[25px] w-[27px]"
@@ -40,6 +44,7 @@ const Login = () => {
                     <button
                         className="flex h-[70px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-[15px] bg-[#f2f2f2] text-[20px] font-bold text-black transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#4285f4] active:scale-[0.99]"
                         type="button"
+                        onClick={() => navigate("/terms")}
                     >
                         <img
                             className="h-[25px] w-[25px]"

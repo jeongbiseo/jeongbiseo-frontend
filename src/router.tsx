@@ -5,11 +5,13 @@
  * 정비서 웹앱의 라우트 url은 다음으로 구성되어 있습니다.
  * - '/': 메인 페이지
  * - '/login': 로그인 페이지
+ * - '/terms': 약관동의 페이지
  */
 
 import App from "@/App";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
+import Terms from "@/pages/Terms";
 import { createBrowserRouter } from "react-router-dom";
 
 // 라우트 정의
@@ -26,6 +28,10 @@ export const router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login />,
+            },
+            {
+                path: "terms",
+                element: <Terms />,
             },
         ],
     },
