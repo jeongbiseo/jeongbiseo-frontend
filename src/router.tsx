@@ -13,6 +13,7 @@ import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Onboarding from "@/pages/Onboarding";
 import Terms from "@/pages/Terms";
+import Recommendation from "@/pages/Recommendation";
 import { createBrowserRouter } from "react-router-dom";
 
 // 라우트 정의
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
             {
                 path: "onboarding",
                 element: <Onboarding />,
+            },
+            {
+                path: "recommend",
+                element: <Recommendation />,
             },
         ],
     },
