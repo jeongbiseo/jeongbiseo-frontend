@@ -6,14 +6,19 @@
  * - '/': 메인 페이지
  * - '/login': 로그인 페이지
  * - '/terms': 약관동의 페이지
+ * - '/onboarding': 온보딩 페이지
+ * - '/recommend': 추천 페이지 (ProtectedRoute로 보호)
+ *
+ * 'ProtectedRoute'는 부팅 중이거나 로그인 상태가 아닌 유저의 접근을 막습니다.
  */
 
 import App from "@/App";
+import { ProtectedRoute } from "@/components/route/ProtectedRoute";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Onboarding from "@/pages/Onboarding";
-import Terms from "@/pages/Terms";
 import Recommendation from "@/pages/Recommendation";
+import Terms from "@/pages/Terms";
 import { createBrowserRouter } from "react-router-dom";
 
 // 라우트 정의
@@ -41,7 +46,11 @@ export const router = createBrowserRouter([
             },
             {
                 path: "recommend",
-                element: <Recommendation />,
+                element: (
+                    <ProtectedRoute>
+                        <Recommendation />
+                    </ProtectedRoute>
+                ),
             },
         ],
     },
