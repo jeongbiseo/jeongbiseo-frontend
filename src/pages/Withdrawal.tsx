@@ -1,0 +1,126 @@
+import {
+    BackButton,
+    CheckIcon,
+    ConfirmDialog,
+    MyPageLayout,
+} from "@/components/mypage/MyPageUI";
+import { clearMyPageDummyData } from "@/constants/mypageData";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const withdrawalReasons = [
+    "자주 사용하지 않아요",
+    "앱 사용법이 너무 어려워요",
+    "원하는 지원금이 없어요",
+];
+
+const Withdrawal = () => {
+    const navigate = useNavigate();
+    const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
+    const [noticeAgreed, setNoticeAgreed] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
+    const handleWithdrawal = () => {
+        clearMyPageDummyData();
+        setConfirmOpen(false);
+        navigate("/login", { replace: true });
+    };
+
+    const toggleReason = (reason: string) => {
+        setSelectedReasons((currentReasons) =>
+            currentReasons.includes(reason)
+                ? currentReasons.filter(
+                      (selectedReason) => selectedReason !== reason
+                  )
+                : [...currentReasons, reason]
+        );
+    };
+
+    return (
+        <>
+            <MyPageLayout className="px-[30px] pt-[56px]">
+                <BackButton className="-ml-5" />
+                <h1 className="mt-0 -ml-[7px] text-[24px] font-bold">
+                    회원 탈퇴
+                </h1>
+
+                <h2 className="mt-8 text-[18px] font-bold">
+                    탈퇴하기 전에 꼭 확인해 주세요
+                </h2>
+                <ul className="mt-4 list-disc space-y-3 rounded-[18px] border border-[#2fbf9f] bg-white px-10 py-5 text-[13px] leading-[1.45] font-semibold">
+                    <li>
+                        탈퇴 시 기존에 보관했던 즐겨찾기 내역이 모두 삭제되며,
+                        복구할 수 없습니다
+                    </li>
+                    <li>회원탈퇴 후 30일간 재가입이 불가능합니다</li>
+                    <li>
+                        연동된 SNS 계정이 있는 경우 정비서와 연동이 해제됩니다.
+                    </li>
+                </ul>
+
+                <h2 className="mt-8 text-[18px] font-bold">
+                    탈퇴하시는 이유가 궁금해요(선택)
+                </h2>
+                <div className="mt-3 rounded-[18px] border border-[#2fbf9f] bg-white px-5 py-3">
+                    {withdrawalReasons.map((reason) => (
+                        <label
+                            className={`flex cursor-pointer items-center gap-3 py-2 text-[13px] font-semibold ${selectedReasons.includes(reason) ? "text-black" : "text-[#a0a0a0]"}`}
+                            key={reason}
+                        >
+                            <input
+                                className="sr-only"
+                                type="checkbox"
+                                name="withdrawal-reason"
+                                checked={selectedReasons.includes(reason)}
+                                onChange={() => toggleReason(reason)}
+                            />
+                            <span
+                                className={`flex size-5 items-center justify-center ${selectedReasons.includes(reason) ? "text-[#10b981]" : "text-[#d9d9d9]"}`}
+                            >
+                                <CheckIcon className="size-5" />
+                            </span>
+                            {reason}
+                        </label>
+                    ))}
+                </div>
+
+                <label className="mt-7 flex min-h-[68px] cursor-pointer items-center gap-4 rounded-[15px] border border-[#2fbf9f] bg-white px-5 py-4 text-[13px] leading-[1.45] font-bold">
+                    <input
+                        className="peer sr-only"
+                        type="checkbox"
+                        checked={noticeAgreed}
+                        onChange={(event) =>
+                            setNoticeAgreed(event.target.checked)
+                        }
+                    />
+                    <span className="flex size-[22px] shrink-0 items-center justify-center rounded-[5px] bg-[#d9d9d9] text-white peer-checked:bg-[#2fbf9f]">
+                        {noticeAgreed && <CheckIcon className="size-4" />}
+                    </span>
+                    [필수] 안내사항을 모두 확인했으며,
+                    <br />
+                    이에 동의합니다
+                </label>
+
+                <button
+                    className="mt-36 h-[40px] w-full cursor-pointer rounded-[10px] bg-[#f03939] text-[16px] font-bold text-white disabled:cursor-not-allowed disabled:bg-[#f6a2a2]"
+                    type="button"
+                    disabled={!noticeAgreed}
+                    onClick={() => setConfirmOpen(true)}
+                >
+                    서비스 탈퇴하기
+                </button>
+            </MyPageLayout>
+
+            <ConfirmDialog
+                open={confirmOpen}
+                title="회원 탈퇴"
+                description="정말 정비서 서비스를 탈퇴하시겠습니까?"
+                confirmLabel="탈퇴하기"
+                onCancel={() => setConfirmOpen(false)}
+                onConfirm={handleWithdrawal}
+            />
+        </>
+    );
+};
+
+export default Withdrawal;

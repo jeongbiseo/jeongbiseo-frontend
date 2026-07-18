@@ -1,9 +1,15 @@
+import { BackButton } from "@/components/mypage/MyPageUI";
 import {
     initialRecommendationPolicies,
+    isUrgentRecommendationPolicy,
     type RecommendationPolicy,
 } from "@/constants/recommendationData";
+import {
+    getFavoritePolicyIds,
+    saveFavoritePolicyIds,
+} from "@/constants/mypageData";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 type RecommendationTab = "recommended" | "favorites" | "all";
 type SortOption = "recommended" | "amount" | "deadline" | "title";
@@ -23,16 +29,38 @@ const sortOptions: Array<{ key: SortOption; label: string }> = [
     { key: "title", label: "가나다순" },
 ];
 
+const getInitialTab = (value: string | null): RecommendationTab =>
+    value === "favorites" || value === "all" ? value : "recommended";
+
+const getInitialSort = (value: string | null): SortOption =>
+    value === "amount" || value === "deadline" || value === "title"
+        ? value
+        : "recommended";
+
 const Recommendation = () => {
     const navigate = useNavigate();
-    const [policies, setPolicies] = useState(initialRecommendationPolicies);
-    const [activeTab, setActiveTab] =
-        useState<RecommendationTab>("recommended");
-    const [sortOption, setSortOption] = useState<SortOption>("recommended");
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const [policies, setPolicies] = useState(() => {
+        const favoriteIds = getFavoritePolicyIds();
+        return initialRecommendationPolicies.map((policy) => ({
+            ...policy,
+            isFavorite: favoriteIds.includes(policy.id),
+        }));
+    });
+    const [activeTab, setActiveTab] = useState<RecommendationTab>(() =>
+        getInitialTab(searchParams.get("tab"))
+    );
+    const [sortOption, setSortOption] = useState<SortOption>(() =>
+        getInitialSort(searchParams.get("sort"))
+    );
     const [allowDuplicates, setAllowDuplicates] = useState(true);
     const [sortSheetOpen, setSortSheetOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
+    const urgentOnly = searchParams.get("filter") === "urgent";
+    const cameFromMyPage =
+        (location.state as { from?: string } | null)?.from === "mypage";
 
     const sortLabel = sortOptions.find(({ key }) => key === sortOption)?.label;
 
@@ -45,6 +73,8 @@ const Recommendation = () => {
                 (activeTab === "favorites" && policy.isFavorite);
             const matchesDuplicateOption =
                 allowDuplicates || !policy.isReceived;
+            const matchesUrgentFilter =
+                !urgentOnly || isUrgentRecommendationPolicy(policy);
             const matchesQuery =
                 normalizedQuery.length === 0 ||
                 policy.title
@@ -56,7 +86,12 @@ const Recommendation = () => {
                     .toLowerCase()
                     .includes(normalizedQuery);
 
-            return matchesTab && matchesDuplicateOption && matchesQuery;
+            return (
+                matchesTab &&
+                matchesDuplicateOption &&
+                matchesUrgentFilter &&
+                matchesQuery
+            );
         });
 
         return [...filteredPolicies].sort((first, second) => {
@@ -75,16 +110,22 @@ const Recommendation = () => {
 
             return Number(second.isRecommended) - Number(first.isRecommended);
         });
-    }, [activeTab, allowDuplicates, policies, query, sortOption]);
+    }, [activeTab, allowDuplicates, policies, query, sortOption, urgentOnly]);
 
     const toggleFavorite = (id: number) => {
-        setPolicies((previous) =>
-            previous.map((policy) =>
+        setPolicies((previous) => {
+            const nextPolicies = previous.map((policy) =>
                 policy.id === id
                     ? { ...policy, isFavorite: !policy.isFavorite }
                     : policy
-            )
-        );
+            );
+            saveFavoritePolicyIds(
+                nextPolicies
+                    .filter(({ isFavorite }) => isFavorite)
+                    .map(({ id: policyId }) => policyId)
+            );
+            return nextPolicies;
+        });
     };
 
     useEffect(() => {
@@ -103,6 +144,9 @@ const Recommendation = () => {
             <main className="bg-surface-dim flex min-h-svh justify-center">
                 <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] pt-[72px] pb-[130px]">
                     <header className="px-5">
+                        {cameFromMyPage && (
+                            <BackButton label="마이페이지로 돌아가기" />
+                        )}
                         <div className="flex items-center justify-between px-1.5">
                             <h1 className="text-[24px] leading-none font-bold">
                                 {searchOpen ? "검색" : "지원금 전체보기"}
@@ -221,7 +265,7 @@ const Recommendation = () => {
                         <SearchEmptyState />
                     ) : activeTab === "recommended" ? (
                         <EmptyRecommendation
-                            onEditProfile={() => navigate("/mypage?mode=edit")}
+                            onEditProfile={() => navigate("/mypage/edit")}
                         />
                     ) : activeTab === "favorites" ? (
                         <FavoriteEmptyState />
