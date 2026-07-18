@@ -8,9 +8,9 @@ export const MyPageLayout = ({
     children: ReactNode;
     className?: string;
 }) => (
-    <main className="flex min-h-svh justify-center bg-[#ededed]">
+    <main className="bg-surface-dim flex min-h-svh justify-center">
         <section
-            className={`min-h-svh w-full max-w-[390px] bg-[#f9f9f9] px-[23px] pt-[72px] pb-[120px] text-[#191919] ${className}`}
+            className={`bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[23px] pt-[72px] pb-[120px] ${className}`}
         >
             {children}
         </section>
@@ -28,7 +28,7 @@ export const BackButton = ({
 
     return (
         <button
-            className={`flex size-8 cursor-pointer items-center justify-start rounded focus-visible:outline-2 focus-visible:outline-[#10b981] ${className}`}
+            className={`focus-visible:outline-primary flex size-8 cursor-pointer items-center justify-start rounded focus-visible:outline-2 ${className}`}
             type="button"
             aria-label={label}
             onClick={() => navigate(-1)}
@@ -72,7 +72,7 @@ export const StarIcon = () => (
     <svg className="size-6" viewBox="0 0 24 24" aria-hidden="true">
         <path
             d="m12 1.8 3.1 6.3 7 .9-5.1 4.9 1.3 6.9-6.3-3.3-6.3 3.3 1.3-6.9L1.9 9l7-.9L12 1.8Z"
-            fill="#f5a623"
+            fill="var(--color-secondary)"
         />
     </svg>
 );
@@ -127,19 +127,19 @@ export const ConfirmDialog = ({
                 <h2 className="text-[16px] font-bold" id="confirm-dialog-title">
                     {title}
                 </h2>
-                <p className="mt-3 text-[13px] font-semibold text-[#808080]">
+                <p className="text-text-muted mt-3 text-[13px] font-semibold">
                     {description}
                 </p>
                 <div className="mt-5 flex justify-center gap-3">
                     <button
-                        className="h-[34px] cursor-pointer rounded-[5px] border border-[#808080] px-4 text-[13px] font-bold"
+                        className="border-text-muted h-[34px] cursor-pointer rounded-[5px] border px-4 text-[13px] font-bold"
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className="h-[34px] cursor-pointer rounded-[5px] bg-[#10b981] px-4 text-[13px] font-bold text-white"
+                        className="bg-primary h-[34px] cursor-pointer rounded-[5px] px-4 text-[13px] font-bold text-white"
                         type="button"
                         onClick={onConfirm}
                     >

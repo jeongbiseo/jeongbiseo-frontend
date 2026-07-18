@@ -23,10 +23,10 @@ const MyPageTerms = () => {
                     이용약관 · 개인정보처리방침
                 </h1>
 
-                <div className="mt-8 overflow-hidden rounded-[20px] border border-[#2fbf9f] bg-white">
+                <div className="border-primary mt-8 overflow-hidden rounded-[20px] border bg-white">
                     {terms.map((term, index) => (
                         <button
-                            className={`flex h-[79px] w-full cursor-pointer items-center justify-between px-4 text-left ${index > 0 ? "border-t border-[#e5e5e5]" : ""}`}
+                            className={`flex h-[79px] w-full cursor-pointer items-center justify-between px-4 text-left ${index > 0 ? "border-line border-t" : ""}`}
                             type="button"
                             key={term.key}
                             onClick={() => setSelectedTerm(term.key)}
@@ -35,18 +35,18 @@ const MyPageTerms = () => {
                                 <strong className="block text-[16px]">
                                     {term.label}
                                 </strong>
-                                <span className="mt-2 block text-[13px] font-bold text-[#808080]">
+                                <span className="text-text-muted mt-2 block text-[13px] font-bold">
                                     최종 수정 2026.06.01
                                 </span>
                             </span>
-                            <span className="text-[#808080]">
+                            <span className="text-text-muted">
                                 <ChevronRightIcon />
                             </span>
                         </button>
                     ))}
                 </div>
 
-                <label className="mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border border-[#2fbf9f] bg-white px-5 text-[16px] font-bold">
+                <label className="border-primary mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border bg-white px-5 text-[16px] font-bold">
                     이벤트·혜택 정보 수신 동의
                     <input
                         className="peer sr-only"
@@ -56,7 +56,7 @@ const MyPageTerms = () => {
                             setMarketingAgreed(event.target.checked)
                         }
                     />
-                    <span className="relative h-5 w-[34px] rounded-full bg-[#d9d9d9] transition-colors peer-checked:bg-[#2fbf9f] after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
+                    <span className="bg-disabled peer-checked:bg-primary relative h-5 w-[34px] rounded-full transition-colors after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
                 </label>
             </MyPageLayout>
 
@@ -94,7 +94,7 @@ const TermsDetailSheet = ({
                 aria-labelledby="terms-detail-title"
                 onClick={(event) => event.stopPropagation()}
             >
-                <div className="mx-auto h-1 w-[44px] rounded-full bg-[#d9d9d9]" />
+                <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
                 <div className="mt-5 flex items-start justify-between gap-4">
                     <div>
                         <h2
@@ -103,12 +103,12 @@ const TermsDetailSheet = ({
                         >
                             {title}
                         </h2>
-                        <p className="mt-1 text-[12px] font-semibold text-[#8e98a8]">
+                        <p className="text-text-subtle mt-1 text-[12px] font-semibold">
                             버전 1.0.0 · 최종 수정 2026.06.01
                         </p>
                     </div>
                     <button
-                        className="flex size-8 cursor-pointer items-center justify-center rounded-full bg-[#f3f3f3] text-[20px]"
+                        className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
                         type="button"
                         aria-label="약관 상세 닫기"
                         onClick={onClose}
@@ -117,7 +117,7 @@ const TermsDetailSheet = ({
                     </button>
                 </div>
 
-                <p className="mt-6 text-[13px] leading-[1.7] text-[#555]">
+                <p className="text-text-body mt-6 text-[13px] leading-[1.7]">
                     {detail.summary}
                 </p>
                 <div className="mt-6 flex flex-col gap-6">
@@ -128,14 +128,14 @@ const TermsDetailSheet = ({
                             </h3>
                             {section.paragraphs?.map((paragraph) => (
                                 <p
-                                    className="mt-2 text-[13px] leading-[1.7] text-[#666]"
+                                    className="text-text-secondary mt-2 text-[13px] leading-[1.7]"
                                     key={paragraph}
                                 >
                                     {paragraph}
                                 </p>
                             ))}
                             {section.bullets && (
-                                <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6] text-[#666]">
+                                <ul className="text-text-secondary mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6]">
                                     {section.bullets.map((bullet) => (
                                         <li key={bullet}>{bullet}</li>
                                     ))}

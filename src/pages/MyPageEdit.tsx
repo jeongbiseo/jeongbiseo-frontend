@@ -100,7 +100,7 @@ const MyPageEdit = () => {
                     <h1 className="mt-1 text-[20px] font-bold">
                         추천 기준 정보
                     </h1>
-                    <p className="mt-2 text-[13px] font-semibold text-[#8e98a8]">
+                    <p className="text-text-subtle mt-2 text-[13px] font-semibold">
                         아래 정보는 지원금 추천에 직접 사용됩니다.
                     </p>
                 </header>
@@ -164,12 +164,12 @@ const MyPageEdit = () => {
                         <option key={option}>{option}</option>
                     ))}
                 </Select>
-                <p className="mt-2 text-[12px] font-semibold text-[#8e98a8]">
+                <p className="text-text-subtle mt-2 text-[12px] font-semibold">
                     중위소득 기준 지원금 매칭에 활용돼요
                 </p>
 
                 <FieldLabel>가구원 수</FieldLabel>
-                <div className="flex h-[48px] items-center justify-between rounded-[10px] border border-[#b7b7b7] bg-white px-7">
+                <div className="border-line-strong flex h-[48px] items-center justify-between rounded-[10px] border bg-white px-7">
                     <CounterButton
                         label="가구원 수 줄이기"
                         onClick={() =>
@@ -180,7 +180,7 @@ const MyPageEdit = () => {
                     >
                         −
                     </CounterButton>
-                    <strong className="text-[16px] text-[#808080]">
+                    <strong className="text-text-muted text-[16px]">
                         {householdSize}명
                     </strong>
                     <CounterButton
@@ -194,13 +194,13 @@ const MyPageEdit = () => {
                         ＋
                     </CounterButton>
                 </div>
-                <p className="mt-2 text-[12px] font-semibold text-[#8e98a8]">
+                <p className="text-text-subtle mt-2 text-[12px] font-semibold">
                     가구원 수에 따라 주거 · 육아 지원금 범위가 달라져요
                 </p>
 
                 <div className="scroll-mt-6 pt-9" ref={receivedSectionRef}>
                     <h2 className="text-[20px] font-bold">기존 수령 지원금</h2>
-                    <p className="mt-2 text-[12px] font-semibold text-[#8e98a8]">
+                    <p className="text-text-subtle mt-2 text-[12px] font-semibold">
                         이미 받고 있는 지원금을 선택하면 중복 추천을
                         줄여드립니다
                     </p>
@@ -208,14 +208,14 @@ const MyPageEdit = () => {
                     <div className="mt-4 flex flex-col gap-3">
                         {receivedBenefits.map((benefit) => (
                             <div
-                                className="flex min-h-[54px] items-center justify-between rounded-[10px] bg-[#e2f8f2] px-6"
+                                className="bg-success-light flex min-h-[54px] items-center justify-between rounded-[10px] px-6"
                                 key={benefit.id}
                             >
                                 <strong className="text-[14px]">
                                     {benefit.title}
                                 </strong>
                                 <button
-                                    className="cursor-pointer rounded-full border border-[#808080] px-3 py-1 text-[12px] font-bold"
+                                    className="border-text-muted cursor-pointer rounded-full border px-3 py-1 text-[12px] font-bold"
                                     type="button"
                                     onClick={() =>
                                         updateReceivedBenefits(
@@ -232,7 +232,7 @@ const MyPageEdit = () => {
                     </div>
 
                     <button
-                        className="mt-4 h-[42px] cursor-pointer rounded-[15px] bg-[#10b981] px-5 text-[15px] font-bold text-white shadow-[3px_8px_10px_#cceee6]"
+                        className="bg-primary mt-4 h-[42px] cursor-pointer rounded-[15px] px-5 text-[15px] font-bold text-white shadow-[3px_8px_10px_var(--color-green-shadow)]"
                         type="button"
                         onClick={() => setAddSheetOpen(true)}
                     >
@@ -241,7 +241,7 @@ const MyPageEdit = () => {
                 </div>
 
                 <button
-                    className="mt-9 h-[48px] w-full cursor-pointer rounded-[15px] bg-[#0f2942] text-[16px] font-bold text-white"
+                    className="bg-third mt-9 h-[48px] w-full cursor-pointer rounded-[15px] text-[16px] font-bold text-white"
                     type="button"
                     onClick={handleSave}
                 >
@@ -249,7 +249,7 @@ const MyPageEdit = () => {
                 </button>
                 {saved && (
                     <p
-                        className="mt-3 text-center text-[13px] font-bold text-[#0d9467]"
+                        className="text-success mt-3 text-center text-[13px] font-bold"
                         role="status"
                     >
                         수정한 정보를 저장했어요
@@ -324,7 +324,7 @@ const BenefitAddSheet = ({
                 aria-labelledby="benefit-sheet-title"
                 onClick={(event) => event.stopPropagation()}
             >
-                <div className="mx-auto h-1 w-[44px] rounded-full bg-[#d9d9d9]" />
+                <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
                 <h2
                     className="mt-5 text-[18px] font-bold"
                     id="benefit-sheet-title"
@@ -335,7 +335,7 @@ const BenefitAddSheet = ({
                 <div className="relative mt-5">
                     <SearchIcon />
                     <input
-                        className="h-[50px] w-full rounded-[10px] border border-[#b7b7b7] pr-4 pl-11 text-[13px] outline-none placeholder:text-[#8e98a8] focus:border-[#10b981]"
+                        className="border-line-strong placeholder:text-text-subtle focus:border-primary h-[50px] w-full rounded-[10px] border pr-4 pl-11 text-[13px] outline-none"
                         value={query}
                         placeholder="지원금명 또는 기관명으로 검색해보세요"
                         onChange={(event) => setQuery(event.target.value)}
@@ -345,7 +345,7 @@ const BenefitAddSheet = ({
                 <div className="mt-4 flex justify-between gap-1.5">
                     {benefitCategories.map((category) => (
                         <button
-                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${selectedCategory === category ? "bg-[#0f2942] text-white" : "bg-[#e5e5e5] text-[#555]"}`}
+                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${selectedCategory === category ? "bg-third text-white" : "bg-line text-text-body"}`}
                             type="button"
                             key={category}
                             onClick={() => setSelectedCategory(category)}
@@ -360,7 +360,7 @@ const BenefitAddSheet = ({
                         const selected = selectedIds.includes(benefit.id);
                         return (
                             <button
-                                className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-[#10b981] bg-[#dff7ef]" : "border-[#b7b7b7] bg-white"}`}
+                                className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-primary bg-selection-light" : "border-line-strong bg-white"}`}
                                 type="button"
                                 key={benefit.id}
                                 onClick={() =>
@@ -374,7 +374,7 @@ const BenefitAddSheet = ({
                                 }
                             >
                                 <span
-                                    className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${selected ? "border-[#10b981] bg-[#10b981] text-white" : "border-[#b7b7b7]"}`}
+                                    className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-line-strong"}`}
                                 >
                                     {selected && <CheckIcon />}
                                 </span>
@@ -382,7 +382,7 @@ const BenefitAddSheet = ({
                                     <strong className="block text-[14px]">
                                         {benefit.title}
                                     </strong>
-                                    <span className="mt-1 block text-[12px] font-semibold text-[#8e98a8]">
+                                    <span className="text-text-subtle mt-1 block text-[12px] font-semibold">
                                         {benefit.organization}
                                     </span>
                                 </span>
@@ -390,14 +390,14 @@ const BenefitAddSheet = ({
                         );
                     })}
                     {visibleBenefits.length === 0 && (
-                        <p className="py-8 text-center text-[13px] text-[#8e98a8]">
+                        <p className="text-text-subtle py-8 text-center text-[13px]">
                             추가할 수 있는 지원금이 없어요
                         </p>
                     )}
                 </div>
 
                 <button
-                    className="mt-6 h-[48px] w-full cursor-pointer rounded-[14px] bg-[#10b981] text-[16px] font-bold text-white disabled:cursor-not-allowed disabled:bg-[#d9d9d9]"
+                    className="bg-primary disabled:bg-disabled mt-6 h-[48px] w-full cursor-pointer rounded-[14px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
                     type="button"
                     disabled={selectedIds.length === 0}
                     onClick={handleSave}
@@ -425,7 +425,7 @@ const Select = <T extends string | number>({
     children: React.ReactNode;
 }) => (
     <select
-        className="h-[48px] w-full cursor-pointer rounded-[10px] border border-[#b7b7b7] bg-white px-3 text-[13px] font-semibold outline-none focus:border-[#10b981]"
+        className="border-line-strong focus:border-primary h-[48px] w-full cursor-pointer rounded-[10px] border bg-white px-3 text-[13px] font-semibold outline-none"
         value={value}
         onChange={(event) =>
             onChange(
@@ -449,7 +449,7 @@ const CounterButton = ({
     onClick: () => void;
 }) => (
     <button
-        className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-[#b7b7b7] text-[22px] leading-none"
+        className="border-line-strong flex size-8 cursor-pointer items-center justify-center rounded-full border text-[22px] leading-none"
         type="button"
         aria-label={label}
         onClick={onClick}

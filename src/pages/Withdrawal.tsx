@@ -47,7 +47,7 @@ const Withdrawal = () => {
                 <h2 className="mt-8 text-[18px] font-bold">
                     탈퇴하기 전에 꼭 확인해 주세요
                 </h2>
-                <ul className="mt-4 list-disc space-y-3 rounded-[18px] border border-[#2fbf9f] bg-white px-10 py-5 text-[13px] leading-[1.45] font-semibold">
+                <ul className="border-primary mt-4 list-disc space-y-3 rounded-[18px] border bg-white px-10 py-5 text-[13px] leading-[1.45] font-semibold">
                     <li>
                         탈퇴 시 기존에 보관했던 즐겨찾기 내역이 모두 삭제되며,
                         복구할 수 없습니다
@@ -61,10 +61,10 @@ const Withdrawal = () => {
                 <h2 className="mt-8 text-[18px] font-bold">
                     탈퇴하시는 이유가 궁금해요(선택)
                 </h2>
-                <div className="mt-3 rounded-[18px] border border-[#2fbf9f] bg-white px-5 py-3">
+                <div className="border-primary mt-3 rounded-[18px] border bg-white px-5 py-3">
                     {withdrawalReasons.map((reason) => (
                         <label
-                            className={`flex cursor-pointer items-center gap-3 py-2 text-[13px] font-semibold ${selectedReasons.includes(reason) ? "text-black" : "text-[#a0a0a0]"}`}
+                            className={`flex cursor-pointer items-center gap-3 py-2 text-[13px] font-semibold ${selectedReasons.includes(reason) ? "text-black" : "text-text-soft"}`}
                             key={reason}
                         >
                             <input
@@ -75,7 +75,7 @@ const Withdrawal = () => {
                                 onChange={() => toggleReason(reason)}
                             />
                             <span
-                                className={`flex size-5 items-center justify-center ${selectedReasons.includes(reason) ? "text-[#10b981]" : "text-[#d9d9d9]"}`}
+                                className={`flex size-5 items-center justify-center ${selectedReasons.includes(reason) ? "text-primary" : "text-disabled"}`}
                             >
                                 <CheckIcon className="size-5" />
                             </span>
@@ -84,7 +84,7 @@ const Withdrawal = () => {
                     ))}
                 </div>
 
-                <label className="mt-7 flex min-h-[68px] cursor-pointer items-center gap-4 rounded-[15px] border border-[#2fbf9f] bg-white px-5 py-4 text-[13px] leading-[1.45] font-bold">
+                <label className="border-primary mt-7 flex min-h-[68px] cursor-pointer items-center gap-4 rounded-[15px] border bg-white px-5 py-4 text-[13px] leading-[1.45] font-bold">
                     <input
                         className="peer sr-only"
                         type="checkbox"
@@ -93,7 +93,7 @@ const Withdrawal = () => {
                             setNoticeAgreed(event.target.checked)
                         }
                     />
-                    <span className="flex size-[22px] shrink-0 items-center justify-center rounded-[5px] bg-[#d9d9d9] text-white peer-checked:bg-[#2fbf9f]">
+                    <span className="bg-disabled peer-checked:bg-primary flex size-[22px] shrink-0 items-center justify-center rounded-[5px] text-white">
                         {noticeAgreed && <CheckIcon className="size-4" />}
                     </span>
                     [필수] 안내사항을 모두 확인했으며,
@@ -102,7 +102,7 @@ const Withdrawal = () => {
                 </label>
 
                 <button
-                    className="mt-36 h-[40px] w-full cursor-pointer rounded-[10px] bg-[#f03939] text-[16px] font-bold text-white disabled:cursor-not-allowed disabled:bg-[#f6a2a2]"
+                    className="bg-danger disabled:bg-danger-disabled mt-36 h-[40px] w-full cursor-pointer rounded-[10px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
                     type="button"
                     disabled={!noticeAgreed}
                     onClick={() => setConfirmOpen(true)}

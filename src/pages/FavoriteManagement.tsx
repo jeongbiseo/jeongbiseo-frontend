@@ -73,28 +73,28 @@ const FavoriteManagement = () => {
                                 setAllowDuplicates(event.target.checked)
                             }
                         />
-                        <span className="relative h-5 w-[34px] rounded-full bg-[#d9d9d9] transition-colors peer-checked:bg-[#2fbf9f] after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
+                        <span className="bg-disabled peer-checked:bg-primary relative h-5 w-[34px] rounded-full transition-colors after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
                     </label>
                 </div>
             </header>
 
-            <div className="mt-4 h-px bg-[#e5e5e5]" />
+            <div className="bg-line mt-4 h-px" />
 
             {favoritePolicies.length > 0 ? (
                 <div className="mt-6 flex flex-col gap-4 px-[15px]">
                     {favoritePolicies.map((policy) => (
                         <article
-                            className="relative min-h-[74px] rounded-[20px] border border-[#2fbf9f] bg-white px-4 py-[14px]"
+                            className="border-primary relative min-h-[74px] rounded-[20px] border bg-white px-4 py-[14px]"
                             key={policy.id}
                         >
                             <h2 className="pr-[90px] text-[16px] font-bold">
                                 {policy.title}
                             </h2>
-                            <p className="mt-1 text-[13px] font-bold text-[#8e98a8]">
+                            <p className="text-text-subtle mt-1 text-[13px] font-bold">
                                 {policy.organization} · {policy.deadlineLabel}
                             </p>
                             <button
-                                className="absolute top-[12px] right-4 flex size-8 cursor-pointer items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-[#10b981]"
+                                className="focus-visible:outline-primary absolute top-[12px] right-4 flex size-8 cursor-pointer items-center justify-center rounded focus-visible:outline-2"
                                 type="button"
                                 aria-label={`${policy.title} 즐겨찾기 해제`}
                                 onClick={() => removeFavorite(policy.id)}
@@ -109,11 +109,11 @@ const FavoriteManagement = () => {
                 </div>
             ) : (
                 <div className="mt-36 px-8 text-center" role="status">
-                    <div className="text-[54px] text-[#d9d9d9]">★</div>
+                    <div className="text-disabled text-[54px]">★</div>
                     <h2 className="mt-6 text-[20px] font-bold">
                         즐겨찾기한 지원금이 없어요
                     </h2>
-                    <p className="mt-2 text-[14px] font-semibold text-[#808080]">
+                    <p className="text-text-muted mt-2 text-[14px] font-semibold">
                         추천 화면에서 관심 지원금을 등록해보세요
                     </p>
                 </div>
