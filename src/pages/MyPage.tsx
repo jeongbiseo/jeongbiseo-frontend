@@ -12,6 +12,7 @@ import {
     getMyPageProfile,
     getReceivedBenefits,
 } from "@/constants/mypageData";
+import { useAuthStore } from "@/stores/authStore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -24,6 +25,7 @@ type MenuItem = {
 
 const MyPage = () => {
     const navigate = useNavigate();
+    const logout = useAuthStore((state) => state.logout);
     const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
     const favoriteCount = getFavoritePolicyIds().length;
     const receivedCount = getReceivedBenefits().length;
@@ -92,6 +94,7 @@ const MyPage = () => {
 
     const handleLogout = () => {
         setLogoutDialogOpen(false);
+        logout();
         navigate("/login", { replace: true });
     };
 

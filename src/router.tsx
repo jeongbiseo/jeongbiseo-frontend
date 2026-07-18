@@ -59,23 +59,43 @@ export const router = createBrowserRouter([
             },
             {
                 path: "mypage",
-                element: <MyPage />,
+                element: (
+                    <ProtectedRoute>
+                        <MyPage />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "mypage/edit",
-                element: <MyPageEdit />,
+                element: (
+                    <ProtectedRoute>
+                        <MyPageEdit />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "mypage/favorites",
-                element: <FavoriteManagement />,
+                element: (
+                    <ProtectedRoute>
+                        <FavoriteManagement />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "mypage/terms",
-                element: <MyPageTerms />,
+                element: (
+                    <ProtectedRoute>
+                        <MyPageTerms />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "mypage/withdraw",
-                element: <Withdrawal />,
+                element: (
+                    <ProtectedRoute>
+                        <Withdrawal />
+                    </ProtectedRoute>
+                ),
             },
         ],
     },

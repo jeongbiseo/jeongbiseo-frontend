@@ -5,6 +5,7 @@ import {
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
 import { clearMyPageDummyData } from "@/constants/mypageData";
+import { useAuthStore } from "@/stores/authStore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,12 +17,14 @@ const withdrawalReasons = [
 
 const Withdrawal = () => {
     const navigate = useNavigate();
+    const logout = useAuthStore((state) => state.logout);
     const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
     const [noticeAgreed, setNoticeAgreed] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
 
     const handleWithdrawal = () => {
         clearMyPageDummyData();
+        logout();
         setConfirmOpen(false);
         navigate("/login", { replace: true });
     };
