@@ -1,4 +1,5 @@
 import { BackButton } from "@/components/mypage/MyPageUI";
+import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import {
     getFavoritePolicyIds,
     saveFavoritePolicyIds,
@@ -9,7 +10,12 @@ import {
     type RecommendationPolicy,
 } from "@/constants/recommendationData";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+    Link,
+    useLocation,
+    useNavigate,
+    useSearchParams,
+} from "react-router-dom";
 
 type RecommendationTab = "recommended" | "favorites" | "all";
 type SortOption = "recommended" | "amount" | "deadline" | "title";
@@ -328,7 +334,11 @@ const PolicyCard = ({
 
     return (
         <article className="border-primary relative min-h-[107px] rounded-[20px] border bg-white px-[21px] py-[15px]">
-            <div className="pr-[82px]">
+            <Link
+                className="block pr-[82px]"
+                to={`/policies/${policy.id}`}
+                state={{ bottomNavPath: "/recommend" }}
+            >
                 <p className="text-[13px] leading-none font-bold text-[#8e98a8]">
                     {policy.organization}
                 </p>
@@ -338,7 +348,7 @@ const PolicyCard = ({
                 <p className="text-green-dark mt-[15px] text-[16px] leading-none font-bold">
                     {policy.amountLabel ?? "산정 불가"}
                 </p>
-            </div>
+            </Link>
 
             <button
                 className="focus-visible:outline-primary absolute top-[12px] right-[21px] flex size-8 cursor-pointer items-center justify-center focus-visible:rounded focus-visible:outline-2"
@@ -416,10 +426,10 @@ const SimpleEmptyState = ({
 
 const SearchEmptyState = () => (
     <div
-        className="mx-auto mt-[51px] flex w-full max-w-[341px] flex-col items-center gap-[54px] text-center"
+        className="mx-auto mt-[177px] flex w-full max-w-[341px] flex-col items-center gap-[34px] text-center"
         role="status"
     >
-        <div className="bg-green-light text-green-dark flex size-[118px] items-center justify-center rounded-full">
+        <div className="bg-disabled flex size-[118px] items-center justify-center rounded-full text-white">
             <SearchIcon className="size-[46px]" />
         </div>
 
@@ -487,23 +497,6 @@ const CloseIcon = () => (
     </svg>
 );
 
-const ChevronDownIcon = () => (
-    <svg
-        className="h-[9px] w-[14px]"
-        viewBox="0 0 14 9"
-        fill="none"
-        aria-hidden="true"
-    >
-        <path
-            d="m1 1 6 6 6-6"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-    </svg>
-);
-
 const StarIcon = ({ filled }: { filled: boolean }) => (
     <svg className="size-6" viewBox="0 0 24 24" aria-hidden="true">
         <path
@@ -522,7 +515,7 @@ const FavoriteStarIcon = () => (
     >
         <path
             d="M33.0016 53.9069L16.4462 62.5937C15.8609 62.9008 15.2013 63.0383 14.5419 62.9908C13.8824 62.9433 13.2495 62.7125 12.7145 62.3247C12.1796 61.9368 11.7641 61.4074 11.5149 60.7961C11.2657 60.1848 11.1928 59.5162 11.3045 58.8657L14.4653 40.4664L1.0707 27.4326C0.5969 26.9718 0.2617 26.3878 0.1032 25.7467C-0.0553 25.1056 -0.0308 24.433 0.1738 23.8051C0.3785 23.1771 0.7552 22.6189 1.2613 22.1936C1.7673 21.7683 2.3826 21.4929 3.0374 21.3986L21.5453 18.714L29.823 1.9735C30.1155 1.3812 30.5682 0.8824 31.1299 0.5336C31.6917 0.1849 32.34 0 33.0016 0C33.6631 0 34.3115 0.1849 34.8732 0.5336C35.435 0.8824 35.8877 1.3812 36.1801 1.9735L44.4579 18.714L62.9658 21.4021C63.6198 21.4969 64.2343 21.7724 64.7397 22.1975C65.2451 22.6226 65.6214 23.1803 65.826 23.8076C66.0306 24.4349 66.0553 25.1068 65.8974 25.7474C65.7395 26.3879 65.4053 26.9717 64.9324 27.4326L51.5343 40.4664L54.6952 58.8657C54.8063 59.5157 54.7333 60.1837 54.4842 60.7945C54.2352 61.4052 53.82 61.9343 53.2857 62.322C52.7513 62.7097 52.119 62.9406 51.4602 62.9886C50.8013 63.0366 50.1421 62.8998 49.557 62.5937L33.0016 53.9069Z"
-            fill="var(--color-secondary)"
+            fill="var(--color-disabled)"
         />
     </svg>
 );

@@ -4,9 +4,6 @@
  * 현재 경로에 해당하는 탭이 활성 상태(검정)로, 나머지는 비활성(네이비 50%)으로 표시됩니다.
  *
  * 아이콘은 Figma 에셋을 currentColor로 변환해 사용하며, 색상은 링크의 text 색으로 제어합니다.
- *
- * NOTE: /calendar 라우트는 아직 없어 클릭 시 빈 화면이 보일 수 있습니다.
- *       캘린더 페이지 이슈에서 라우트를 채울 예정입니다.
  */
 
 import type { ComponentType } from "react";
@@ -26,7 +23,7 @@ const navItems: NavItem[] = [
     { to: "/mypage", label: "MY", Icon: PersonIcon },
 ];
 
-const BottomNav = () => (
+const BottomNav = ({ activePath }: { activePath?: string }) => (
     <nav className="fixed bottom-0 left-1/2 z-40 h-[57px] w-full max-w-[390px] -translate-x-1/2 border-t border-[#eee] bg-white">
         <ul className="flex h-full items-center justify-around">
             {navItems.map(({ to, label, Icon, end }) => (
@@ -35,7 +32,7 @@ const BottomNav = () => (
                         to={to}
                         end={end}
                         className={({ isActive }) =>
-                            `flex flex-col items-center gap-[7px] ${isActive ? "text-black" : "text-third/50"}`
+                            `flex flex-col items-center gap-[7px] ${isActive || activePath === to ? "text-black" : "text-third/50"}`
                         }
                     >
                         <Icon className="size-[27px]" />
