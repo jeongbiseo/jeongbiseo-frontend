@@ -3,6 +3,7 @@ import {
     ConfirmDialog,
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
+import Header from "@/components/common/Header";
 import {
     initialRecommendationPolicies,
     isUrgentRecommendationPolicy,
@@ -49,7 +50,7 @@ const MyPage = () => {
         },
         {
             value: `${favoriteCount}건`,
-            label: "관심 등록한 지원금",
+            label: "즐겨찾기 지원금",
             path: "/recommend?tab=favorites",
             returnToMyPage: true,
         },
@@ -68,16 +69,10 @@ const MyPage = () => {
 
     const menuGroups: MenuItem[][] = [
         [
-            { label: "내 정보 수정", path: "/mypage/edit" },
-            { label: "즐겨찾기 관리", path: "/mypage/favorites" },
-        ],
-        [
             {
                 label: "이용약관 · 개인정보처리방침",
                 path: "/mypage/terms",
             },
-        ],
-        [
             { label: "로그아웃", action: "logout" },
             {
                 label: "회원 탈퇴",
@@ -101,7 +96,7 @@ const MyPage = () => {
     return (
         <>
             <MyPageLayout className="px-[25px]">
-                <h1 className="text-[24px] font-bold">마이페이지</h1>
+                <Header title="마이페이지" />
 
                 <button
                     className="border-primary mt-7 flex h-[90px] w-full cursor-pointer items-center rounded-[20px] border bg-white px-[25px] text-left"

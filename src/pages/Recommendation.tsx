@@ -147,7 +147,7 @@ const Recommendation = () => {
                         {cameFromMyPage && (
                             <BackButton label="마이페이지로 돌아가기" />
                         )}
-                        <div className="flex items-center justify-between px-1.5">
+                        <div className="flex items-center justify-between px-0">
                             <h1 className="text-[24px] leading-none font-bold">
                                 {searchOpen ? "검색" : "지원금 전체보기"}
                             </h1>
