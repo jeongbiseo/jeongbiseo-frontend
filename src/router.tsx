@@ -18,6 +18,7 @@
 
 import App from "@/App";
 import { ProtectedRoute } from "@/components/route/ProtectedRoute";
+import AuthCallback from "@/pages/AuthCallback";
 import CalendarPage from "@/pages/CalendarPage";
 import AvailablePolicies from "@/pages/AvailablePolicies";
 import ExpectedAmount from "@/pages/ExpectedAmount";
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
             {
                 path: "onboarding",
                 element: <Onboarding />,
+            },
+            {
+                path: "auth/callback/:provider",
+                element: <AuthCallback />,
             },
             {
                 path: "recommend",

@@ -18,3 +18,20 @@ export interface ReissueResult {
     accessToken: string;
     tokenType?: string;
 }
+
+/** 지원하는 소셜 로그인 제공자입니다. */
+export type SocialProvider = "kakao" | "google";
+
+/** POST /auth/{provider} 요청 바디입니다. (PKCE 인가 코드 교환) */
+export interface SocialLoginRequest {
+    code: string;
+    codeVerifier: string;
+    redirectUri: string;
+}
+
+/** POST /auth/{provider} 성공 응답입니다. */
+export interface SocialCallbackResponse {
+    accessToken: string;
+    isNewMember: boolean;
+    onboardingCompleted: boolean;
+}
