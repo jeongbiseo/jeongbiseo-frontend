@@ -68,11 +68,17 @@ export const ChevronRightIcon = () => (
     </svg>
 );
 
-export const StarIcon = () => (
-    <svg className="size-6" viewBox="0 0 24 24" aria-hidden="true">
+export const StarIcon = ({
+    filled = true,
+    className = "size-6",
+}: {
+    filled?: boolean;
+    className?: string;
+}) => (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
         <path
             d="m12 1.8 3.1 6.3 7 .9-5.1 4.9 1.3 6.9-6.3-3.3-6.3 3.3 1.3-6.9L1.9 9l7-.9L12 1.8Z"
-            fill="var(--color-secondary)"
+            fill={filled ? "var(--color-secondary)" : "var(--color-disabled)"}
         />
     </svg>
 );
@@ -101,6 +107,7 @@ export const ConfirmDialog = ({
     confirmLabel,
     onCancel,
     onConfirm,
+    variant = "default",
 }: {
     open: boolean;
     title: string;
@@ -108,17 +115,20 @@ export const ConfirmDialog = ({
     confirmLabel: string;
     onCancel: () => void;
     onConfirm: () => void;
+    variant?: "default" | "external";
 }) => {
     if (!open) return null;
 
+    const external = variant === "external";
+
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-9"
+            className={`fixed inset-0 z-50 flex items-center justify-center px-9 ${external ? "bg-black/25" : "bg-black/20"}`}
             role="presentation"
             onClick={onCancel}
         >
             <section
-                className="w-full max-w-[318px] rounded-[10px] bg-white px-6 py-5 text-center shadow-lg"
+                className={`w-full rounded-[10px] bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-[21px] pt-[25px] pb-[13px] text-left" : "max-w-[318px] px-6 py-5 text-center"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="confirm-dialog-title"
@@ -127,19 +137,23 @@ export const ConfirmDialog = ({
                 <h2 className="text-[16px] font-bold" id="confirm-dialog-title">
                     {title}
                 </h2>
-                <p className="text-text-muted mt-3 text-[13px] font-semibold">
+                <p
+                    className={`text-text-muted text-[13px] font-semibold ${external ? "mt-[11px] leading-normal" : "mt-3"}`}
+                >
                     {description}
                 </p>
-                <div className="mt-5 flex justify-center gap-3">
+                <div
+                    className={`flex gap-3 ${external ? "mt-[9px] justify-end" : "mt-5 justify-center"}`}
+                >
                     <button
-                        className="border-text-muted h-[34px] cursor-pointer rounded-[5px] border px-4 text-[13px] font-bold"
+                        className={`border-text-muted cursor-pointer rounded-[5px] border text-[13px] font-bold ${external ? "h-[26px] px-[14px]" : "h-[34px] px-4"}`}
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className="bg-primary h-[34px] cursor-pointer rounded-[5px] px-4 text-[13px] font-bold text-white"
+                        className={`bg-primary cursor-pointer rounded-[5px] text-[13px] font-bold text-white ${external ? "border-success h-[26px] border px-[14px]" : "h-[34px] px-4"}`}
                         type="button"
                         onClick={onConfirm}
                     >

@@ -1,4 +1,5 @@
 import { BackButton } from "@/components/mypage/MyPageUI";
+import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import {
     getFavoritePolicyIds,
     saveFavoritePolicyIds,
@@ -9,7 +10,12 @@ import {
     type RecommendationPolicy,
 } from "@/constants/recommendationData";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+    Link,
+    useLocation,
+    useNavigate,
+    useSearchParams,
+} from "react-router-dom";
 
 type RecommendationTab = "recommended" | "favorites" | "all";
 type SortOption = "recommended" | "amount" | "deadline" | "title";
@@ -328,7 +334,11 @@ const PolicyCard = ({
 
     return (
         <article className="border-primary relative min-h-[107px] rounded-[20px] border bg-white px-[21px] py-[15px]">
-            <div className="pr-[82px]">
+            <Link
+                className="block pr-[82px]"
+                to={`/policies/${policy.id}`}
+                state={{ bottomNavPath: "/recommend" }}
+            >
                 <p className="text-[13px] leading-none font-bold text-[#8e98a8]">
                     {policy.organization}
                 </p>
@@ -338,7 +348,7 @@ const PolicyCard = ({
                 <p className="text-green-dark mt-[15px] text-[16px] leading-none font-bold">
                     {policy.amountLabel ?? "산정 불가"}
                 </p>
-            </div>
+            </Link>
 
             <button
                 className="focus-visible:outline-primary absolute top-[12px] right-[21px] flex size-8 cursor-pointer items-center justify-center focus-visible:rounded focus-visible:outline-2"
@@ -483,23 +493,6 @@ const CloseIcon = () => (
             stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
-        />
-    </svg>
-);
-
-const ChevronDownIcon = () => (
-    <svg
-        className="h-[9px] w-[14px]"
-        viewBox="0 0 14 9"
-        fill="none"
-        aria-hidden="true"
-    >
-        <path
-            d="m1 1 6 6 6-6"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
         />
     </svg>
 );

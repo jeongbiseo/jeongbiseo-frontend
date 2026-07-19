@@ -9,6 +9,7 @@ import {
 } from "@/constants/calendarData";
 import { useMemo, useState } from "react";
 import Calendar from "react-calendar";
+import { Link } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
 import "@/styles/calendar.css";
 
@@ -173,7 +174,11 @@ const DeadlineCard = ({ policy }: { policy: CalendarPolicy }) => {
     const badgeLabel = remainingDays === 0 ? "D-Day" : `D-${remainingDays}`;
 
     return (
-        <article className="border-primary relative h-[107px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]">
+        <Link
+            className="border-primary relative block h-[107px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]"
+            to={`/policies/${policy.policyId}`}
+            state={{ bottomNavPath: "/calendar" }}
+        >
             <div className="pr-[76px]">
                 <p className="text-text-subtle text-[13px] leading-normal font-bold">
                     {policy.organization}
@@ -191,7 +196,7 @@ const DeadlineCard = ({ policy }: { policy: CalendarPolicy }) => {
             >
                 {badgeLabel}
             </span>
-        </article>
+        </Link>
     );
 };
 
