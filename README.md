@@ -86,6 +86,21 @@ npm run preview
 2. 기능 개발 완료 후, `dev` 브랜치로 Pull Request (PR)를 생성합니다.
 3. 코드 리뷰 후 `dev` 브랜치에 병합(Merge)합니다.
 
+- **배포 및 릴리스 규칙:**
+
+1. 배포할 기능이 `dev`에서 검증되면 `dev`에서 `main`으로 릴리스 PR을 생성합니다.
+2. 릴리스 PR 제목은 `chore(release): 정비서 프로토타입 v0.1.0 배포` 형식을 사용합니다.
+3. 장기 브랜치의 커밋 관계를 유지하기 위해 `dev`에서 `main`으로 병합할 때는 **Create a merge commit**을 사용합니다.
+4. Production 배포가 완료되면 같은 버전으로 Git 태그를 생성합니다. (예: `v0.1.0`)
+5. `main`은 Vercel Production 브랜치로 사용하고, 기능 브랜치와 `dev` 배포는 Preview로 취급합니다.
+
+- **버전 규칙:**
+    1. [Semantic Versioning](https://semver.org/)의 `MAJOR.MINOR.PATCH` 형식을 사용합니다.
+    2. 정식 출시 전 개발 단계는 `0.x.x` 버전을 사용합니다.
+    3. 최초 기능 프로토타입은 `v0.1.0`부터 시작합니다.
+    4. 하위 호환 기능 추가는 MINOR, 버그 수정은 PATCH 버전을 올립니다.
+    5. 시험 배포가 필요하면 `v0.2.0-beta.1`처럼 pre-release 식별자를 사용합니다.
+
 - **커밋 메시지 컨벤션**
     1. 커밋 메시지는 Conventional Commits 규칙을 따릅니다.
 
