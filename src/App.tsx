@@ -11,16 +11,27 @@ import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-const bottomNavPaths = new Set(["/", "/recommend", "/calendar", "/mypage"]);
+const bottomNavPaths = new Set([
+    "/",
+    "/recommend",
+    "/calendar",
+    "/mypage",
+    "/expected-amount",
+    "/available-policies",
+]);
 
 function App() {
     const { pathname, state: locationState } = useLocation();
     const policyDetail = pathname.startsWith("/policies/");
     const showBottomNav = bottomNavPaths.has(pathname) || policyDetail;
-    const activeBottomNavPath = policyDetail
-        ? ((locationState as { bottomNavPath?: string } | null)
-              ?.bottomNavPath ?? "/recommend")
-        : undefined;
+    const homeSummaryDetail =
+        pathname === "/expected-amount" || pathname === "/available-policies";
+    const activeBottomNavPath = homeSummaryDetail
+        ? "/"
+        : policyDetail
+          ? ((locationState as { bottomNavPath?: string } | null)
+                ?.bottomNavPath ?? "/recommend")
+          : undefined;
     const authInitialized = useAuthStore((state) => state.authInitialized);
 
     useEffect(() => {
