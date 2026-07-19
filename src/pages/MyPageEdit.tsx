@@ -199,7 +199,9 @@ const MyPageEdit = () => {
                 </p>
 
                 <div className="scroll-mt-6 pt-9" ref={receivedSectionRef}>
-                    <h2 className="text-[20px] font-bold">기존 수령 지원금</h2>
+                    <h2 className="text-[20px] font-bold">
+                        기존 수령중인 지원금
+                    </h2>
                     <p className="text-text-subtle mt-2 text-[12px] font-semibold">
                         이미 받고 있는 지원금을 선택하면 중복 추천을
                         줄여드립니다
@@ -236,12 +238,12 @@ const MyPageEdit = () => {
                         type="button"
                         onClick={() => setAddSheetOpen(true)}
                     >
-                        기존 수령 지원금 추가
+                        기존 수령중인 지원금 추가
                     </button>
                 </div>
 
                 <button
-                    className="bg-third mt-9 h-[48px] w-full cursor-pointer rounded-[15px] text-[16px] font-bold text-white"
+                    className="bg-third mt-9 h-[39px] w-[341px] max-w-full cursor-pointer rounded-[15px] text-[16px] font-bold text-white"
                     type="button"
                     onClick={handleSave}
                 >
@@ -329,7 +331,7 @@ const BenefitAddSheet = ({
                     className="mt-5 text-[18px] font-bold"
                     id="benefit-sheet-title"
                 >
-                    기존 수령 지원금 추가
+                    기존 수령중인 지원금 추가
                 </h2>
 
                 <div className="relative mt-5">

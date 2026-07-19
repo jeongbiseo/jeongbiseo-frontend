@@ -473,7 +473,7 @@ const StepThree = ({
             ))}
         </div>
 
-        <FieldLabel>요즘 많이 찾는 지원금</FieldLabel>
+        <FieldLabel>현재 수령 중인 지원금</FieldLabel>
         <div className="flex flex-col gap-2.5">
             {visiblePolicies.map((policy) => {
                 const selected = selectedPolicies.includes(policy.id);
