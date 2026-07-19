@@ -14,8 +14,13 @@ import { Outlet, useLocation } from "react-router-dom";
 const bottomNavPaths = new Set(["/", "/recommend", "/calendar", "/mypage"]);
 
 function App() {
-    const { pathname } = useLocation();
-    const showBottomNav = bottomNavPaths.has(pathname);
+    const { pathname, state: locationState } = useLocation();
+    const policyDetail = pathname.startsWith("/policies/");
+    const showBottomNav = bottomNavPaths.has(pathname) || policyDetail;
+    const activeBottomNavPath = policyDetail
+        ? ((locationState as { bottomNavPath?: string } | null)
+              ?.bottomNavPath ?? "/recommend")
+        : undefined;
     const authInitialized = useAuthStore((state) => state.authInitialized);
 
     useEffect(() => {
@@ -68,7 +73,7 @@ function App() {
     return (
         <>
             <Outlet />
-            {showBottomNav && <BottomNav />}
+            {showBottomNav && <BottomNav activePath={activeBottomNavPath} />}
         </>
     );
 }

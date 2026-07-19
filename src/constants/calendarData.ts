@@ -1,5 +1,6 @@
 export interface CalendarPolicy {
     id: number;
+    policyId: number;
     organization: string;
     title: string;
     deadline: Date;
@@ -13,42 +14,49 @@ export const createCalendarReferenceDate = () => new Date(2026, 5, 15);
 export const calendarPolicies: CalendarPolicy[] = [
     {
         id: 1,
+        policyId: 3,
         organization: "보건복지부",
         title: "청년 마음건강 지원사업",
         deadline: new Date(2026, 5, 5),
     },
     {
         id: 2,
+        policyId: 8,
         organization: "서울특별시",
         title: "청년 교통비 지원",
         deadline: new Date(2026, 5, 12),
     },
     {
         id: 3,
+        policyId: 1,
         organization: "고용노동부",
         title: "청년 구직활동 지원금",
         deadline: new Date(2026, 5, 18),
     },
     {
         id: 4,
+        policyId: 4,
         organization: "청년창업지원센터",
         title: "청년 창업 도약자금",
         deadline: new Date(2026, 5, 25),
     },
     {
         id: 5,
+        policyId: 2,
         organization: "국토교통부",
         title: "청년 월세 특별지원",
         deadline: new Date(2026, 5, 27),
     },
     {
         id: 6,
+        policyId: 9,
         organization: "중소벤처기업부",
         title: "초기창업패키지",
         deadline: new Date(2026, 5, 30),
     },
     {
         id: 7,
+        policyId: 10,
         organization: "서울주택도시공사",
         title: "청년안심주택 입주자 모집",
         deadline: new Date(2026, 5, 30),

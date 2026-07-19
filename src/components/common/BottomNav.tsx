@@ -23,7 +23,7 @@ const navItems: NavItem[] = [
     { to: "/mypage", label: "MY", Icon: PersonIcon },
 ];
 
-const BottomNav = () => (
+const BottomNav = ({ activePath }: { activePath?: string }) => (
     <nav className="fixed bottom-0 left-1/2 z-40 h-[57px] w-full max-w-[390px] -translate-x-1/2 border-t border-[#eee] bg-white">
         <ul className="flex h-full items-center justify-around">
             {navItems.map(({ to, label, Icon, end }) => (
@@ -32,7 +32,7 @@ const BottomNav = () => (
                         to={to}
                         end={end}
                         className={({ isActive }) =>
-                            `flex flex-col items-center gap-[7px] ${isActive ? "text-black" : "text-third/50"}`
+                            `flex flex-col items-center gap-[7px] ${isActive || activePath === to ? "text-black" : "text-third/50"}`
                         }
                     >
                         <Icon className="size-[27px]" />

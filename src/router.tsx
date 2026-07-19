@@ -9,6 +9,7 @@
  * - '/onboarding': 온보딩 페이지
  * - '/recommend': 추천 페이지 (ProtectedRoute로 보호)
  * - '/calendar': 마감 캘린더 페이지 (ProtectedRoute로 보호)
+ * - '/policies/:policyId': 지원금 상세 페이지 (ProtectedRoute로 보호)
  *
  * 'ProtectedRoute'는 부팅 중이거나 로그인 상태가 아닌 유저의 접근을 막습니다.
  */
@@ -23,6 +24,7 @@ import MyPage from "@/pages/MyPage";
 import MyPageEdit from "@/pages/MyPageEdit";
 import MyPageTerms from "@/pages/MyPageTerms";
 import Onboarding from "@/pages/Onboarding";
+import PolicyDetail from "@/pages/PolicyDetail";
 import Recommendation from "@/pages/Recommendation";
 import Terms from "@/pages/Terms";
 import Withdrawal from "@/pages/Withdrawal";
@@ -64,6 +66,14 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <CalendarPage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "policies/:policyId",
+                element: (
+                    <ProtectedRoute>
+                        <PolicyDetail />
                     </ProtectedRoute>
                 ),
             },
