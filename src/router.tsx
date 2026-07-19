@@ -8,12 +8,14 @@
  * - '/terms': 약관동의 페이지
  * - '/onboarding': 온보딩 페이지
  * - '/recommend': 추천 페이지 (ProtectedRoute로 보호)
+ * - '/calendar': 마감 캘린더 페이지 (ProtectedRoute로 보호)
  *
  * 'ProtectedRoute'는 부팅 중이거나 로그인 상태가 아닌 유저의 접근을 막습니다.
  */
 
 import App from "@/App";
 import { ProtectedRoute } from "@/components/route/ProtectedRoute";
+import CalendarPage from "@/pages/CalendarPage";
 import Home from "@/pages/Home";
 import FavoriteManagement from "@/pages/FavoriteManagement";
 import Login from "@/pages/Login";
@@ -54,6 +56,14 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <Recommendation />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "calendar",
+                element: (
+                    <ProtectedRoute>
+                        <CalendarPage />
                     </ProtectedRoute>
                 ),
             },
