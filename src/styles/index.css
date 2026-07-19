@@ -35,17 +35,28 @@
     /* 시맨틱 */
     --color-danger: #f03939; /* D-day 임박 텍스트 */
     --color-danger-light: #ffe5e5; /* D-day 임박 배지 배경 */
+    --color-danger-disabled: #f6a2a2;
+    --color-success: #0d9467;
+    --color-success-light: #e2f8f2;
+    --color-selection-light: #dff7ef;
     --color-warning: #a66a00; /* 경고 박스 텍스트 */
     --color-warning-light: #fff1d8; /* 경고 박스 배경 */
     --color-kakao: #fee500;
 
     /* 텍스트 */
     --color-text-strong: #191919;
+    --color-text-body: #555;
+    --color-text-secondary: #666;
     --color-text-muted: #808080;
+    --color-text-subtle: #8e98a8;
+    --color-text-soft: #a0a0a0;
     --color-text-faint: #b0b0b0;
 
     /* 서피스 */
     --color-surface-dim: #ededed;
+    --color-surface-soft: #f3f3f3;
     --color-disabled: #d9d9d9; /* 비활성 버튼/체크박스/토글 off */
     --color-line: #e5e5e5; /* 구분선, 프로그레스 트랙 */
+    --color-line-strong: #b7b7b7;
+    --color-green-shadow: #cceee6;
 }

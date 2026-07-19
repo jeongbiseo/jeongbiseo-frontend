@@ -15,10 +15,15 @@
 import App from "@/App";
 import { ProtectedRoute } from "@/components/route/ProtectedRoute";
 import Home from "@/pages/Home";
+import FavoriteManagement from "@/pages/FavoriteManagement";
 import Login from "@/pages/Login";
+import MyPage from "@/pages/MyPage";
+import MyPageEdit from "@/pages/MyPageEdit";
+import MyPageTerms from "@/pages/MyPageTerms";
 import Onboarding from "@/pages/Onboarding";
 import Recommendation from "@/pages/Recommendation";
 import Terms from "@/pages/Terms";
+import Withdrawal from "@/pages/Withdrawal";
 import { createBrowserRouter } from "react-router-dom";
 
 // 라우트 정의
@@ -49,6 +54,46 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <Recommendation />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage",
+                element: (
+                    <ProtectedRoute>
+                        <MyPage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage/edit",
+                element: (
+                    <ProtectedRoute>
+                        <MyPageEdit />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage/favorites",
+                element: (
+                    <ProtectedRoute>
+                        <FavoriteManagement />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage/terms",
+                element: (
+                    <ProtectedRoute>
+                        <MyPageTerms />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage/withdraw",
+                element: (
+                    <ProtectedRoute>
+                        <Withdrawal />
                     </ProtectedRoute>
                 ),
             },
