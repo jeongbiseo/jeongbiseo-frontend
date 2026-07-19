@@ -17,7 +17,8 @@ type ButtonVariant = "primary" | "kakao" | "google" | "dark";
 type ButtonSize = "md" | "lg";
 
 const variantStyles: Record<ButtonVariant, string> = {
-    primary: "bg-primary text-white",
+    primary:
+        "bg-primary text-white shadow-[3px_11px_16.3px_var(--color-green-light-active)]",
     kakao: "bg-kakao text-text-strong",
     google: "bg-[#f2f2f2] text-black",
     dark: "bg-third text-white",
@@ -44,7 +45,7 @@ const Button = ({
 }: ButtonProps) => (
     <button
         type={type}
-        className={`disabled:bg-disabled w-full cursor-pointer rounded-[15px] font-bold transition-transform hover:brightness-[0.98] active:scale-[0.99] disabled:cursor-not-allowed disabled:hover:brightness-100 ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        className={`focus-visible:outline-third disabled:bg-disabled w-full cursor-pointer rounded-[15px] font-bold transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:shadow-none disabled:hover:brightness-100 ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         {...rest}
     >
         {children}

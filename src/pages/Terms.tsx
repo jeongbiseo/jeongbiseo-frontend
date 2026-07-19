@@ -1,3 +1,5 @@
+import Button from "@/components/common/Button";
+import Header from "@/components/common/Header";
 import { agreementDetails, type AgreementKey } from "@/constants/termsContent";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -99,27 +101,7 @@ const Terms = () => {
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
                 <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-[72px] pb-8">
-                    <button
-                        className="focus-visible:outline-primary flex h-6 w-6 cursor-pointer items-center justify-start text-black focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
-                        type="button"
-                        aria-label="이전 화면으로 돌아가기"
-                        onClick={() => navigate(-1)}
-                    >
-                        <svg
-                            className="h-4 w-[18px]"
-                            viewBox="0 0 18 16"
-                            fill="none"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M17 8H1M1 8l7-7M1 8l7 7"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                    </button>
+                    <Header showBack />
 
                     <h1 className="mt-3 -ml-[5px] text-[24px] leading-[1.2] font-bold text-black">
                         서비스 이용을 위해
@@ -195,14 +177,13 @@ const Terms = () => {
                         </ul>
                     </div>
 
-                    <button
-                        className="bg-primary focus-visible:outline-third disabled:bg-disabled mt-auto mb-[clamp(32px,11.9svh,112px)] h-[55px] w-full max-w-[325px] cursor-pointer self-center rounded-[15px] text-[20px] leading-none font-bold text-white shadow-[3px_11px_8.15px_var(--color-green-light-active)] transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:shadow-none disabled:hover:brightness-100"
-                        type="button"
+                    <Button
+                        className="mt-auto mb-[clamp(32px,11.9svh,112px)] max-w-[325px] self-center"
                         disabled={!requiredAgreed}
                         onClick={() => navigate("/onboarding")}
                     >
                         동의하고 시작하기
-                    </button>
+                    </Button>
                 </section>
             </main>
 
