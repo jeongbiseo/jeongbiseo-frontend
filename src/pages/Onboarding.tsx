@@ -1,3 +1,5 @@
+import Button from "@/components/common/Button";
+import Header from "@/components/common/Header";
 import { regionNames, regions } from "@/constants/regions";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -146,27 +148,7 @@ const Onboarding = () => {
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground text-text-strong flex min-h-svh w-full max-w-[390px] flex-col px-6 pt-[72px] pb-8">
-                <button
-                    className="focus-visible:outline-primary flex size-7 cursor-pointer items-center focus-visible:rounded focus-visible:outline-2"
-                    type="button"
-                    aria-label="이전 단계"
-                    onClick={handleBack}
-                >
-                    <svg
-                        className="h-4 w-[18px]"
-                        viewBox="0 0 18 16"
-                        fill="none"
-                        aria-hidden="true"
-                    >
-                        <path
-                            d="M17 8H1M1 8l7-7M1 8l7 7"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                </button>
+                <Header showBack onBack={handleBack} />
 
                 <div className="bg-line mt-3 h-[5px] overflow-hidden rounded-full">
                     <div
@@ -220,13 +202,9 @@ const Onboarding = () => {
                     )}
                 </div>
 
-                <button
-                    className="bg-primary mt-7 h-[55px] w-full cursor-pointer rounded-[14px] text-[18px] font-bold text-white shadow-[3px_10px_10px_var(--color-green-light-active)] transition active:scale-[0.99]"
-                    type="button"
-                    onClick={handleNext}
-                >
+                <Button className="mt-7" onClick={handleNext}>
                     {step === 3 ? "완료" : "다음"}
-                </button>
+                </Button>
                 {step > 1 && (
                     <button
                         className="mx-auto mt-4 cursor-pointer text-[12px] text-[#9a9a9a] underline underline-offset-2"
