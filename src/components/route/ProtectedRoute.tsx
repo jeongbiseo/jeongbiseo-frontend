@@ -7,7 +7,7 @@
 
 import { useAuthStore } from "@/stores/authStore";
 import type { ReactNode } from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     const isLogin = useAuthStore((state) => state.isLogin);
@@ -23,11 +23,10 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
         );
     }
 
-    /*
     // 부팅 이후 로그인 상태가 아니면, 로그인 페이지로 이동
     if (!isLogin) {
         return <Navigate to="/login" replace state={{ from: location }} />;
-    }*/
+    }
 
     return children;
 };
