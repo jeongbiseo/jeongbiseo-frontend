@@ -177,6 +177,36 @@ const policyDetailSeeds: PolicyDetailSeed[] = [
         tags: ["청년", "주거"],
         amount: "소득구간별 상이",
     },
+    {
+        id: 11,
+        title: "근로장려금",
+        organization: "국세청",
+        category: "소득지원",
+        deadlineLabel: "기간별 신청",
+        deadline: "신청 유형별 상이",
+        tags: ["근로", "소득"],
+        amount: "심사 후 확정",
+    },
+    {
+        id: 12,
+        title: "청년내일저축계좌",
+        organization: "보건복지부",
+        category: "자산형성",
+        deadlineLabel: "모집 공고 확인",
+        deadline: "지역별 모집 일정 확인",
+        tags: ["청년", "저축"],
+        amount: "월 최대 30만원 매칭",
+    },
+    {
+        id: 13,
+        title: "문화누리카드 재충전",
+        organization: "문화체육관광부",
+        category: "문화지원",
+        deadlineLabel: "상시",
+        deadline: "예산 소진 시까지",
+        tags: ["문화", "바우처"],
+        amount: "연간 이용권 지원",
+    },
 ];
 
 export const policyDetailData = Object.fromEntries(

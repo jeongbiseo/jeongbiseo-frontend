@@ -34,6 +34,11 @@ const Home = () => {
                 <SummaryCard
                     summary={data.summary}
                     compact={viewState === "expected"}
+                    linkTo={
+                        viewState === "expected"
+                            ? "/expected-amount"
+                            : "/available-policies"
+                    }
                 />
 
                 <HomeSection
@@ -70,9 +75,11 @@ const Home = () => {
 const SummaryCard = ({
     summary,
     compact,
+    linkTo,
 }: {
     summary: HomeSummary;
     compact: boolean;
+    linkTo: string;
 }) => (
     <article
         className={`bg-primary relative mx-auto w-[324px] overflow-hidden rounded-[30px] px-[19px] text-white ${compact ? "mt-4 h-[184px] pt-[27px]" : "mt-[18px] h-[262px] pt-7"}`}
@@ -95,6 +102,7 @@ const SummaryCard = ({
                     <SummaryLink
                         label={summary.linkLabel}
                         className="mt-[13px]"
+                        to={linkTo}
                     />
                 </>
             ) : (
@@ -127,6 +135,7 @@ const SummaryCard = ({
                     <SummaryLink
                         label={summary.linkLabel}
                         className="mt-[13px]"
+                        to={linkTo}
                     />
                 </>
             )}
@@ -145,13 +154,15 @@ const SummaryDecoration = () => (
 const SummaryLink = ({
     label,
     className,
+    to,
 }: {
     label: string;
     className: string;
+    to: string;
 }) => (
     <Link
         className={`flex w-fit items-center gap-[5px] text-[13px] leading-none font-bold ${className}`}
-        to="/recommend"
+        to={to}
     >
         {label}
         <span aria-hidden="true">→</span>
