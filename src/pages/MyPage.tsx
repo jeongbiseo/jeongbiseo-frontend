@@ -1,3 +1,4 @@
+import { logoutApi } from "@/api/authApi";
 import Header from "@/components/common/Header";
 import {
     ChevronRightIcon,
@@ -87,8 +88,14 @@ const MyPage = () => {
         if (item.action === "logout") setLogoutDialogOpen(true);
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         setLogoutDialogOpen(false);
+        // 서버 로그아웃(RT 쿠키 만료)이 실패해도 클라이언트 상태는 초기화합니다.
+        try {
+            await logoutApi();
+        } catch {
+            /* 무시 */
+        }
         logout();
         navigate("/login", { replace: true });
     };

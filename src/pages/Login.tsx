@@ -1,11 +1,17 @@
 import googleSymbol from "@/assets/login/google-symbol.png";
 import kakaoSymbol from "@/assets/login/kakao-symbol.svg";
 import supportIllustration from "@/assets/login/support-illustration.svg";
-import { useNavigate } from "react-router-dom";
+import type { SocialProvider } from "@/types/auth";
+import { startSocialLogin } from "@/utils/oauth";
 
 // 로그인 페이지 ('/login')
 const Login = () => {
-    const navigate = useNavigate();
+    const handleSocialLogin = (provider: SocialProvider) => {
+        // 인가 URL로 리다이렉트됩니다. client id 미설정 등 실패 시 로그만 남깁니다.
+        startSocialLogin(provider).catch((error) => {
+            console.error(error);
+        });
+    };
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
@@ -31,7 +37,7 @@ const Login = () => {
                     <button
                         className="bg-kakao text-text-strong focus-visible:outline-text-strong flex h-[70px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-[15px] text-[20px] font-bold transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 active:scale-[0.99]"
                         type="button"
-                        onClick={() => navigate("/terms")}
+                        onClick={() => handleSocialLogin("kakao")}
                     >
                         <img
                             className="h-[25px] w-[27px]"
@@ -44,7 +50,7 @@ const Login = () => {
                     <button
                         className="flex h-[70px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-[15px] bg-[#f2f2f2] text-[20px] font-bold text-black transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#4285f4] active:scale-[0.99]"
                         type="button"
-                        onClick={() => navigate("/terms")}
+                        onClick={() => handleSocialLogin("google")}
                     >
                         <img
                             className="h-[25px] w-[25px]"
