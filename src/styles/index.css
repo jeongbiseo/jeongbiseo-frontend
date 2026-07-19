@@ -1,3 +1,4 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css");
 @import "tailwindcss";
 
 :root {
@@ -6,4 +7,56 @@
     background: #ededed;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
+}
+
+@theme {
+    /* 폰트 */
+    --font-sans:
+        "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+
+    /* Green 스케일 */
+    --color-green-light: #eaf9f5;
+    --color-green-light-hover: #e0f5f1;
+    --color-green-light-active: #bfebe1;
+    --color-green-normal: #2fbf9f;
+    --color-green-normal-hover: #2aac8f;
+    --color-green-normal-active: #26997f;
+    --color-green-dark: #238f77;
+    --color-green-dark-hover: #1c735f;
+    --color-green-dark-active: #155648;
+    --color-green-darker: #104338;
+
+    /* 메인 팔레트 */
+    --color-primary: #2fbf9f;
+    --color-secondary: #f5a623; /* 즐겨찾기 별 등. TODO: 디자이너 hex 확인 필요 */
+    --color-third: #0f2942; /* 네이비(활성 탭, 칩). TODO: 디자이너 hex 확인 필요 */
+    --color-ground: #f9f9f9; /* TODO: 디자이너 hex 확인 필요 */
+
+    /* 시맨틱 */
+    --color-danger: #f03939; /* D-day 임박 텍스트 */
+    --color-danger-light: #ffe5e5; /* D-day 임박 배지 배경 */
+    --color-danger-disabled: #f6a2a2;
+    --color-success: #0d9467;
+    --color-success-light: #e2f8f2;
+    --color-selection-light: #dff7ef;
+    --color-warning: #a66a00; /* 경고 박스 텍스트 */
+    --color-warning-light: #fff1d8; /* 경고 박스 배경 */
+    --color-kakao: #fee500;
+
+    /* 텍스트 */
+    --color-text-strong: #191919;
+    --color-text-body: #555;
+    --color-text-secondary: #666;
+    --color-text-muted: #808080;
+    --color-text-subtle: #8e98a8;
+    --color-text-soft: #a0a0a0;
+    --color-text-faint: #b0b0b0;
+
+    /* 서피스 */
+    --color-surface-dim: #ededed;
+    --color-surface-soft: #f3f3f3;
+    --color-disabled: #d9d9d9; /* 비활성 버튼/체크박스/토글 off */
+    --color-line: #e5e5e5; /* 구분선, 프로그레스 트랙 */
+    --color-line-strong: #b7b7b7;
+    --color-green-shadow: #cceee6;
 }

@@ -1,3 +1,5 @@
+import Button from "@/components/common/Button";
+import Header from "@/components/common/Header";
 import { agreementDetails, type AgreementKey } from "@/constants/termsContent";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +35,7 @@ const CheckIcon = ({ checked }: { checked: boolean }) => (
     >
         <path
             d="M1 5.2 5.1 9 14 1"
-            stroke={checked ? "#2fbf9f" : "#d9d9d9"}
+            stroke={checked ? "var(--color-primary)" : "var(--color-disabled)"}
             strokeWidth="1.7"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -97,29 +99,9 @@ const Terms = () => {
 
     return (
         <>
-            <main className="flex min-h-svh justify-center bg-[#ededed]">
-                <section className="flex min-h-svh w-full max-w-[390px] flex-col bg-[#f9f9f9] px-8 pt-[72px] pb-8">
-                    <button
-                        className="flex h-6 w-6 cursor-pointer items-center justify-start text-black focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#10b981]"
-                        type="button"
-                        aria-label="이전 화면으로 돌아가기"
-                        onClick={() => navigate(-1)}
-                    >
-                        <svg
-                            className="h-4 w-[18px]"
-                            viewBox="0 0 18 16"
-                            fill="none"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M17 8H1M1 8l7-7M1 8l7 7"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                    </button>
+            <main className="bg-surface-dim flex min-h-svh justify-center">
+                <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-[72px] pb-8">
+                    <Header showBack />
 
                     <h1 className="mt-3 -ml-[5px] text-[24px] leading-[1.2] font-bold text-black">
                         서비스 이용을 위해
@@ -129,14 +111,14 @@ const Terms = () => {
 
                     <div className="mt-[34px] w-full max-w-[325px] self-center">
                         <button
-                            className="flex cursor-pointer items-center gap-[11px] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#10b981]"
+                            className="focus-visible:outline-primary flex cursor-pointer items-center gap-[11px] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                             type="button"
                             role="checkbox"
                             aria-checked={allAgreed}
                             onClick={handleAllAgreement}
                         >
                             <span
-                                className={`flex size-[26px] items-center justify-center rounded-full ${allAgreed ? "bg-[#2fbf9f]" : "bg-[#d9d9d9]"}`}
+                                className={`flex size-[26px] items-center justify-center rounded-full ${allAgreed ? "bg-primary" : "bg-disabled"}`}
                             >
                                 <svg
                                     className="h-[10px] w-[14px]"
@@ -158,7 +140,7 @@ const Terms = () => {
                             </span>
                         </button>
 
-                        <div className="mt-4 h-px w-full bg-[#d9d9d9]" />
+                        <div className="bg-disabled mt-4 h-px w-full" />
 
                         <ul className="mt-4 flex flex-col gap-[23px]">
                             {agreementItems.map(({ key, label, required }) => (
@@ -167,21 +149,21 @@ const Terms = () => {
                                     key={key}
                                 >
                                     <button
-                                        className="flex min-w-0 cursor-pointer items-center gap-[18px] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#10b981]"
+                                        className="focus-visible:outline-primary flex min-w-0 cursor-pointer items-center gap-[18px] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                                         type="button"
                                         role="checkbox"
                                         aria-checked={agreements[key]}
                                         onClick={() => handleAgreement(key)}
                                     >
                                         <CheckIcon checked={agreements[key]} />
-                                        <span className="text-[clamp(14px,4.1vw,16px)] leading-[1.2] font-bold whitespace-nowrap text-[#808080]">
+                                        <span className="text-text-muted text-[clamp(14px,4.1vw,16px)] leading-[1.2] font-bold whitespace-nowrap">
                                             [{required ? "필수" : "선택"}]{" "}
                                             {label}
                                         </span>
                                     </button>
 
                                     <button
-                                        className="ml-2 shrink-0 cursor-pointer text-[13px] leading-none font-bold text-[rgba(128,128,128,0.7)] underline underline-offset-2 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#10b981]"
+                                        className="text-text-muted/70 focus-visible:outline-primary ml-2 shrink-0 cursor-pointer text-[13px] leading-none font-bold underline underline-offset-2 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                                         type="button"
                                         aria-haspopup="dialog"
                                         onClick={() =>
@@ -195,14 +177,13 @@ const Terms = () => {
                         </ul>
                     </div>
 
-                    <button
-                        className="mt-auto mb-[clamp(32px,11.9svh,112px)] h-[55px] w-full max-w-[325px] cursor-pointer self-center rounded-[15px] bg-[#10b981] text-[20px] leading-none font-bold text-white shadow-[3px_11px_8.15px_#bfebe1] transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#0f2942] active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-[#d9d9d9] disabled:shadow-none disabled:hover:brightness-100"
-                        type="button"
+                    <Button
+                        className="mt-auto mb-[clamp(32px,11.9svh,112px)] max-w-[325px] self-center"
                         disabled={!requiredAgreed}
                         onClick={() => navigate("/onboarding")}
                     >
                         동의하고 시작하기
-                    </button>
+                    </Button>
                 </section>
             </main>
 
@@ -221,7 +202,7 @@ const Terms = () => {
                     >
                         <header className="flex items-start justify-between gap-4">
                             <div>
-                                <p className="text-[14px] font-semibold text-[#10b981]">
+                                <p className="text-primary text-[14px] font-semibold">
                                     {selectedAgreementItem.required
                                         ? "필수 약관"
                                         : "선택 약관"}
@@ -235,7 +216,7 @@ const Terms = () => {
                             </div>
 
                             <button
-                                className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#f2f2f2] text-[#191919] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#10b981]"
+                                className="text-text-strong focus-visible:outline-primary flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#f2f2f2] focus-visible:outline-2 focus-visible:outline-offset-2"
                                 type="button"
                                 aria-label="약관 상세 닫기"
                                 autoFocus
@@ -257,7 +238,7 @@ const Terms = () => {
                             </button>
                         </header>
 
-                        <div className="mt-6 flex-1 overflow-y-auto rounded-[15px] bg-[#f9f9f9] p-5 text-[15px] leading-[1.7] text-[#606060]">
+                        <div className="bg-ground mt-6 flex-1 overflow-y-auto rounded-[15px] p-5 text-[15px] leading-[1.7] text-[#606060]">
                             <p className="font-semibold text-[#303030]">
                                 {selectedAgreementDetail.summary}
                             </p>
@@ -266,7 +247,7 @@ const Terms = () => {
                                 {selectedAgreementDetail.sections.map(
                                     ({ title, paragraphs, bullets }) => (
                                         <section key={title}>
-                                            <h3 className="font-bold text-[#191919]">
+                                            <h3 className="text-text-strong font-bold">
                                                 {title}
                                             </h3>
 
@@ -295,7 +276,7 @@ const Terms = () => {
                         </div>
 
                         <button
-                            className="mt-5 h-[52px] w-full cursor-pointer rounded-[15px] bg-[#10b981] text-[18px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#0f2942]"
+                            className="bg-primary focus-visible:outline-third mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-[18px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2"
                             type="button"
                             onClick={() => setSelectedAgreement(null)}
                         >

@@ -6,13 +6,24 @@
  * - '/': 메인 페이지
  * - '/login': 로그인 페이지
  * - '/terms': 약관동의 페이지
+ * - '/onboarding': 온보딩 페이지
+ * - '/recommend': 추천 페이지 (ProtectedRoute로 보호)
+ *
+ * 'ProtectedRoute'는 부팅 중이거나 로그인 상태가 아닌 유저의 접근을 막습니다.
  */
 
 import App from "@/App";
+import { ProtectedRoute } from "@/components/route/ProtectedRoute";
 import Home from "@/pages/Home";
+import FavoriteManagement from "@/pages/FavoriteManagement";
 import Login from "@/pages/Login";
+import MyPage from "@/pages/MyPage";
+import MyPageEdit from "@/pages/MyPageEdit";
+import MyPageTerms from "@/pages/MyPageTerms";
 import Onboarding from "@/pages/Onboarding";
+import Recommendation from "@/pages/Recommendation";
 import Terms from "@/pages/Terms";
+import Withdrawal from "@/pages/Withdrawal";
 import { createBrowserRouter } from "react-router-dom";
 
 // 라우트 정의
@@ -37,6 +48,54 @@ export const router = createBrowserRouter([
             {
                 path: "onboarding",
                 element: <Onboarding />,
+            },
+            {
+                path: "recommend",
+                element: (
+                    <ProtectedRoute>
+                        <Recommendation />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage",
+                element: (
+                    <ProtectedRoute>
+                        <MyPage />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage/edit",
+                element: (
+                    <ProtectedRoute>
+                        <MyPageEdit />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage/favorites",
+                element: (
+                    <ProtectedRoute>
+                        <FavoriteManagement />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage/terms",
+                element: (
+                    <ProtectedRoute>
+                        <MyPageTerms />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "mypage/withdraw",
+                element: (
+                    <ProtectedRoute>
+                        <Withdrawal />
+                    </ProtectedRoute>
+                ),
             },
         ],
     },

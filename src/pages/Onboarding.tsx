@@ -1,3 +1,5 @@
+import Button from "@/components/common/Button";
+import Header from "@/components/common/Header";
 import { regionNames, regions } from "@/constants/regions";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -144,33 +146,13 @@ const Onboarding = () => {
     };
 
     return (
-        <main className="flex min-h-svh justify-center bg-[#ededed]">
-            <section className="flex min-h-svh w-full max-w-[390px] flex-col bg-[#f9f9f9] px-6 pt-[72px] pb-8 text-[#191919]">
-                <button
-                    className="flex size-7 cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-[#10b981]"
-                    type="button"
-                    aria-label="이전 단계"
-                    onClick={handleBack}
-                >
-                    <svg
-                        className="h-4 w-[18px]"
-                        viewBox="0 0 18 16"
-                        fill="none"
-                        aria-hidden="true"
-                    >
-                        <path
-                            d="M17 8H1M1 8l7-7M1 8l7 7"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                </button>
+        <main className="bg-surface-dim flex min-h-svh justify-center">
+            <section className="bg-ground text-text-strong flex min-h-svh w-full max-w-[390px] flex-col px-6 pt-[72px] pb-8">
+                <Header showBack onBack={handleBack} />
 
-                <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-[#e5e5e5]">
+                <div className="bg-line mt-3 h-[5px] overflow-hidden rounded-full">
                     <div
-                        className="h-full rounded-full bg-[#10b981] transition-[width] duration-300"
+                        className="bg-primary h-full rounded-full transition-[width] duration-300"
                         style={{ width: `${(step / 3) * 100}%` }}
                     />
                 </div>
@@ -220,13 +202,9 @@ const Onboarding = () => {
                     )}
                 </div>
 
-                <button
-                    className="mt-7 h-[55px] w-full cursor-pointer rounded-[14px] bg-[#10b981] text-[18px] font-bold text-white shadow-[3px_10px_10px_#cceee6] transition active:scale-[0.99]"
-                    type="button"
-                    onClick={handleNext}
-                >
+                <Button className="mt-7" onClick={handleNext}>
                     {step === 3 ? "완료" : "다음"}
-                </button>
+                </Button>
                 {step > 1 && (
                     <button
                         className="mx-auto mt-4 cursor-pointer text-[12px] text-[#9a9a9a] underline underline-offset-2"
@@ -317,7 +295,7 @@ const StepOne = ({
                 ))}
             </Select>
         </div>
-        <div className="mt-3 rounded-[10px] bg-[#dff7f0] px-4 py-3 text-[13px] font-semibold text-[#10a77e]">
+        <div className="bg-green-light text-green-dark mt-3 rounded-[10px] px-4 py-3 text-[13px] font-semibold">
             만 {age}세로 계산돼요
         </div>
 
@@ -339,21 +317,21 @@ const StepOne = ({
         <div className="grid grid-cols-2 gap-3">
             {employmentOptions.map((option) => (
                 <button
-                    className={`relative h-[46px] cursor-pointer rounded-[10px] border text-[14px] font-semibold ${employment === option ? "border-[#10b981] bg-[#e2f8f2] text-[#0c9b75]" : "border-[#d8d8d8] bg-white"}`}
+                    className={`relative h-[46px] cursor-pointer rounded-[10px] border text-[14px] font-semibold ${employment === option ? "border-primary bg-green-light text-green-dark" : "border-[#d8d8d8] bg-white"}`}
                     type="button"
                     key={option}
                     onClick={() => onEmploymentChange(option)}
                 >
                     {option}
                     {employment === option && (
-                        <span className="absolute top-1.5 right-2 text-[#10b981]">
+                        <span className="text-primary absolute top-1.5 right-2">
                             ✓
                         </span>
                     )}
                 </button>
             ))}
         </div>
-        <div className="mt-4 rounded-[10px] bg-[#fff1d8] px-4 py-3 text-center text-[12px] leading-[1.45] font-semibold text-[#a66a00]">
+        <div className="bg-warning-light text-warning mt-4 rounded-[10px] px-4 py-3 text-center text-[12px] leading-[1.45] font-semibold">
             현재 고용상태는 지원금 추천 조건에만 활용되며
             <br />
             저장 후 언제든 수정할 수 있어요
@@ -474,7 +452,7 @@ const StepThree = ({
                 />
             </svg>
             <input
-                className="h-[50px] w-full rounded-[10px] border border-[#d8d8d8] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#9a9a9a] focus:border-[#10b981]"
+                className="focus:border-primary h-[50px] w-full rounded-[10px] border border-[#d8d8d8] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#9a9a9a]"
                 value={query}
                 placeholder="지원금명 또는 기관명으로 검색해보세요"
                 onChange={(event) => onQueryChange(event.target.value)}
@@ -484,7 +462,7 @@ const StepThree = ({
         <div className="mt-3 flex w-full items-center justify-between pb-1">
             {categories.map((category) => (
                 <button
-                    className="shrink-0 cursor-pointer rounded-full bg-[#0f2942] px-2 py-[5px] text-[12px] leading-[15px] font-bold whitespace-nowrap text-white min-[390px]:px-[10px] min-[390px]:py-[6px] min-[390px]:text-[13px] min-[390px]:leading-[16px]"
+                    className="bg-third shrink-0 cursor-pointer rounded-full px-2 py-[5px] text-[12px] leading-[15px] font-bold whitespace-nowrap text-white min-[390px]:px-[10px] min-[390px]:py-[6px] min-[390px]:text-[13px] min-[390px]:leading-[16px]"
                     type="button"
                     key={category}
                     aria-pressed={selectedCategory === category}
@@ -501,13 +479,13 @@ const StepThree = ({
                 const selected = selectedPolicies.includes(policy.id);
                 return (
                     <button
-                        className={`flex min-h-[66px] cursor-pointer items-center gap-4 rounded-[10px] border px-4 text-left ${selected ? "border-[#10b981] bg-[#e0f8f1]" : "border-[#d8d8d8] bg-white"}`}
+                        className={`flex min-h-[66px] cursor-pointer items-center gap-4 rounded-[10px] border px-4 text-left ${selected ? "border-primary bg-green-light" : "border-[#d8d8d8] bg-white"}`}
                         type="button"
                         key={policy.id}
                         onClick={() => onPolicyToggle(policy.id)}
                     >
                         <span
-                            className={`flex size-7 shrink-0 items-center justify-center rounded-full border ${selected ? "border-[#10b981] bg-[#10b981] text-white" : "border-[#c8c8c8]"}`}
+                            className={`flex size-7 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-[#c8c8c8]"}`}
                         >
                             {selected && "✓"}
                         </span>
@@ -541,7 +519,7 @@ const StepHeading = ({
     description: string;
 }) => (
     <header>
-        <p className="text-[13px] font-bold text-[#10b981]">{eyebrow}</p>
+        <p className="text-primary text-[13px] font-bold">{eyebrow}</p>
         <h1 className="mt-2 text-[24px] leading-[1.25] font-bold">{title}</h1>
         <p className="mt-2 text-[12px] text-[#929292]">{description}</p>
     </header>
@@ -561,7 +539,7 @@ const Select = ({
     children: React.ReactNode;
 }) => (
     <select
-        className="h-[48px] w-full cursor-pointer rounded-[10px] border border-[#d8d8d8] bg-white px-3 text-[13px] font-semibold outline-none focus:border-[#10b981]"
+        className="focus:border-primary h-[48px] w-full cursor-pointer rounded-[10px] border border-[#d8d8d8] bg-white px-3 text-[13px] font-semibold outline-none"
         value={value}
         onChange={(event) => onChange(event.target.value)}
     >
