@@ -4,6 +4,8 @@
  * 각 페이지는 Outlet 위치에 렌더링됩니다.
  */
 
+import { reissueAccessToken } from "@/api/axiosInstance";
+import { getMyInfoApi } from "@/api/memberApi";
 import BottomNav from "@/components/common/BottomNav";
 import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
@@ -14,15 +16,54 @@ const bottomNavPaths = new Set(["/", "/recommend", "/calendar", "/mypage"]);
 function App() {
     const { pathname } = useLocation();
     const showBottomNav = bottomNavPaths.has(pathname);
+    const authInitialized = useAuthStore((state) => state.authInitialized);
 
-    // ⚠️ 임시 코드 — 다음 이슈(axios instance + App 부팅)에서 제거 예정
-    // 아직 실제 부팅 로직(reissue → 유저 정보 조회 → setAuthInitialized)이 없어서,
-    // ProtectedRoute가 무한 로딩되지 않도록 임시로 로그인 상태를 강제합니다.
     useEffect(() => {
-        const { login, setAuthInitialized } = useAuthStore.getState();
-        login({ id: 0, name: "개발용 임시 유저" });
-        setAuthInitialized(true);
-    }, []);
+        if (authInitialized) return;
+
+        let active = true;
+
+        const bootstrapAuth = async () => {
+            const { login, logout, setAuthInitialized } =
+                useAuthStore.getState();
+
+            // 백엔드 인증 배포 전 보호 페이지 개발을 위한 명시적 로컬 옵션입니다.
+            if (
+                import.meta.env.DEV &&
+                import.meta.env.VITE_USE_MOCK_AUTH === "true"
+            ) {
+                login({
+                    memberId: 0,
+                    name: "개발용 임시 유저",
+                    email: null,
+                    onboardingCompleted: true,
+                });
+                setAuthInitialized(true);
+                return;
+            }
+
+            try {
+                await reissueAccessToken();
+                const response = await getMyInfoApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (active) login(response.result);
+            } catch {
+                if (active) logout();
+            } finally {
+                if (active) setAuthInitialized(true);
+            }
+        };
+
+        void bootstrapAuth();
+
+        return () => {
+            active = false;
+        };
+    }, [authInitialized]);
 
     return (
         <>

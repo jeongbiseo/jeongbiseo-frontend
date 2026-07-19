@@ -1,16 +1,20 @@
-/*
- * 인증/유저 관련 타입 정의 파일입니다.
- * 백엔드 유저 스키마가 확정되면 UserProfile 필드를 보강합니다.
- */
+/* 인증 및 로그인 사용자 관련 타입입니다. */
 
-// 유저 프로필 (로그인 후 유저 정보 조회 결과)
+/**
+ * 로그인 사용자 조회 응답입니다.
+ *
+ * TODO: 백엔드의 GET /members/me Swagger가 배포되면 실제 필드에 맞게
+ * 이 타입과 memberApi만 수정합니다.
+ */
 export type UserProfile = {
-    id: number;
-    name: string;
-    // TODO: 백엔드 유저 스키마 확정 후 필드 보강 (프로필 정보 등)
+    memberId: number;
+    name: string | null;
+    email: string | null;
+    onboardingCompleted: boolean;
 };
 
-// 토큰 재발급 결과
+/** POST /auth/reissue의 임시 성공 응답입니다. */
 export interface ReissueResult {
     accessToken: string;
+    tokenType?: string;
 }
