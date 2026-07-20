@@ -1,3 +1,5 @@
+import { addFavoriteApi, removeFavoriteApi } from "@/api/favoriteApi";
+import { getSubsidyDetailApi } from "@/api/subsidyApi";
 import Button from "@/components/common/Button";
 import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import { ConfirmDialog, StarIcon } from "@/components/mypage/MyPageUI";
@@ -5,11 +7,7 @@ import {
     policyDetailData,
     type PolicyDetailSection,
 } from "@/constants/policyDetailData";
-import {
-    getFavoritePolicyIds,
-    saveFavoritePolicyIds,
-} from "@/constants/mypageData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 type SectionId = PolicyDetailSection["id"];
@@ -22,10 +20,42 @@ const PolicyDetail = () => {
     const [openSections, setOpenSections] = useState<Set<SectionId>>(
         () => new Set()
     );
-    const [favorite, setFavorite] = useState(() =>
-        getFavoritePolicyIds().includes(numericPolicyId)
-    );
+    const [favorite, setFavorite] = useState(false);
+    const [favoriteLoading, setFavoriteLoading] = useState(true);
+    const [favoriteUpdating, setFavoriteUpdating] = useState(false);
     const [externalDialogOpen, setExternalDialogOpen] = useState(false);
+
+    useEffect(() => {
+        if (!policy) return;
+
+        let active = true;
+
+        const loadFavorite = async () => {
+            try {
+                const response = await getSubsidyDetailApi(numericPolicyId);
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (active) {
+                    setFavorite(response.result.isFavorite);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                if (active) {
+                    setFavoriteLoading(false);
+                }
+            }
+        };
+
+        void loadFavorite();
+
+        return () => {
+            active = false;
+        };
+    }, [numericPolicyId, policy]);
 
     if (!policy) {
         return (
@@ -57,15 +87,28 @@ const PolicyDetail = () => {
         });
     };
 
-    const toggleFavorite = () => {
-        const favoriteIds = getFavoritePolicyIds();
-        const nextFavorite = !favorite;
-        const nextIds = nextFavorite
-            ? [...new Set([...favoriteIds, policy.id])]
-            : favoriteIds.filter((id) => id !== policy.id);
+    const toggleFavorite = async () => {
+        if (favoriteUpdating) return;
 
-        saveFavoritePolicyIds(nextIds);
-        setFavorite(nextFavorite);
+        const nextFavorite = !favorite;
+        setFavoriteUpdating(true);
+
+        try {
+            const response = nextFavorite
+                ? await addFavoriteApi(policy.id)
+                : await removeFavoriteApi(policy.id);
+
+            if (!response.isSuccess) {
+                throw new Error(response.message);
+            }
+
+            setFavorite(response.result.favorited);
+        } catch (error) {
+            console.error(error);
+            window.alert("즐겨찾기를 변경하지 못했습니다.");
+        } finally {
+            setFavoriteUpdating(false);
+        }
     };
 
     const moveToApplicationPage = () => {
@@ -90,6 +133,8 @@ const PolicyDetail = () => {
                         <button
                             className="focus-visible:outline-primary absolute top-[14px] right-[13px] flex size-10 cursor-pointer items-center justify-center rounded focus-visible:outline-2"
                             type="button"
+                            disabled={favoriteLoading || favoriteUpdating}
+                            aria-busy={favoriteLoading || favoriteUpdating}
                             aria-label={
                                 favorite ? "즐겨찾기 해제" : "즐겨찾기 추가"
                             }
