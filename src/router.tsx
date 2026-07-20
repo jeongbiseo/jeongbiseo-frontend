@@ -9,7 +9,6 @@
  * - '/onboarding': 온보딩 페이지
  * - '/recommend': 추천 페이지 (ProtectedRoute로 보호)
  * - '/calendar': 마감 캘린더 페이지 (ProtectedRoute로 보호)
- * - '/expected-amount': 예상 수령액 상세 페이지 (ProtectedRoute로 보호)
  * - '/available-policies': 신청 가능한 지원금 목록 페이지 (ProtectedRoute로 보호)
  * - '/policies/:policyId': 지원금 상세 페이지 (ProtectedRoute로 보호)
  *
@@ -21,7 +20,6 @@ import { ProtectedRoute } from "@/components/route/ProtectedRoute";
 import AuthCallback from "@/pages/AuthCallback";
 import CalendarPage from "@/pages/CalendarPage";
 import AvailablePolicies from "@/pages/AvailablePolicies";
-import ExpectedAmount from "@/pages/ExpectedAmount";
 import Home from "@/pages/Home";
 import FavoriteManagement from "@/pages/FavoriteManagement";
 import Login from "@/pages/Login";
@@ -75,14 +73,6 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <CalendarPage />
-                    </ProtectedRoute>
-                ),
-            },
-            {
-                path: "expected-amount",
-                element: (
-                    <ProtectedRoute>
-                        <ExpectedAmount />
                     </ProtectedRoute>
                 ),
             },

@@ -16,7 +16,6 @@ const bottomNavPaths = new Set([
     "/recommend",
     "/calendar",
     "/mypage",
-    "/expected-amount",
     "/available-policies",
 ]);
 
@@ -24,8 +23,7 @@ function App() {
     const { pathname, state: locationState } = useLocation();
     const policyDetail = pathname.startsWith("/policies/");
     const showBottomNav = bottomNavPaths.has(pathname) || policyDetail;
-    const homeSummaryDetail =
-        pathname === "/expected-amount" || pathname === "/available-policies";
+    const homeSummaryDetail = pathname === "/available-policies";
     const activeBottomNavPath = homeSummaryDetail
         ? "/"
         : policyDetail
