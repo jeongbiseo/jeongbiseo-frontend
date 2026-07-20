@@ -3,7 +3,7 @@
  * 여기서 정의된 router는 main.tsx의 RouterProvider의 router로 적용됩니다.
  *
  * 정비서 웹앱의 라우트 url은 다음으로 구성되어 있습니다.
- * - '/': 메인 페이지
+ * - '/': 메인 페이지 (ProtectedRoute로 보호)
  * - '/login': 로그인 페이지
  * - '/terms': 약관동의 페이지
  * - '/onboarding': 온보딩 페이지
@@ -42,7 +42,11 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true, // path: '/'
-                element: <Home />,
+                element: (
+                    <ProtectedRoute>
+                        <Home />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "login",

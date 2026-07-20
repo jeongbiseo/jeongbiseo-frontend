@@ -41,21 +41,6 @@ function App() {
             const { login, logout, setAuthInitialized } =
                 useAuthStore.getState();
 
-            // 백엔드 인증 배포 전 보호 페이지 개발을 위한 명시적 로컬 옵션입니다.
-            if (
-                import.meta.env.DEV &&
-                import.meta.env.VITE_USE_MOCK_AUTH === "true"
-            ) {
-                login({
-                    memberId: 0,
-                    name: "개발용 임시 유저",
-                    email: null,
-                    onboardingCompleted: true,
-                });
-                setAuthInitialized(true);
-                return;
-            }
-
             try {
                 await reissueAccessToken();
                 const response = await getMyInfoApi();
