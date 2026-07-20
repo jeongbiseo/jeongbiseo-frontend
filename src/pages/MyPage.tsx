@@ -28,6 +28,7 @@ type MenuItem = {
 const MyPage = () => {
     const navigate = useNavigate();
     const logout = useAuthStore((state) => state.logout);
+    const user = useAuthStore((state) => state.user);
     const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
     const favoriteCount = getFavoritePolicyIds().length;
     const receivedCount = getReceivedBenefits().length;
@@ -113,7 +114,7 @@ const MyPage = () => {
                     <span className="bg-secondary size-[46px] shrink-0 rounded-full" />
                     <span className="ml-[18px] min-w-0 flex-1">
                         <strong className="block text-[16px]">
-                            아기삼자 님
+                            {user?.name ?? "사용자"} 님
                         </strong>
                         <span className="text-text-subtle mt-1.5 block truncate text-[13px] font-bold">
                             카카오 계정 · {profile.city.replace("특별시", "")}{" "}

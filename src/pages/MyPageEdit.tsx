@@ -8,17 +8,19 @@ import {
     benefitCategories,
     getMyPageProfile,
     getReceivedBenefits,
-    saveMyPageProfile,
     saveReceivedBenefits,
     type ReceivedBenefit,
 } from "@/constants/mypageData";
 import {
+    employmentLabelOf,
     employmentOptions,
+    incomeLabelOf,
     incomeOptions,
 } from "@/constants/onboardingOptions";
 import { regionNames, regions } from "@/constants/regions";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { getMyOnboardingApi, updateMyOnboardingApi } from "@/api/onboardingApi";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from(
@@ -46,6 +48,49 @@ const MyPageEdit = () => {
         useState(getReceivedBenefits);
     const [addSheetOpen, setAddSheetOpen] = useState(false);
     const [saved, setSaved] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadProfile = async () => {
+            try {
+                const response = await getMyOnboardingApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                const profile = response.result;
+                const [year, month, day] = profile.birthDate
+                    .split("-")
+                    .map(Number);
+
+                setBirthYear(year);
+                setBirthMonth(month);
+                setBirthDay(day);
+                setCity(profile.sido);
+                setDistrict(profile.sigungu);
+                setEmployment(employmentLabelOf(profile.employmentStatus));
+                setIncome(incomeLabelOf(profile.incomeBracket));
+                setHouseholdSize(profile.householdSize ?? 1);
+            } catch (error) {
+                console.error(error);
+
+                if (active) {
+                    window.alert("내 정보를 불러오지 못했습니다.");
+                }
+            }
+        };
+
+        void loadProfile();
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     useEffect(() => {
         if (searchParams.get("section") !== "received") return;
@@ -64,19 +109,44 @@ const MyPageEdit = () => {
         saveReceivedBenefits(benefits);
     };
 
-    const handleSave = () => {
-        saveMyPageProfile({
-            birthYear,
-            birthMonth,
-            birthDay,
-            city,
-            district,
-            employment,
-            income,
-            householdSize,
-        });
-        setSaved(true);
-        window.setTimeout(() => setSaved(false), 1800);
+    const handleSave = async () => {
+        const employmentStatus = employmentOptions.find(
+            (option) => option.label === employment
+        )?.value;
+        const incomeBracket = incomeOptions.find(
+            (option) => option.label === income
+        )?.value;
+
+        if (!employmentStatus) {
+            window.alert("고용상태를 선택해주세요.");
+            return;
+        }
+
+        setSaving(true);
+        setSaved(false);
+
+        try {
+            const response = await updateMyOnboardingApi({
+                birthDate: `${birthYear}-${String(birthMonth).padStart(2, "0")}-${String(birthDay).padStart(2, "0")}`,
+                sido: city,
+                sigungu: district,
+                employmentStatus,
+                ...(incomeBracket ? { incomeBracket } : {}),
+                householdSize,
+            });
+
+            if (!response.isSuccess) {
+                throw new Error(response.message);
+            }
+
+            setSaved(true);
+            window.setTimeout(() => setSaved(false), 1800);
+        } catch (error) {
+            console.error(error);
+            window.alert("정보를 저장하지 못했습니다. 다시 시도해주세요.");
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
@@ -233,9 +303,10 @@ const MyPageEdit = () => {
                 <button
                     className="bg-third mt-9 h-[39px] w-[341px] max-w-full cursor-pointer rounded-[15px] text-[16px] font-bold text-white"
                     type="button"
+                    disabled={saving}
                     onClick={handleSave}
                 >
-                    저장
+                    {saving ? "저장 중..." : "저장"}
                 </button>
                 {saved && (
                     <p
