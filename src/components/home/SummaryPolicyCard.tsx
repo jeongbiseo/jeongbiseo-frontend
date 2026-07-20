@@ -1,5 +1,13 @@
-import type { SummaryPolicyItem } from "@/constants/homeSummaryData";
 import { Link } from "react-router-dom";
+
+/** 요약 목록 카드 한 줄에 표시할 데이터입니다. */
+export interface SummaryPolicyItem {
+    rowId: string;
+    policyId: number;
+    title: string;
+    value: string;
+    valueTone?: "success" | "muted" | "voucher";
+}
 
 const valueToneClassNames = {
     success: "text-success",

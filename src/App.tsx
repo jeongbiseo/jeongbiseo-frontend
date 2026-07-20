@@ -16,7 +16,6 @@ const bottomNavPaths = new Set([
     "/recommend",
     "/calendar",
     "/mypage",
-    "/expected-amount",
     "/available-policies",
 ]);
 
@@ -24,8 +23,7 @@ function App() {
     const { pathname, state: locationState } = useLocation();
     const policyDetail = pathname.startsWith("/policies/");
     const showBottomNav = bottomNavPaths.has(pathname) || policyDetail;
-    const homeSummaryDetail =
-        pathname === "/expected-amount" || pathname === "/available-policies";
+    const homeSummaryDetail = pathname === "/available-policies";
     const activeBottomNavPath = homeSummaryDetail
         ? "/"
         : policyDetail
@@ -42,21 +40,6 @@ function App() {
         const bootstrapAuth = async () => {
             const { login, logout, setAuthInitialized } =
                 useAuthStore.getState();
-
-            // 백엔드 인증 배포 전 보호 페이지 개발을 위한 명시적 로컬 옵션입니다.
-            if (
-                import.meta.env.DEV &&
-                import.meta.env.VITE_USE_MOCK_AUTH === "true"
-            ) {
-                login({
-                    memberId: 0,
-                    name: "개발용 임시 유저",
-                    email: null,
-                    onboardingCompleted: true,
-                });
-                setAuthInitialized(true);
-                return;
-            }
 
             try {
                 await reissueAccessToken();
