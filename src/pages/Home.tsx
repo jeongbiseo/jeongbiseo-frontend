@@ -17,6 +17,8 @@ import {
 } from "@/api/estimatedApi";
 import { getCalendarApi } from "@/api/calendarApi";
 import { getRecommendationsApi } from "@/api/recommendationApi";
+import DeadlineSheet from "@/components/calendar/DeadlineSheet";
+import { isNonCashPayment, paymentTypeLabels } from "@/constants/paymentType";
 import { useAuthStore } from "@/stores/authStore";
 import type { CalendarResult } from "@/types/calendar";
 import type {
@@ -48,6 +50,7 @@ type HomeState =
 const Home = () => {
     const user = useAuthStore((state) => state.user);
     const [state, setState] = useState<HomeState>({ status: "loading" });
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
     useEffect(() => {
         let active = true;
@@ -161,12 +164,27 @@ const Home = () => {
                             <div className="pt-2">
                                 <CalendarPreview
                                     calendar={state.data.calendar}
+                                    selectedDate={selectedDate}
+                                    onSelectDate={setSelectedDate}
                                 />
                             </div>
                         </HomeSection>
                     </>
                 )}
             </section>
+
+            {selectedDate && state.status === "ready" && (
+                <DeadlineSheet
+                    date={selectedDate}
+                    items={
+                        state.data.calendar?.days.find(
+                            ({ date }) => date === selectedDate
+                        )?.items ?? []
+                    }
+                    bottomNavPath="/"
+                    onClose={() => setSelectedDate(null)}
+                />
+            )}
         </main>
     );
 };
@@ -300,15 +318,18 @@ const RecommendationCard = ({
 }: {
     recommendation: RecommendationItem;
 }) => {
-    // NOTE: 응답에 지급 방식(paymentType)이 없어 "바우처" 여부를 알 수 없습니다.
-    // 마감일이 없으면 상시 모집으로 보고 별도 색으로 구분합니다.
-    const isAlways = recommendation.dDay === null;
+    // 바우처·현물성 지원금은 마감일 대신 지급 방식을 배지로 보여줍니다.
+    const nonCash = isNonCashPayment(recommendation.paymentType);
     const isUrgent = recommendation.dDay !== null && recommendation.dDay <= 7;
-    const badgeClassName = isAlways
-        ? "bg-[#fff1d8] text-warning"
-        : isUrgent
-          ? "bg-danger-light text-danger"
-          : "bg-green-light text-success";
+    const badgeLabel = nonCash
+        ? paymentTypeLabels[recommendation.paymentType]
+        : formatDDay(recommendation.dDay);
+    const badgeClassName =
+        nonCash || recommendation.dDay === null
+            ? "bg-warning-light text-warning"
+            : isUrgent
+              ? "bg-danger-light text-danger"
+              : "bg-green-light text-success";
 
     return (
         <Link
@@ -334,7 +355,7 @@ const RecommendationCard = ({
             <span
                 className={`absolute top-[15px] right-[21px] rounded-[13px] px-[7px] py-[6px] text-[13px] leading-none font-bold ${badgeClassName}`}
             >
-                {formatDDay(recommendation.dDay)}
+                {badgeLabel}
             </span>
             {recommendation.deadline && (
                 <span className="text-text-muted absolute right-[21px] bottom-[16px] text-[13px] leading-none font-medium">
@@ -368,7 +389,15 @@ const buildMonthCells = (year: number, month: number) => {
     return cells;
 };
 
-const CalendarPreview = ({ calendar }: { calendar: CalendarResult | null }) => {
+const CalendarPreview = ({
+    calendar,
+    selectedDate,
+    onSelectDate,
+}: {
+    calendar: CalendarResult | null;
+    selectedDate: string | null;
+    onSelectDate: (date: string) => void;
+}) => {
     const today = new Date();
     const year = calendar?.year ?? today.getFullYear();
     const month = calendar?.month ?? today.getMonth() + 1;
@@ -382,6 +411,8 @@ const CalendarPreview = ({ calendar }: { calendar: CalendarResult | null }) => {
     );
     const isCurrentMonth =
         year === today.getFullYear() && month === today.getMonth() + 1;
+    const toKey = (day: number) =>
+        `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
     return (
         <article className="mx-auto h-[267px] w-[307px] rounded-[20px] bg-white px-4 pt-4 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
@@ -398,20 +429,35 @@ const CalendarPreview = ({ calendar }: { calendar: CalendarResult | null }) => {
 
             <div className="mt-[5px] grid grid-cols-7">
                 {cells.map(({ day, muted }, index) => {
-                    const selected =
+                    const isToday =
                         !muted && isCurrentMonth && day === today.getDate();
+                    const isSelected = !muted && selectedDate === toKey(day);
                     const hasEvent = !muted && eventDays.has(day);
 
                     return (
-                        <div
-                            className={`relative flex h-[36.8px] items-center justify-center rounded-full text-[13px] font-bold ${muted ? "text-text-strong/15" : selected ? "bg-text-strong text-white" : "text-text-strong"}`}
+                        <button
+                            className={`relative flex h-[36.8px] cursor-pointer items-center justify-center rounded-full text-[13px] font-bold ${
+                                muted
+                                    ? "text-text-strong/15"
+                                    : isSelected
+                                      ? "border-primary bg-green-light text-primary border"
+                                      : isToday
+                                        ? "bg-text-strong text-white"
+                                        : "text-text-strong"
+                            }`}
+                            type="button"
+                            disabled={muted}
                             key={`${muted ? "outside" : "current"}-${day}-${index}`}
+                            onClick={() => onSelectDate(toKey(day))}
                         >
                             <span>{day}</span>
-                            {hasEvent && !selected && (
+                            {hasEvent && !isToday && (
                                 <span className="bg-primary absolute bottom-[4px] size-[4.8px] rounded-full" />
                             )}
-                        </div>
+                            {hasEvent && isToday && (
+                                <span className="absolute bottom-[4px] size-[4.8px] rounded-full bg-white" />
+                            )}
+                        </button>
                     );
                 })}
             </div>
