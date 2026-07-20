@@ -12,26 +12,14 @@ import {
     saveReceivedBenefits,
     type ReceivedBenefit,
 } from "@/constants/mypageData";
+import {
+    employmentOptions,
+    incomeOptions,
+} from "@/constants/onboardingOptions";
 import { regionNames, regions } from "@/constants/regions";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const employmentOptions = [
-    "재직중",
-    "구직중",
-    "학생",
-    "프리랜서",
-    "자영업",
-    "기타",
-];
-const incomeOptions = [
-    "소득 없음",
-    "100만원 미만",
-    "100 ~ 200만원",
-    "200 ~ 300만원",
-    "300 ~ 400만원",
-    "400만원 이상",
-];
 const currentYear = new Date().getFullYear();
 const years = Array.from(
     { length: 83 },
@@ -153,15 +141,15 @@ const MyPageEdit = () => {
 
                 <FieldLabel>고용상태</FieldLabel>
                 <Select value={employment} onChange={setEmployment}>
-                    {employmentOptions.map((option) => (
-                        <option key={option}>{option}</option>
+                    {employmentOptions.map(({ label, value }) => (
+                        <option key={value}>{label}</option>
                     ))}
                 </Select>
 
                 <FieldLabel>월 소득구간</FieldLabel>
                 <Select value={income} onChange={setIncome}>
-                    {incomeOptions.map((option) => (
-                        <option key={option}>{option}</option>
+                    {incomeOptions.map(({ label, value }) => (
+                        <option key={value}>{label}</option>
                     ))}
                 </Select>
                 <p className="text-text-subtle mt-2 text-[12px] font-semibold">
