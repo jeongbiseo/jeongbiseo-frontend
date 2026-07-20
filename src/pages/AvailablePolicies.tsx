@@ -1,17 +1,152 @@
-import ChevronDownIcon from "@/components/common/ChevronDownIcon";
-import SummaryPolicyCard from "@/components/home/SummaryPolicyCard";
-import { BackButton } from "@/components/mypage/MyPageUI";
+/*
+ * 신청 가능한 지원금 목록 페이지 ('/available-policies')입니다.
+ *
+ * GET /estimated-total/breakdown 응답을 지급 방식에 따라 세 섹션으로 나눠 보여줍니다.
+ * - 현금성 지원금   : items(현금) + monthlyItems(월 지급)
+ * - 바우처·현물     : separateBenefits 중 VOUCHER / IN_KIND / REDUCTION
+ * - 금액 미확정     : separateBenefits 중 UNKNOWN
+ *
+ * 상단 기준 문구는 GET /estimated-total의 notice를 사용합니다.
+ */
+
 import {
-    availablePoliciesData,
+    getEstimatedBreakdownApi,
+    getEstimatedTotalApi,
+} from "@/api/estimatedApi";
+import ChevronDownIcon from "@/components/common/ChevronDownIcon";
+import SummaryPolicyCard, {
     type SummaryPolicyItem,
-} from "@/constants/homeSummaryData";
-import { useState } from "react";
+} from "@/components/home/SummaryPolicyCard";
+import { BackButton } from "@/components/mypage/MyPageUI";
+import type { EstimatedBreakdownResult, PaymentType } from "@/types/estimated";
+import { formatAmountRange, formatWon } from "@/utils/format";
+import { useEffect, useState } from "react";
+
+const VOUCHER_TYPES: PaymentType[] = ["VOUCHER", "IN_KIND", "REDUCTION"];
+
+const paymentTypeLabels: Record<PaymentType, string> = {
+    CASH: "현금",
+    MONTHLY: "월 지급",
+    VOUCHER: "바우처",
+    IN_KIND: "현물",
+    REDUCTION: "감면",
+    UNKNOWN: "금액 미확정",
+};
+
+type Sections = {
+    cash: SummaryPolicyItem[];
+    voucher: SummaryPolicyItem[];
+    unconfirmed: SummaryPolicyItem[];
+    totalCount: number;
+    confirmedCount: number;
+    confirmedMaximum: string;
+};
+
+/** breakdown 응답을 화면 섹션 구조로 변환합니다. */
+const toSections = (breakdown: EstimatedBreakdownResult): Sections => {
+    const cash: SummaryPolicyItem[] = [
+        ...breakdown.items.map((item) => ({
+            rowId: `cash-${item.subsidyId}`,
+            policyId: item.subsidyId,
+            title: item.name,
+            value:
+                item.includedInTotal && item.amountMax > 0
+                    ? formatAmountRange(item.amountMin, item.amountMax)
+                    : "확정 금액 없음",
+            valueTone: (item.includedInTotal && item.amountMax > 0
+                ? "success"
+                : "muted") as SummaryPolicyItem["valueTone"],
+        })),
+        ...breakdown.monthlyItems.map((item) => ({
+            rowId: `monthly-${item.subsidyId}`,
+            policyId: item.subsidyId,
+            title: item.name,
+            value: formatAmountRange(
+                item.monthlyAmountMin,
+                item.monthlyAmountMax,
+                " / 월"
+            ),
+            valueTone: "success" as const,
+        })),
+    ];
+
+    const voucher = breakdown.separateBenefits
+        .filter(({ paymentType }) => VOUCHER_TYPES.includes(paymentType))
+        .map((item) => ({
+            rowId: `voucher-${item.subsidyId}`,
+            policyId: item.subsidyId,
+            title: item.name,
+            value: paymentTypeLabels[item.paymentType],
+            valueTone: "voucher" as const,
+        }));
+
+    const unconfirmed = breakdown.separateBenefits
+        .filter(({ paymentType }) => paymentType === "UNKNOWN")
+        .map((item) => ({
+            rowId: `unconfirmed-${item.subsidyId}`,
+            policyId: item.subsidyId,
+            title: item.name,
+            value: "금액 미확정",
+            valueTone: "muted" as const,
+        }));
+
+    return {
+        cash,
+        voucher,
+        unconfirmed,
+        totalCount:
+            breakdown.items.length +
+            breakdown.monthlyItems.length +
+            breakdown.separateBenefits.length,
+        confirmedCount: breakdown.items.filter(
+            ({ includedInTotal }) => includedInTotal
+        ).length,
+        confirmedMaximum: formatWon(breakdown.cashTotalMax),
+    };
+};
+
+type PageState =
+    | { status: "loading" }
+    | { status: "error" }
+    | { status: "ready"; sections: Sections; notice: string };
 
 const AvailablePolicies = () => {
+    const [state, setState] = useState<PageState>({ status: "loading" });
     const [voucherExpanded, setVoucherExpanded] = useState(false);
-    const voucherItems = voucherExpanded
-        ? availablePoliciesData.voucher
-        : availablePoliciesData.voucher.slice(0, 3);
+
+    useEffect(() => {
+        let active = true;
+
+        const load = async () => {
+            try {
+                const [total, breakdown] = await Promise.all([
+                    getEstimatedTotalApi(),
+                    getEstimatedBreakdownApi(),
+                ]);
+
+                if (!active) return;
+
+                if (!total.isSuccess || !breakdown.isSuccess) {
+                    setState({ status: "error" });
+                    return;
+                }
+
+                setState({
+                    status: "ready",
+                    sections: toSections(breakdown.result),
+                    notice: total.result.notice,
+                });
+            } catch {
+                if (active) setState({ status: "error" });
+            }
+        };
+
+        void load();
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
@@ -21,40 +156,91 @@ const AvailablePolicies = () => {
                     지금 신청 가능한 지원금
                 </h1>
 
-                <div className="mt-[9px] rounded-[15px] px-[10px] py-[8px]">
-                    <p className="text-text-muted text-[13px] leading-normal font-bold">
-                        전체{" "}
-                        <strong className="text-text-strong text-[16px]">
-                            {availablePoliciesData.totalCount}건
-                        </strong>{" "}
-                        중 금액 확정{" "}
-                        <strong className="text-text-strong text-[16px]">
-                            {availablePoliciesData.confirmedCount}건
-                        </strong>{" "}
-                        · 합계 최대 {availablePoliciesData.confirmedMaximum}
+                {state.status === "loading" && (
+                    <p className="text-text-muted mt-10 text-center text-[14px] font-semibold">
+                        불러오는 중이에요...
                     </p>
-                    <p className="text-text-muted/50 mt-[7px] text-[11px] leading-normal font-medium">
-                        {availablePoliciesData.referenceDate}
-                    </p>
-                    <div className="mt-[11px] flex items-center gap-[14px]">
-                        <CountBadge tone="cash">현금 3</CountBadge>
-                        <CountBadge tone="voucher">바우처·현물 7</CountBadge>
-                        <CountBadge tone="unconfirmed">
-                            금액 미확정 2
-                        </CountBadge>
-                    </div>
-                </div>
+                )}
 
-                <PolicyListSection
-                    className="mt-[25px]"
-                    title="현금성 지원금 (3건)"
-                    items={availablePoliciesData.cash}
-                />
-                <PolicyListSection
-                    className="mt-[24px]"
-                    title="바우처 · 현물 지원금 (7건)"
-                    items={voucherItems}
-                />
+                {state.status === "error" && (
+                    <p className="text-text-muted mt-10 text-center text-[14px] font-semibold">
+                        정보를 불러오지 못했어요.
+                        <br />
+                        잠시 후 다시 시도해주세요.
+                    </p>
+                )}
+
+                {state.status === "ready" && (
+                    <AvailablePoliciesContent
+                        sections={state.sections}
+                        notice={state.notice}
+                        voucherExpanded={voucherExpanded}
+                        onToggleVoucher={() =>
+                            setVoucherExpanded((expanded) => !expanded)
+                        }
+                    />
+                )}
+            </section>
+        </main>
+    );
+};
+
+const AvailablePoliciesContent = ({
+    sections,
+    notice,
+    voucherExpanded,
+    onToggleVoucher,
+}: {
+    sections: Sections;
+    notice: string;
+    voucherExpanded: boolean;
+    onToggleVoucher: () => void;
+}) => {
+    const voucherItems = voucherExpanded
+        ? sections.voucher
+        : sections.voucher.slice(0, 3);
+
+    return (
+        <>
+            <div className="mt-[9px] rounded-[15px] px-[10px] py-[8px]">
+                <p className="text-text-muted text-[13px] leading-normal font-bold">
+                    전체{" "}
+                    <strong className="text-text-strong text-[16px]">
+                        {sections.totalCount}건
+                    </strong>{" "}
+                    중 금액 확정{" "}
+                    <strong className="text-text-strong text-[16px]">
+                        {sections.confirmedCount}건
+                    </strong>{" "}
+                    · 합계 최대 {sections.confirmedMaximum}
+                </p>
+                <p className="text-text-muted/50 mt-[7px] text-[11px] leading-normal font-medium">
+                    {notice}
+                </p>
+                <div className="mt-[11px] flex items-center gap-[14px]">
+                    <CountBadge tone="cash">
+                        {`현금 ${sections.cash.length}`}
+                    </CountBadge>
+                    <CountBadge tone="voucher">
+                        {`바우처·현물 ${sections.voucher.length}`}
+                    </CountBadge>
+                    <CountBadge tone="unconfirmed">
+                        {`금액 미확정 ${sections.unconfirmed.length}`}
+                    </CountBadge>
+                </div>
+            </div>
+
+            <PolicyListSection
+                className="mt-[25px]"
+                title={`현금성 지원금 (${sections.cash.length}건)`}
+                items={sections.cash}
+            />
+            <PolicyListSection
+                className="mt-[24px]"
+                title={`바우처 · 현물 지원금 (${sections.voucher.length}건)`}
+                items={voucherItems}
+            />
+            {sections.voucher.length > 3 && (
                 <button
                     className="border-primary mx-auto mt-[14px] flex h-[23px] w-[306px] cursor-pointer items-center justify-center rounded-[5px] border-[0.5px] bg-white"
                     type="button"
@@ -64,17 +250,17 @@ const AvailablePolicies = () => {
                             ? "바우처·현물 지원금 접기"
                             : "바우처·현물 지원금 더 보기"
                     }
-                    onClick={() => setVoucherExpanded((expanded) => !expanded)}
+                    onClick={onToggleVoucher}
                 >
                     <ChevronDownIcon expanded={voucherExpanded} />
                 </button>
-                <PolicyListSection
-                    className="mt-[27px]"
-                    title="금액 미확정 지원금 (2건)"
-                    items={availablePoliciesData.unconfirmed}
-                />
-            </section>
-        </main>
+            )}
+            <PolicyListSection
+                className="mt-[27px]"
+                title={`금액 미확정 지원금 (${sections.unconfirmed.length}건)`}
+                items={sections.unconfirmed}
+            />
+        </>
     );
 };
 
