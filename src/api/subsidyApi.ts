@@ -4,10 +4,7 @@ import type {
     SubsidyPageResult,
     SubsidySearchParams,
 } from "@/types/onboarding";
-
-export type SubsidyDetailFavoriteResult = {
-    isFavorite: boolean;
-};
+import type { SubsidyDetailResult } from "@/types/subsidy";
 
 /**
  * 지원금을 검색합니다. 온보딩 3단계(기수령 지원금 선택)에서
@@ -27,9 +24,9 @@ export const searchSubsidiesApi = async ({
 };
 
 export const getSubsidyDetailApi = async (subsidyId: number) => {
-    const response = await axiosInstance.get<
-        ApiResponse<SubsidyDetailFavoriteResult>
-    >(`/subsidies/${subsidyId}`);
+    const response = await axiosInstance.get<ApiResponse<SubsidyDetailResult>>(
+        `/subsidies/${subsidyId}`
+    );
 
     return response.data;
 };
