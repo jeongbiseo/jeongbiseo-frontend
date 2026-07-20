@@ -18,20 +18,10 @@ import SummaryPolicyCard, {
     type SummaryPolicyItem,
 } from "@/components/home/SummaryPolicyCard";
 import { BackButton } from "@/components/mypage/MyPageUI";
-import type { EstimatedBreakdownResult, PaymentType } from "@/types/estimated";
+import { isNonCashPayment, paymentTypeLabels } from "@/constants/paymentType";
+import type { EstimatedBreakdownResult } from "@/types/estimated";
 import { formatAmountRange, formatWon } from "@/utils/format";
 import { useEffect, useState } from "react";
-
-const VOUCHER_TYPES: PaymentType[] = ["VOUCHER", "IN_KIND", "REDUCTION"];
-
-const paymentTypeLabels: Record<PaymentType, string> = {
-    CASH: "현금",
-    MONTHLY: "월 지급",
-    VOUCHER: "바우처",
-    IN_KIND: "현물",
-    REDUCTION: "감면",
-    UNKNOWN: "금액 미확정",
-};
 
 type Sections = {
     cash: SummaryPolicyItem[];
@@ -71,7 +61,7 @@ const toSections = (breakdown: EstimatedBreakdownResult): Sections => {
     ];
 
     const voucher = breakdown.separateBenefits
-        .filter(({ paymentType }) => VOUCHER_TYPES.includes(paymentType))
+        .filter(({ paymentType }) => isNonCashPayment(paymentType))
         .map((item) => ({
             rowId: `voucher-${item.subsidyId}`,
             policyId: item.subsidyId,

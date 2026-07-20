@@ -11,53 +11,8 @@
     font-family: var(--font-sans);
 }
 
+/* 연/월 선택은 상단 커스텀 드롭다운이 담당하므로 기본 내비게이션은 숨깁니다. */
 .jeongbiseo-calendar .react-calendar__navigation {
-    display: flex;
-    align-items: center;
-    height: 18px;
-    margin-bottom: 12px;
-}
-
-.jeongbiseo-calendar .react-calendar__navigation button {
-    min-width: 18px;
-    height: 18px;
-    padding: 0;
-    border-radius: 50%;
-    background: transparent;
-    color: var(--color-text-strong);
-    font: inherit;
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 16px;
-}
-
-.jeongbiseo-calendar .react-calendar__navigation button:enabled:hover,
-.jeongbiseo-calendar .react-calendar__navigation button:enabled:focus {
-    background: var(--color-green-light);
-}
-
-.jeongbiseo-calendar .react-calendar__navigation__label {
-    order: 1;
-    flex-grow: 0 !important;
-    width: auto;
-    font-size: 14px !important;
-    line-height: 18px !important;
-    word-spacing: 8px;
-    pointer-events: none;
-}
-
-.jeongbiseo-calendar .react-calendar__navigation__prev-button {
-    order: 2;
-    margin-left: auto;
-}
-
-.jeongbiseo-calendar .react-calendar__navigation__next-button {
-    order: 3;
-    margin-left: 6px;
-}
-
-.jeongbiseo-calendar .react-calendar__navigation__prev2-button,
-.jeongbiseo-calendar .react-calendar__navigation__next2-button {
     display: none;
 }
 
@@ -98,15 +53,19 @@
     background: var(--color-green-light);
 }
 
+/* 오늘: 검정 채움 */
 .jeongbiseo-calendar .react-calendar__tile--now {
-    background: transparent;
+    background: #000;
+    color: #fff;
 }
 
+/* 선택한 날짜: 초록 링 (오늘과 겹치면 선택 표시가 우선) */
 .jeongbiseo-calendar .react-calendar__tile--active,
 .jeongbiseo-calendar .react-calendar__tile--active:enabled:hover,
 .jeongbiseo-calendar .react-calendar__tile--active:enabled:focus {
-    background: #000;
-    color: #fff;
+    border: 1px solid var(--color-primary);
+    background: var(--color-green-light);
+    color: var(--color-primary);
 }
 
 .jeongbiseo-calendar .react-calendar__month-view__days__day--weekend {
@@ -138,6 +97,9 @@
     background: var(--color-primary);
 }
 
-.jeongbiseo-calendar .react-calendar__tile--active .calendar-deadline-marker {
+/* 검정으로 채워지는 오늘 타일에서는 마커를 흰색으로 표시합니다. */
+.jeongbiseo-calendar
+    .react-calendar__tile--now:not(.react-calendar__tile--active)
+    .calendar-deadline-marker {
     background: #fff;
 }
