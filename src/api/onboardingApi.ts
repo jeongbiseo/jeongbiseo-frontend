@@ -4,6 +4,7 @@ import type {
     OnboardingProfile,
     OnboardingRequest,
     OnboardingSubmitResult,
+    ReceivedSubsidyListResult,
     ReceivedSubsidiesResult,
 } from "@/types/onboarding";
 
@@ -46,5 +47,13 @@ export const setReceivedSubsidiesApi = async (subsidyIds: number[]) => {
     const response = await axiosInstance.put<
         ApiResponse<ReceivedSubsidiesResult>
     >("/onboarding/received-subsidies", { subsidyIds });
+    return response.data;
+};
+
+/** 현재 회원이 기존에 수령 중으로 등록한 지원금 목록을 조회합니다. */
+export const getReceivedSubsidiesApi = async () => {
+    const response = await axiosInstance.get<
+        ApiResponse<ReceivedSubsidyListResult>
+    >("/onboarding/received-subsidies");
     return response.data;
 };

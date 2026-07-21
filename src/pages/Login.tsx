@@ -1,15 +1,21 @@
 import googleSymbol from "@/assets/login/google-symbol.png";
 import kakaoSymbol from "@/assets/login/kakao-symbol.svg";
 import supportIllustration from "@/assets/login/support-illustration.svg";
+import Toast from "@/components/common/Toast";
 import type { SocialProvider } from "@/types/auth";
 import { startSocialLogin } from "@/utils/oauth";
+import { useState } from "react";
 
 // 로그인 페이지 ('/login')
 const Login = () => {
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
     const handleSocialLogin = (provider: SocialProvider) => {
-        // 인가 URL로 리다이렉트됩니다. client id 미설정 등 실패 시 로그만 남깁니다.
         startSocialLogin(provider).catch((error) => {
             console.error(error);
+            setToastMessage(
+                "로그인을 시작하지 못했어요. 잠시 후 다시 시도해주세요."
+            );
         });
     };
 
@@ -61,6 +67,10 @@ const Login = () => {
                     </button>
                 </div>
             </section>
+            <Toast
+                message={toastMessage}
+                onDismiss={() => setToastMessage(null)}
+            />
         </main>
     );
 };

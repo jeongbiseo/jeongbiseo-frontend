@@ -1,5 +1,7 @@
+import { updateMarketingConsentApi } from "@/api/termsApi";
 import Button from "@/components/common/Button";
 import Header from "@/components/common/Header";
+import Toast from "@/components/common/Toast";
 import { agreementDetails, type AgreementKey } from "@/constants/termsContent";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -49,6 +51,8 @@ const Terms = () => {
     const [agreements, setAgreements] = useState<Agreements>(initialAgreements);
     const [selectedAgreement, setSelectedAgreement] =
         useState<AgreementKey | null>(null);
+    const [submitting, setSubmitting] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     const selectedAgreementItem = agreementItems.find(
         ({ key }) => key === selectedAgreement
@@ -79,6 +83,27 @@ const Terms = () => {
             ...previous,
             [key]: !previous[key],
         }));
+    };
+
+    const handleContinue = async () => {
+        if (!requiredAgreed || submitting) return;
+
+        setSubmitting(true);
+
+        try {
+            const response = await updateMarketingConsentApi(
+                agreements.marketing
+            );
+            if (!response.isSuccess) throw new Error(response.message);
+
+            navigate("/onboarding");
+        } catch (error) {
+            console.error(error);
+            setToastMessage(
+                "동의 정보를 저장하지 못했어요. 다시 시도해주세요."
+            );
+            setSubmitting(false);
+        }
     };
 
     useEffect(() => {
@@ -179,10 +204,10 @@ const Terms = () => {
 
                     <Button
                         className="mt-auto mb-[clamp(32px,11.9svh,112px)] max-w-[325px] self-center"
-                        disabled={!requiredAgreed}
-                        onClick={() => navigate("/onboarding")}
+                        disabled={!requiredAgreed || submitting}
+                        onClick={() => void handleContinue()}
                     >
-                        동의하고 시작하기
+                        {submitting ? "저장 중..." : "동의하고 시작하기"}
                     </Button>
                 </section>
             </main>
@@ -285,6 +310,10 @@ const Terms = () => {
                     </section>
                 </div>
             )}
+            <Toast
+                message={toastMessage}
+                onDismiss={() => setToastMessage(null)}
+            />
         </>
     );
 };

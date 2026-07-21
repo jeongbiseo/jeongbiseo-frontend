@@ -14,24 +14,15 @@ import {
     getEstimatedTotalApi,
 } from "@/api/estimatedApi";
 import ChevronDownIcon from "@/components/common/ChevronDownIcon";
+import Button from "@/components/common/Button";
 import SummaryPolicyCard, {
     type SummaryPolicyItem,
 } from "@/components/home/SummaryPolicyCard";
 import { BackButton } from "@/components/mypage/MyPageUI";
-import type { EstimatedBreakdownResult, PaymentType } from "@/types/estimated";
+import { isNonCashPayment, paymentTypeLabels } from "@/constants/paymentType";
+import type { EstimatedBreakdownResult } from "@/types/estimated";
 import { formatAmountRange, formatWon } from "@/utils/format";
 import { useEffect, useState } from "react";
-
-const VOUCHER_TYPES: PaymentType[] = ["VOUCHER", "IN_KIND", "REDUCTION"];
-
-const paymentTypeLabels: Record<PaymentType, string> = {
-    CASH: "현금",
-    MONTHLY: "월 지급",
-    VOUCHER: "바우처",
-    IN_KIND: "현물",
-    REDUCTION: "감면",
-    UNKNOWN: "금액 미확정",
-};
 
 type Sections = {
     cash: SummaryPolicyItem[];
@@ -71,7 +62,7 @@ const toSections = (breakdown: EstimatedBreakdownResult): Sections => {
     ];
 
     const voucher = breakdown.separateBenefits
-        .filter(({ paymentType }) => VOUCHER_TYPES.includes(paymentType))
+        .filter(({ paymentType }) => isNonCashPayment(paymentType))
         .map((item) => ({
             rowId: `voucher-${item.subsidyId}`,
             policyId: item.subsidyId,
@@ -113,6 +104,7 @@ type PageState =
 const AvailablePolicies = () => {
     const [state, setState] = useState<PageState>({ status: "loading" });
     const [voucherExpanded, setVoucherExpanded] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
 
     useEffect(() => {
         let active = true;
@@ -146,7 +138,7 @@ const AvailablePolicies = () => {
         return () => {
             active = false;
         };
-    }, []);
+    }, [reloadKey]);
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
@@ -163,11 +155,20 @@ const AvailablePolicies = () => {
                 )}
 
                 {state.status === "error" && (
-                    <p className="text-text-muted mt-10 text-center text-[14px] font-semibold">
-                        정보를 불러오지 못했어요.
-                        <br />
-                        잠시 후 다시 시도해주세요.
-                    </p>
+                    <div className="mt-10 text-center">
+                        <p className="text-text-muted text-[14px] font-semibold">
+                            정보를 불러오지 못했어요.
+                        </p>
+                        <Button
+                            className="mt-5"
+                            onClick={() => {
+                                setState({ status: "loading" });
+                                setReloadKey((key) => key + 1);
+                            }}
+                        >
+                            다시 시도
+                        </Button>
+                    </div>
                 )}
 
                 {state.status === "ready" && (

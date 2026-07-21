@@ -1,15 +1,14 @@
 /* AI 추천 지원금 관련 타입입니다. (백엔드 Swagger 기준) */
 
-/**
- * GET /recommendations 항목입니다.
- *
- * NOTE: 지급 방식(paymentType)이 응답에 없어 "바우처" 여부를 알 수 없습니다.
- * 현재는 deadline이 null이면 "상시"로 표기합니다. (백엔드에 추가 요청해둔 상태)
- */
+import type { PaymentType } from "@/types/estimated";
+
+/** GET /recommendations 항목입니다. */
 export interface RecommendationItem {
     subsidyId: number;
     name: string;
     agency: string;
+    /** 지급 방식. 현금성이 아니면 바우처·현물 등으로 표기합니다. */
+    paymentType: PaymentType;
     /** YYYY-MM-DD, 상시/마감없음이면 null */
     deadline: string | null;
     /** 마감까지 남은 일수, 마감일이 없으면 null */

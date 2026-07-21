@@ -3,22 +3,26 @@ import {
     CheckIcon,
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
+import Toast from "@/components/common/Toast";
 import {
-    availableBenefits,
-    benefitCategories,
-    getMyPageProfile,
-    getReceivedBenefits,
-    saveMyPageProfile,
-    saveReceivedBenefits,
-    type ReceivedBenefit,
-} from "@/constants/mypageData";
-import {
+    employmentLabelOf,
     employmentOptions,
+    incomeLabelOf,
     incomeOptions,
+    subsidyCategoryOptions,
 } from "@/constants/onboardingOptions";
 import { regionNames, regions } from "@/constants/regions";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import {
+    getMyOnboardingApi,
+    getReceivedSubsidiesApi,
+    setReceivedSubsidiesApi,
+    updateMyOnboardingApi,
+} from "@/api/onboardingApi";
+import { searchSubsidiesApi } from "@/api/subsidyApi";
+import type { ReceivedBenefit, SubsidyCategory } from "@/types/onboarding";
+import { getDaysInMonth } from "@/utils/date";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from(
@@ -26,26 +30,114 @@ const years = Array.from(
     (_, index) => currentYear - 14 - index
 );
 const months = Array.from({ length: 12 }, (_, index) => index + 1);
-const days = Array.from({ length: 31 }, (_, index) => index + 1);
 
 const MyPageEdit = () => {
     const [searchParams] = useSearchParams();
     const receivedSectionRef = useRef<HTMLDivElement>(null);
-    const [initialProfile] = useState(getMyPageProfile);
-    const [birthYear, setBirthYear] = useState(initialProfile.birthYear);
-    const [birthMonth, setBirthMonth] = useState(initialProfile.birthMonth);
-    const [birthDay, setBirthDay] = useState(initialProfile.birthDay);
-    const [city, setCity] = useState(initialProfile.city);
-    const [district, setDistrict] = useState(initialProfile.district);
-    const [employment, setEmployment] = useState(initialProfile.employment);
-    const [income, setIncome] = useState(initialProfile.income);
-    const [householdSize, setHouseholdSize] = useState(
-        initialProfile.householdSize
+    const initialCity = regionNames[0];
+    const [birthYear, setBirthYear] = useState(years[0]);
+    const [birthMonth, setBirthMonth] = useState(1);
+    const [birthDay, setBirthDay] = useState(1);
+    const days = getDaysInMonth(birthYear, birthMonth);
+    const [city, setCity] = useState(initialCity);
+    const [district, setDistrict] = useState(regions[initialCity][0]);
+    const [employment, setEmployment] = useState("");
+    const [income, setIncome] = useState("");
+    const [householdSize, setHouseholdSize] = useState(1);
+    const [profileStatus, setProfileStatus] = useState<
+        "loading" | "ready" | "error"
+    >("loading");
+    const [profileReloadKey, setProfileReloadKey] = useState(0);
+    const [receivedBenefits, setReceivedBenefits] = useState<ReceivedBenefit[]>(
+        []
     );
-    const [receivedBenefits, setReceivedBenefits] =
-        useState(getReceivedBenefits);
+    const [receivedLoading, setReceivedLoading] = useState(true);
+    const [receivedError, setReceivedError] = useState(false);
+    const [receivedReloadKey, setReceivedReloadKey] = useState(0);
     const [addSheetOpen, setAddSheetOpen] = useState(false);
     const [saved, setSaved] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadProfile = async () => {
+            setProfileStatus("loading");
+            try {
+                const response = await getMyOnboardingApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                const profile = response.result;
+                const [year, month, day] = profile.birthDate
+                    .split("-")
+                    .map(Number);
+
+                setBirthYear(year);
+                setBirthMonth(month);
+                setBirthDay(day);
+                setCity(profile.sido);
+                setDistrict(profile.sigungu);
+                setEmployment(employmentLabelOf(profile.employmentStatus));
+                setIncome(incomeLabelOf(profile.incomeBracket));
+                setHouseholdSize(profile.householdSize ?? 1);
+                setProfileStatus("ready");
+            } catch (error) {
+                console.error(error);
+                if (active) setProfileStatus("error");
+            }
+        };
+
+        void loadProfile();
+
+        return () => {
+            active = false;
+        };
+    }, [profileReloadKey]);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadReceivedBenefits = async () => {
+            setReceivedLoading(true);
+            setReceivedError(false);
+
+            try {
+                const response = await getReceivedSubsidiesApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                setReceivedBenefits(
+                    response.result.content.map((benefit) => ({
+                        id: benefit.subsidyId,
+                        title: benefit.name,
+                        organization: "",
+                        categories: [],
+                    }))
+                );
+            } catch (error) {
+                console.error(error);
+                if (active) setReceivedError(true);
+            } finally {
+                if (active) setReceivedLoading(false);
+            }
+        };
+
+        void loadReceivedBenefits();
+
+        return () => {
+            active = false;
+        };
+    }, [receivedReloadKey]);
 
     useEffect(() => {
         if (searchParams.get("section") !== "received") return;
@@ -61,22 +153,97 @@ const MyPageEdit = () => {
 
     const updateReceivedBenefits = (benefits: ReceivedBenefit[]) => {
         setReceivedBenefits(benefits);
-        saveReceivedBenefits(benefits);
     };
 
-    const handleSave = () => {
-        saveMyPageProfile({
-            birthYear,
-            birthMonth,
-            birthDay,
-            city,
-            district,
-            employment,
-            income,
-            householdSize,
-        });
-        setSaved(true);
-        window.setTimeout(() => setSaved(false), 1800);
+    if (profileStatus !== "ready") {
+        return (
+            <MyPageLayout className="pt-[56px]">
+                <BackButton />
+                <div className="flex min-h-[65svh] flex-col items-center justify-center px-6 text-center">
+                    <h1 className="text-[20px] font-bold">
+                        {profileStatus === "loading"
+                            ? "내 정보를 불러오고 있어요"
+                            : "내 정보를 불러오지 못했어요"}
+                    </h1>
+                    <p className="text-text-muted mt-2 text-[13px] font-semibold">
+                        {profileStatus === "loading"
+                            ? "잠시만 기다려주세요."
+                            : "네트워크 상태를 확인한 뒤 다시 시도해주세요."}
+                    </p>
+                    {profileStatus === "error" && (
+                        <button
+                            className="bg-primary mt-5 rounded-[12px] px-5 py-3 text-[14px] font-bold text-white"
+                            type="button"
+                            onClick={() =>
+                                setProfileReloadKey((previous) => previous + 1)
+                            }
+                        >
+                            다시 시도
+                        </button>
+                    )}
+                </div>
+            </MyPageLayout>
+        );
+    }
+
+    const handleSave = async () => {
+        const employmentStatus = employmentOptions.find(
+            (option) => option.label === employment
+        )?.value;
+        const incomeBracket = incomeOptions.find(
+            (option) => option.label === income
+        )?.value;
+
+        if (!employmentStatus) {
+            setToastMessage("고용상태를 선택해주세요.");
+            return;
+        }
+
+        if (receivedLoading || receivedError) {
+            setToastMessage("기수령 지원금을 먼저 불러와주세요.");
+            return;
+        }
+
+        setSaving(true);
+        setSaved(false);
+
+        let profileSaved = false;
+
+        try {
+            const profileResponse = await updateMyOnboardingApi({
+                birthDate: `${birthYear}-${String(birthMonth).padStart(2, "0")}-${String(birthDay).padStart(2, "0")}`,
+                sido: city,
+                sigungu: district,
+                employmentStatus,
+                ...(incomeBracket ? { incomeBracket } : {}),
+                householdSize,
+            });
+
+            if (!profileResponse.isSuccess) {
+                throw new Error(profileResponse.message);
+            }
+            profileSaved = true;
+
+            const receivedResponse = await setReceivedSubsidiesApi(
+                receivedBenefits.map((benefit) => benefit.id)
+            );
+
+            if (!receivedResponse.isSuccess) {
+                throw new Error(receivedResponse.message);
+            }
+
+            setSaved(true);
+            window.setTimeout(() => setSaved(false), 1800);
+        } catch (error) {
+            console.error(error);
+            setToastMessage(
+                profileSaved
+                    ? "프로필은 저장됐지만 기수령 지원금은 저장하지 못했습니다."
+                    : "정보를 저장하지 못했습니다. 다시 시도해주세요."
+            );
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
@@ -95,14 +262,36 @@ const MyPageEdit = () => {
 
                 <FieldLabel>생년월일</FieldLabel>
                 <div className="grid grid-cols-3 gap-[13px]">
-                    <Select value={birthYear} onChange={setBirthYear}>
+                    <Select
+                        value={birthYear}
+                        onChange={(nextYear) => {
+                            setBirthYear(nextYear);
+                            setBirthDay((day) =>
+                                Math.min(
+                                    day,
+                                    getDaysInMonth(nextYear, birthMonth).length
+                                )
+                            );
+                        }}
+                    >
                         {years.map((year) => (
                             <option value={year} key={year}>
                                 {year}년
                             </option>
                         ))}
                     </Select>
-                    <Select value={birthMonth} onChange={setBirthMonth}>
+                    <Select
+                        value={birthMonth}
+                        onChange={(nextMonth) => {
+                            setBirthMonth(nextMonth);
+                            setBirthDay((day) =>
+                                Math.min(
+                                    day,
+                                    getDaysInMonth(birthYear, nextMonth).length
+                                )
+                            );
+                        }}
+                    >
                         {months.map((month) => (
                             <option value={month} key={month}>
                                 {month}월
@@ -148,6 +337,7 @@ const MyPageEdit = () => {
 
                 <FieldLabel>월 소득구간</FieldLabel>
                 <Select value={income} onChange={setIncome}>
+                    <option value="">선택 안 함</option>
                     {incomeOptions.map(({ label, value }) => (
                         <option key={value}>{label}</option>
                     ))}
@@ -196,34 +386,68 @@ const MyPageEdit = () => {
                     </p>
 
                     <div className="mt-4 flex flex-col gap-3">
-                        {receivedBenefits.map((benefit) => (
-                            <div
-                                className="bg-success-light flex min-h-[54px] items-center justify-between rounded-[10px] px-6"
-                                key={benefit.id}
-                            >
-                                <strong className="text-[14px]">
-                                    {benefit.title}
-                                </strong>
+                        {receivedLoading && (
+                            <p className="text-text-subtle py-4 text-center text-[13px] font-semibold">
+                                기수령 지원금을 불러오는 중이에요
+                            </p>
+                        )}
+                        {receivedError && (
+                            <div className="py-4 text-center">
+                                <p className="text-text-subtle text-[13px] font-semibold">
+                                    기수령 지원금을 불러오지 못했어요
+                                </p>
                                 <button
-                                    className="border-text-muted cursor-pointer rounded-full border px-3 py-1 text-[12px] font-bold"
+                                    className="text-primary mt-2 cursor-pointer text-[13px] font-bold"
                                     type="button"
                                     onClick={() =>
-                                        updateReceivedBenefits(
-                                            receivedBenefits.filter(
-                                                ({ id }) => id !== benefit.id
-                                            )
+                                        setReceivedReloadKey(
+                                            (previous) => previous + 1
                                         )
                                     }
                                 >
-                                    삭제
+                                    다시 시도
                                 </button>
                             </div>
-                        ))}
+                        )}
+                        {!receivedLoading &&
+                            !receivedError &&
+                            receivedBenefits.length === 0 && (
+                                <p className="text-text-subtle py-4 text-center text-[13px] font-semibold">
+                                    등록된 기수령 지원금이 없어요
+                                </p>
+                            )}
+                        {!receivedLoading &&
+                            !receivedError &&
+                            receivedBenefits.map((benefit) => (
+                                <div
+                                    className="bg-success-light flex min-h-[54px] items-center justify-between rounded-[10px] px-6"
+                                    key={benefit.id}
+                                >
+                                    <strong className="text-[14px]">
+                                        {benefit.title}
+                                    </strong>
+                                    <button
+                                        className="border-text-muted cursor-pointer rounded-full border px-3 py-1 text-[12px] font-bold"
+                                        type="button"
+                                        onClick={() =>
+                                            updateReceivedBenefits(
+                                                receivedBenefits.filter(
+                                                    ({ id }) =>
+                                                        id !== benefit.id
+                                                )
+                                            )
+                                        }
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
+                            ))}
                     </div>
 
                     <button
                         className="bg-primary mt-4 h-[42px] cursor-pointer rounded-[15px] px-5 text-[15px] font-bold text-white shadow-[3px_8px_10px_var(--color-green-shadow)]"
                         type="button"
+                        disabled={receivedLoading || receivedError}
                         onClick={() => setAddSheetOpen(true)}
                     >
                         기존 수령중인 지원금 추가
@@ -233,9 +457,10 @@ const MyPageEdit = () => {
                 <button
                     className="bg-third mt-9 h-[39px] w-[341px] max-w-full cursor-pointer rounded-[15px] text-[16px] font-bold text-white"
                     type="button"
+                    disabled={saving || receivedLoading || receivedError}
                     onClick={handleSave}
                 >
-                    저장
+                    {saving ? "저장 중..." : "저장"}
                 </button>
                 {saved && (
                     <p
@@ -256,6 +481,10 @@ const MyPageEdit = () => {
                     setAddSheetOpen(false);
                 }}
             />
+            <Toast
+                message={toastMessage}
+                onDismiss={() => setToastMessage(null)}
+            />
         </>
     );
 };
@@ -272,33 +501,77 @@ const BenefitAddSheet = ({
     onSave: (benefits: ReceivedBenefit[]) => void;
 }) => {
     const [query, setQuery] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("청년");
-    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [selectedCategory, setSelectedCategory] =
+        useState<SubsidyCategory | null>(null);
+    const [selectedBenefits, setSelectedBenefits] = useState<ReceivedBenefit[]>(
+        []
+    );
+    const [searchResults, setSearchResults] = useState<ReceivedBenefit[]>([]);
+    const [searching, setSearching] = useState(false);
+    const [searchError, setSearchError] = useState(false);
+
+    useEffect(() => {
+        if (!open) return;
+
+        let active = true;
+        const timer = window.setTimeout(() => {
+            const searchBenefits = async () => {
+                setSearching(true);
+                setSearchError(false);
+
+                try {
+                    const response = await searchSubsidiesApi({
+                        keyword: query.trim() || undefined,
+                        category: selectedCategory ?? undefined,
+                        includeClosed: true,
+                        page: 0,
+                        size: 50,
+                    });
+
+                    if (!response.isSuccess) {
+                        throw new Error(response.message);
+                    }
+
+                    if (!active) return;
+
+                    setSearchResults(
+                        response.result.content.map((benefit) => ({
+                            id: benefit.subsidyId,
+                            title: benefit.name,
+                            organization: benefit.agency ?? "기관 정보 없음",
+                            categories: benefit.category
+                                ? [benefit.category]
+                                : [],
+                        }))
+                    );
+                } catch (error) {
+                    console.error(error);
+                    if (active) setSearchError(true);
+                } finally {
+                    if (active) setSearching(false);
+                }
+            };
+
+            void searchBenefits();
+        }, 300);
+
+        return () => {
+            active = false;
+            window.clearTimeout(timer);
+        };
+    }, [open, query, selectedCategory]);
 
     const visibleBenefits = useMemo(() => {
         const receivedIds = new Set(receivedBenefits.map(({ id }) => id));
-        const normalizedQuery = query.trim().toLowerCase();
 
-        return availableBenefits.filter(
-            (benefit) =>
-                !receivedIds.has(benefit.id) &&
-                benefit.categories.includes(selectedCategory) &&
-                (normalizedQuery.length === 0 ||
-                    benefit.title.toLowerCase().includes(normalizedQuery) ||
-                    benefit.organization
-                        .toLowerCase()
-                        .includes(normalizedQuery))
-        );
-    }, [query, receivedBenefits, selectedCategory]);
+        return searchResults.filter((benefit) => !receivedIds.has(benefit.id));
+    }, [receivedBenefits, searchResults]);
 
     if (!open) return null;
 
     const handleSave = () => {
-        const additions = availableBenefits.filter(({ id }) =>
-            selectedIds.includes(id)
-        );
-        onSave([...receivedBenefits, ...additions]);
-        setSelectedIds([]);
+        onSave([...receivedBenefits, ...selectedBenefits]);
+        setSelectedBenefits([]);
     };
 
     return (
@@ -332,68 +605,88 @@ const BenefitAddSheet = ({
                     />
                 </div>
 
-                <div className="mt-4 flex justify-between gap-1.5">
-                    {benefitCategories.map((category) => (
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                    {[
+                        { label: "전체", value: null },
+                        ...subsidyCategoryOptions,
+                    ].map(({ label, value }) => (
                         <button
-                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${selectedCategory === category ? "bg-third text-white" : "bg-line text-text-body"}`}
+                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${selectedCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
                             type="button"
-                            key={category}
-                            onClick={() => setSelectedCategory(category)}
+                            key={value ?? "all"}
+                            onClick={() => setSelectedCategory(value)}
                         >
-                            {category}
+                            {label}
                         </button>
                     ))}
                 </div>
 
                 <div className="mt-8 flex flex-col gap-3">
-                    {visibleBenefits.map((benefit) => {
-                        const selected = selectedIds.includes(benefit.id);
-                        return (
-                            <button
-                                className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-primary bg-selection-light" : "border-line-strong bg-white"}`}
-                                type="button"
-                                key={benefit.id}
-                                onClick={() =>
-                                    setSelectedIds((previous) =>
-                                        selected
-                                            ? previous.filter(
-                                                  (id) => id !== benefit.id
-                                              )
-                                            : [...previous, benefit.id]
-                                    )
-                                }
-                            >
-                                <span
-                                    className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-line-strong"}`}
-                                >
-                                    {selected && <CheckIcon />}
-                                </span>
-                                <span>
-                                    <strong className="block text-[14px]">
-                                        {benefit.title}
-                                    </strong>
-                                    <span className="text-text-subtle mt-1 block text-[12px] font-semibold">
-                                        {benefit.organization}
-                                    </span>
-                                </span>
-                            </button>
-                        );
-                    })}
-                    {visibleBenefits.length === 0 && (
+                    {searching && (
                         <p className="text-text-subtle py-8 text-center text-[13px]">
-                            추가할 수 있는 지원금이 없어요
+                            지원금을 검색하는 중이에요
                         </p>
                     )}
+                    {searchError && (
+                        <p className="text-danger py-8 text-center text-[13px] font-semibold">
+                            지원금을 불러오지 못했어요
+                        </p>
+                    )}
+                    {!searching &&
+                        !searchError &&
+                        visibleBenefits.map((benefit) => {
+                            const selected = selectedBenefits.some(
+                                ({ id }) => id === benefit.id
+                            );
+                            return (
+                                <button
+                                    className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-primary bg-selection-light" : "border-line-strong bg-white"}`}
+                                    type="button"
+                                    key={benefit.id}
+                                    onClick={() =>
+                                        setSelectedBenefits((previous) =>
+                                            selected
+                                                ? previous.filter(
+                                                      ({ id }) =>
+                                                          id !== benefit.id
+                                                  )
+                                                : [...previous, benefit]
+                                        )
+                                    }
+                                >
+                                    <span
+                                        className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-line-strong"}`}
+                                    >
+                                        {selected && <CheckIcon />}
+                                    </span>
+                                    <span>
+                                        <strong className="block text-[14px]">
+                                            {benefit.title}
+                                        </strong>
+                                        <span className="text-text-subtle mt-1 block text-[12px] font-semibold">
+                                            {benefit.organization}
+                                        </span>
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    {!searching &&
+                        !searchError &&
+                        visibleBenefits.length === 0 && (
+                            <p className="text-text-subtle py-8 text-center text-[13px]">
+                                추가할 수 있는 지원금이 없어요
+                            </p>
+                        )}
                 </div>
 
                 <button
                     className="bg-primary disabled:bg-disabled mt-6 h-[48px] w-full cursor-pointer rounded-[14px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
                     type="button"
-                    disabled={selectedIds.length === 0}
+                    disabled={selectedBenefits.length === 0}
                     onClick={handleSave}
                 >
-                    {selectedIds.length > 0
-                        ? `${selectedIds.length}개 추가하기`
+                    {selectedBenefits.length > 0
+                        ? `${selectedBenefits.length}개 추가하기`
                         : "추가할 지원금을 선택해주세요"}
                 </button>
             </section>

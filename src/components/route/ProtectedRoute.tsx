@@ -17,9 +17,21 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     // 부팅 중이면 로딩(깜빡임 방지)
     if (!authInitialized) {
         return (
-            <div className="flex min-h-svh items-center justify-center">
-                로딩중...
-            </div>
+            <main className="bg-surface-dim flex min-h-svh justify-center">
+                <section
+                    className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col items-center justify-center"
+                    role="status"
+                    aria-live="polite"
+                >
+                    <span
+                        className="border-disabled border-t-primary size-9 animate-spin rounded-full border-[3px]"
+                        aria-hidden="true"
+                    />
+                    <p className="text-text-muted mt-4 text-[14px] font-semibold">
+                        로그인 정보를 확인하고 있어요
+                    </p>
+                </section>
+            </main>
         );
     }
 
