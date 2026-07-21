@@ -12,3 +12,12 @@ export const getMyInfoApi = async () => {
     const response = await axiosInstance.get<MyInfoResponse>("/members/me");
     return response.data;
 };
+
+/** 현재 로그인한 회원을 탈퇴 처리합니다. 탈퇴 사유는 선택값입니다. */
+export const withdrawMemberApi = async (reason?: string) => {
+    const response = await axiosInstance.delete<ApiResponse<null>>(
+        "/members/me",
+        { data: reason ? { reason } : {} }
+    );
+    return response.data;
+};

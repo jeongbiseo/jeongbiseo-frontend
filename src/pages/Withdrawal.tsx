@@ -4,6 +4,7 @@ import {
     ConfirmDialog,
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
+import { withdrawMemberApi } from "@/api/memberApi";
 import { clearMyPageDummyData } from "@/constants/mypageData";
 import { useAuthStore } from "@/stores/authStore";
 import { useState } from "react";
@@ -21,12 +22,32 @@ const Withdrawal = () => {
     const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
     const [noticeAgreed, setNoticeAgreed] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [withdrawing, setWithdrawing] = useState(false);
 
-    const handleWithdrawal = () => {
-        clearMyPageDummyData();
-        logout();
-        setConfirmOpen(false);
-        navigate("/login", { replace: true });
+    const handleWithdrawal = async () => {
+        if (withdrawing) return;
+
+        setWithdrawing(true);
+
+        try {
+            const response = await withdrawMemberApi(
+                selectedReasons.join(", ") || undefined
+            );
+
+            if (!response.isSuccess) {
+                throw new Error(response.message);
+            }
+
+            clearMyPageDummyData();
+            logout();
+            setConfirmOpen(false);
+            navigate("/login", { replace: true });
+        } catch (error) {
+            console.error(error);
+            window.alert("회원 탈퇴에 실패했습니다. 다시 시도해주세요.");
+        } finally {
+            setWithdrawing(false);
+        }
     };
 
     const toggleReason = (reason: string) => {
@@ -107,10 +128,10 @@ const Withdrawal = () => {
                 <button
                     className="bg-danger disabled:bg-danger-disabled mt-36 h-[40px] w-full cursor-pointer rounded-[10px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
                     type="button"
-                    disabled={!noticeAgreed}
+                    disabled={!noticeAgreed || withdrawing}
                     onClick={() => setConfirmOpen(true)}
                 >
-                    서비스 탈퇴하기
+                    {withdrawing ? "탈퇴 처리 중..." : "서비스 탈퇴하기"}
                 </button>
             </MyPageLayout>
 
