@@ -1,4 +1,5 @@
 import type { SubsidyCategory } from "@/types/onboarding";
+import type { PaymentType } from "@/types/estimated";
 
 export type SubsidyDetailResult = {
     subsidyId: number;
@@ -9,7 +10,7 @@ export type SubsidyDetailResult = {
     dDay: number | null;
     estimatedAmountMin: number | null;
     estimatedAmountMax: number | null;
-    paymentType: string;
+    paymentType: PaymentType;
     category: SubsidyCategory | null;
     description: string | null;
     externalUrl: string | null;

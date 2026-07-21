@@ -3,7 +3,7 @@ import {
     CheckIcon,
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
-import { getMyPageProfile, type ReceivedBenefit } from "@/constants/mypageData";
+import Toast from "@/components/common/Toast";
 import {
     employmentLabelOf,
     employmentOptions,
@@ -21,7 +21,7 @@ import {
     updateMyOnboardingApi,
 } from "@/api/onboardingApi";
 import { searchSubsidiesApi } from "@/api/subsidyApi";
-import type { SubsidyCategory } from "@/types/onboarding";
+import type { ReceivedBenefit, SubsidyCategory } from "@/types/onboarding";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from(
@@ -34,17 +34,19 @@ const days = Array.from({ length: 31 }, (_, index) => index + 1);
 const MyPageEdit = () => {
     const [searchParams] = useSearchParams();
     const receivedSectionRef = useRef<HTMLDivElement>(null);
-    const [initialProfile] = useState(getMyPageProfile);
-    const [birthYear, setBirthYear] = useState(initialProfile.birthYear);
-    const [birthMonth, setBirthMonth] = useState(initialProfile.birthMonth);
-    const [birthDay, setBirthDay] = useState(initialProfile.birthDay);
-    const [city, setCity] = useState(initialProfile.city);
-    const [district, setDistrict] = useState(initialProfile.district);
-    const [employment, setEmployment] = useState(initialProfile.employment);
-    const [income, setIncome] = useState(initialProfile.income);
-    const [householdSize, setHouseholdSize] = useState(
-        initialProfile.householdSize
-    );
+    const initialCity = regionNames[0];
+    const [birthYear, setBirthYear] = useState(years[0]);
+    const [birthMonth, setBirthMonth] = useState(1);
+    const [birthDay, setBirthDay] = useState(1);
+    const [city, setCity] = useState(initialCity);
+    const [district, setDistrict] = useState(regions[initialCity][0]);
+    const [employment, setEmployment] = useState("");
+    const [income, setIncome] = useState("");
+    const [householdSize, setHouseholdSize] = useState(1);
+    const [profileStatus, setProfileStatus] = useState<
+        "loading" | "ready" | "error"
+    >("loading");
+    const [profileReloadKey, setProfileReloadKey] = useState(0);
     const [receivedBenefits, setReceivedBenefits] = useState<ReceivedBenefit[]>(
         []
     );
@@ -54,11 +56,13 @@ const MyPageEdit = () => {
     const [addSheetOpen, setAddSheetOpen] = useState(false);
     const [saved, setSaved] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     useEffect(() => {
         let active = true;
 
         const loadProfile = async () => {
+            setProfileStatus("loading");
             try {
                 const response = await getMyOnboardingApi();
 
@@ -81,12 +85,10 @@ const MyPageEdit = () => {
                 setEmployment(employmentLabelOf(profile.employmentStatus));
                 setIncome(incomeLabelOf(profile.incomeBracket));
                 setHouseholdSize(profile.householdSize ?? 1);
+                setProfileStatus("ready");
             } catch (error) {
                 console.error(error);
-
-                if (active) {
-                    window.alert("내 정보를 불러오지 못했습니다.");
-                }
+                if (active) setProfileStatus("error");
             }
         };
 
@@ -95,7 +97,7 @@ const MyPageEdit = () => {
         return () => {
             active = false;
         };
-    }, []);
+    }, [profileReloadKey]);
 
     useEffect(() => {
         let active = true;
@@ -152,6 +154,37 @@ const MyPageEdit = () => {
         setReceivedBenefits(benefits);
     };
 
+    if (profileStatus !== "ready") {
+        return (
+            <MyPageLayout className="pt-[56px]">
+                <BackButton />
+                <div className="flex min-h-[65svh] flex-col items-center justify-center px-6 text-center">
+                    <h1 className="text-[20px] font-bold">
+                        {profileStatus === "loading"
+                            ? "내 정보를 불러오고 있어요"
+                            : "내 정보를 불러오지 못했어요"}
+                    </h1>
+                    <p className="text-text-muted mt-2 text-[13px] font-semibold">
+                        {profileStatus === "loading"
+                            ? "잠시만 기다려주세요."
+                            : "네트워크 상태를 확인한 뒤 다시 시도해주세요."}
+                    </p>
+                    {profileStatus === "error" && (
+                        <button
+                            className="bg-primary mt-5 rounded-[12px] px-5 py-3 text-[14px] font-bold text-white"
+                            type="button"
+                            onClick={() =>
+                                setProfileReloadKey((previous) => previous + 1)
+                            }
+                        >
+                            다시 시도
+                        </button>
+                    )}
+                </div>
+            </MyPageLayout>
+        );
+    }
+
     const handleSave = async () => {
         const employmentStatus = employmentOptions.find(
             (option) => option.label === employment
@@ -161,41 +194,52 @@ const MyPageEdit = () => {
         )?.value;
 
         if (!employmentStatus) {
-            window.alert("고용상태를 선택해주세요.");
+            setToastMessage("고용상태를 선택해주세요.");
+            return;
+        }
+
+        if (receivedLoading || receivedError) {
+            setToastMessage("기수령 지원금을 먼저 불러와주세요.");
             return;
         }
 
         setSaving(true);
         setSaved(false);
 
-        try {
-            const [profileResponse, receivedResponse] = await Promise.all([
-                updateMyOnboardingApi({
-                    birthDate: `${birthYear}-${String(birthMonth).padStart(2, "0")}-${String(birthDay).padStart(2, "0")}`,
-                    sido: city,
-                    sigungu: district,
-                    employmentStatus,
-                    ...(incomeBracket ? { incomeBracket } : {}),
-                    householdSize,
-                }),
-                setReceivedSubsidiesApi(
-                    receivedBenefits.map((benefit) => benefit.id)
-                ),
-            ]);
+        let profileSaved = false;
 
-            if (!profileResponse.isSuccess || !receivedResponse.isSuccess) {
-                throw new Error(
-                    profileResponse.isSuccess
-                        ? receivedResponse.message
-                        : profileResponse.message
-                );
+        try {
+            const profileResponse = await updateMyOnboardingApi({
+                birthDate: `${birthYear}-${String(birthMonth).padStart(2, "0")}-${String(birthDay).padStart(2, "0")}`,
+                sido: city,
+                sigungu: district,
+                employmentStatus,
+                ...(incomeBracket ? { incomeBracket } : {}),
+                householdSize,
+            });
+
+            if (!profileResponse.isSuccess) {
+                throw new Error(profileResponse.message);
+            }
+            profileSaved = true;
+
+            const receivedResponse = await setReceivedSubsidiesApi(
+                receivedBenefits.map((benefit) => benefit.id)
+            );
+
+            if (!receivedResponse.isSuccess) {
+                throw new Error(receivedResponse.message);
             }
 
             setSaved(true);
             window.setTimeout(() => setSaved(false), 1800);
         } catch (error) {
             console.error(error);
-            window.alert("정보를 저장하지 못했습니다. 다시 시도해주세요.");
+            setToastMessage(
+                profileSaved
+                    ? "프로필은 저장됐지만 기수령 지원금은 저장하지 못했습니다."
+                    : "정보를 저장하지 못했습니다. 다시 시도해주세요."
+            );
         } finally {
             setSaving(false);
         }
@@ -270,6 +314,7 @@ const MyPageEdit = () => {
 
                 <FieldLabel>월 소득구간</FieldLabel>
                 <Select value={income} onChange={setIncome}>
+                    <option value="">선택 안 함</option>
                     {incomeOptions.map(({ label, value }) => (
                         <option key={value}>{label}</option>
                     ))}
@@ -389,7 +434,7 @@ const MyPageEdit = () => {
                 <button
                     className="bg-third mt-9 h-[39px] w-[341px] max-w-full cursor-pointer rounded-[15px] text-[16px] font-bold text-white"
                     type="button"
-                    disabled={saving}
+                    disabled={saving || receivedLoading || receivedError}
                     onClick={handleSave}
                 >
                     {saving ? "저장 중..." : "저장"}
@@ -412,6 +457,10 @@ const MyPageEdit = () => {
                     updateReceivedBenefits(benefits);
                     setAddSheetOpen(false);
                 }}
+            />
+            <Toast
+                message={toastMessage}
+                onDismiss={() => setToastMessage(null)}
             />
         </>
     );
@@ -451,6 +500,7 @@ const BenefitAddSheet = ({
                     const response = await searchSubsidiesApi({
                         keyword: query.trim() || undefined,
                         category: selectedCategory ?? undefined,
+                        includeClosed: true,
                         page: 0,
                         size: 50,
                     });

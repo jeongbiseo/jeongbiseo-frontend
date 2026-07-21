@@ -464,6 +464,7 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
                 const response = await searchSubsidiesApi({
                     keyword: debouncedQuery,
                     category: category ?? undefined,
+                    includeClosed: true,
                 });
                 if (active) {
                     setResult({

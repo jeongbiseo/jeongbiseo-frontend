@@ -21,7 +21,6 @@ import AuthCallback from "@/pages/AuthCallback";
 import CalendarPage from "@/pages/CalendarPage";
 import AvailablePolicies from "@/pages/AvailablePolicies";
 import Home from "@/pages/Home";
-import FavoriteManagement from "@/pages/FavoriteManagement";
 import Login from "@/pages/Login";
 import MyPage from "@/pages/MyPage";
 import MyPageEdit from "@/pages/MyPageEdit";
@@ -109,14 +108,6 @@ export const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <MyPageEdit />
-                    </ProtectedRoute>
-                ),
-            },
-            {
-                path: "mypage/favorites",
-                element: (
-                    <ProtectedRoute>
-                        <FavoriteManagement />
                     </ProtectedRoute>
                 ),
             },
