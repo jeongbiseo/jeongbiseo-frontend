@@ -3,24 +3,25 @@ import {
     CheckIcon,
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
-import {
-    availableBenefits,
-    benefitCategories,
-    getMyPageProfile,
-    getReceivedBenefits,
-    saveReceivedBenefits,
-    type ReceivedBenefit,
-} from "@/constants/mypageData";
+import { getMyPageProfile, type ReceivedBenefit } from "@/constants/mypageData";
 import {
     employmentLabelOf,
     employmentOptions,
     incomeLabelOf,
     incomeOptions,
+    subsidyCategoryOptions,
 } from "@/constants/onboardingOptions";
 import { regionNames, regions } from "@/constants/regions";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getMyOnboardingApi, updateMyOnboardingApi } from "@/api/onboardingApi";
+import {
+    getMyOnboardingApi,
+    getReceivedSubsidiesApi,
+    setReceivedSubsidiesApi,
+    updateMyOnboardingApi,
+} from "@/api/onboardingApi";
+import { searchSubsidiesApi } from "@/api/subsidyApi";
+import type { SubsidyCategory } from "@/types/onboarding";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from(
@@ -44,8 +45,12 @@ const MyPageEdit = () => {
     const [householdSize, setHouseholdSize] = useState(
         initialProfile.householdSize
     );
-    const [receivedBenefits, setReceivedBenefits] =
-        useState(getReceivedBenefits);
+    const [receivedBenefits, setReceivedBenefits] = useState<ReceivedBenefit[]>(
+        []
+    );
+    const [receivedLoading, setReceivedLoading] = useState(true);
+    const [receivedError, setReceivedError] = useState(false);
+    const [receivedReloadKey, setReceivedReloadKey] = useState(0);
     const [addSheetOpen, setAddSheetOpen] = useState(false);
     const [saved, setSaved] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -93,6 +98,45 @@ const MyPageEdit = () => {
     }, []);
 
     useEffect(() => {
+        let active = true;
+
+        const loadReceivedBenefits = async () => {
+            setReceivedLoading(true);
+            setReceivedError(false);
+
+            try {
+                const response = await getReceivedSubsidiesApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                setReceivedBenefits(
+                    response.result.content.map((benefit) => ({
+                        id: benefit.subsidyId,
+                        title: benefit.name,
+                        organization: "",
+                        categories: [],
+                    }))
+                );
+            } catch (error) {
+                console.error(error);
+                if (active) setReceivedError(true);
+            } finally {
+                if (active) setReceivedLoading(false);
+            }
+        };
+
+        void loadReceivedBenefits();
+
+        return () => {
+            active = false;
+        };
+    }, [receivedReloadKey]);
+
+    useEffect(() => {
         if (searchParams.get("section") !== "received") return;
 
         const frame = window.requestAnimationFrame(() => {
@@ -106,7 +150,6 @@ const MyPageEdit = () => {
 
     const updateReceivedBenefits = (benefits: ReceivedBenefit[]) => {
         setReceivedBenefits(benefits);
-        saveReceivedBenefits(benefits);
     };
 
     const handleSave = async () => {
@@ -126,17 +169,26 @@ const MyPageEdit = () => {
         setSaved(false);
 
         try {
-            const response = await updateMyOnboardingApi({
-                birthDate: `${birthYear}-${String(birthMonth).padStart(2, "0")}-${String(birthDay).padStart(2, "0")}`,
-                sido: city,
-                sigungu: district,
-                employmentStatus,
-                ...(incomeBracket ? { incomeBracket } : {}),
-                householdSize,
-            });
+            const [profileResponse, receivedResponse] = await Promise.all([
+                updateMyOnboardingApi({
+                    birthDate: `${birthYear}-${String(birthMonth).padStart(2, "0")}-${String(birthDay).padStart(2, "0")}`,
+                    sido: city,
+                    sigungu: district,
+                    employmentStatus,
+                    ...(incomeBracket ? { incomeBracket } : {}),
+                    householdSize,
+                }),
+                setReceivedSubsidiesApi(
+                    receivedBenefits.map((benefit) => benefit.id)
+                ),
+            ]);
 
-            if (!response.isSuccess) {
-                throw new Error(response.message);
+            if (!profileResponse.isSuccess || !receivedResponse.isSuccess) {
+                throw new Error(
+                    profileResponse.isSuccess
+                        ? receivedResponse.message
+                        : profileResponse.message
+                );
             }
 
             setSaved(true);
@@ -266,34 +318,68 @@ const MyPageEdit = () => {
                     </p>
 
                     <div className="mt-4 flex flex-col gap-3">
-                        {receivedBenefits.map((benefit) => (
-                            <div
-                                className="bg-success-light flex min-h-[54px] items-center justify-between rounded-[10px] px-6"
-                                key={benefit.id}
-                            >
-                                <strong className="text-[14px]">
-                                    {benefit.title}
-                                </strong>
+                        {receivedLoading && (
+                            <p className="text-text-subtle py-4 text-center text-[13px] font-semibold">
+                                기수령 지원금을 불러오는 중이에요
+                            </p>
+                        )}
+                        {receivedError && (
+                            <div className="py-4 text-center">
+                                <p className="text-text-subtle text-[13px] font-semibold">
+                                    기수령 지원금을 불러오지 못했어요
+                                </p>
                                 <button
-                                    className="border-text-muted cursor-pointer rounded-full border px-3 py-1 text-[12px] font-bold"
+                                    className="text-primary mt-2 cursor-pointer text-[13px] font-bold"
                                     type="button"
                                     onClick={() =>
-                                        updateReceivedBenefits(
-                                            receivedBenefits.filter(
-                                                ({ id }) => id !== benefit.id
-                                            )
+                                        setReceivedReloadKey(
+                                            (previous) => previous + 1
                                         )
                                     }
                                 >
-                                    삭제
+                                    다시 시도
                                 </button>
                             </div>
-                        ))}
+                        )}
+                        {!receivedLoading &&
+                            !receivedError &&
+                            receivedBenefits.length === 0 && (
+                                <p className="text-text-subtle py-4 text-center text-[13px] font-semibold">
+                                    등록된 기수령 지원금이 없어요
+                                </p>
+                            )}
+                        {!receivedLoading &&
+                            !receivedError &&
+                            receivedBenefits.map((benefit) => (
+                                <div
+                                    className="bg-success-light flex min-h-[54px] items-center justify-between rounded-[10px] px-6"
+                                    key={benefit.id}
+                                >
+                                    <strong className="text-[14px]">
+                                        {benefit.title}
+                                    </strong>
+                                    <button
+                                        className="border-text-muted cursor-pointer rounded-full border px-3 py-1 text-[12px] font-bold"
+                                        type="button"
+                                        onClick={() =>
+                                            updateReceivedBenefits(
+                                                receivedBenefits.filter(
+                                                    ({ id }) =>
+                                                        id !== benefit.id
+                                                )
+                                            )
+                                        }
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
+                            ))}
                     </div>
 
                     <button
                         className="bg-primary mt-4 h-[42px] cursor-pointer rounded-[15px] px-5 text-[15px] font-bold text-white shadow-[3px_8px_10px_var(--color-green-shadow)]"
                         type="button"
+                        disabled={receivedLoading || receivedError}
                         onClick={() => setAddSheetOpen(true)}
                     >
                         기존 수령중인 지원금 추가
@@ -343,33 +429,76 @@ const BenefitAddSheet = ({
     onSave: (benefits: ReceivedBenefit[]) => void;
 }) => {
     const [query, setQuery] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("청년");
-    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [selectedCategory, setSelectedCategory] =
+        useState<SubsidyCategory | null>(null);
+    const [selectedBenefits, setSelectedBenefits] = useState<ReceivedBenefit[]>(
+        []
+    );
+    const [searchResults, setSearchResults] = useState<ReceivedBenefit[]>([]);
+    const [searching, setSearching] = useState(false);
+    const [searchError, setSearchError] = useState(false);
+
+    useEffect(() => {
+        if (!open) return;
+
+        let active = true;
+        const timer = window.setTimeout(() => {
+            const searchBenefits = async () => {
+                setSearching(true);
+                setSearchError(false);
+
+                try {
+                    const response = await searchSubsidiesApi({
+                        keyword: query.trim() || undefined,
+                        category: selectedCategory ?? undefined,
+                        page: 0,
+                        size: 50,
+                    });
+
+                    if (!response.isSuccess) {
+                        throw new Error(response.message);
+                    }
+
+                    if (!active) return;
+
+                    setSearchResults(
+                        response.result.content.map((benefit) => ({
+                            id: benefit.subsidyId,
+                            title: benefit.name,
+                            organization: benefit.agency ?? "기관 정보 없음",
+                            categories: benefit.category
+                                ? [benefit.category]
+                                : [],
+                        }))
+                    );
+                } catch (error) {
+                    console.error(error);
+                    if (active) setSearchError(true);
+                } finally {
+                    if (active) setSearching(false);
+                }
+            };
+
+            void searchBenefits();
+        }, 300);
+
+        return () => {
+            active = false;
+            window.clearTimeout(timer);
+        };
+    }, [open, query, selectedCategory]);
 
     const visibleBenefits = useMemo(() => {
         const receivedIds = new Set(receivedBenefits.map(({ id }) => id));
-        const normalizedQuery = query.trim().toLowerCase();
 
-        return availableBenefits.filter(
-            (benefit) =>
-                !receivedIds.has(benefit.id) &&
-                benefit.categories.includes(selectedCategory) &&
-                (normalizedQuery.length === 0 ||
-                    benefit.title.toLowerCase().includes(normalizedQuery) ||
-                    benefit.organization
-                        .toLowerCase()
-                        .includes(normalizedQuery))
-        );
-    }, [query, receivedBenefits, selectedCategory]);
+        return searchResults.filter((benefit) => !receivedIds.has(benefit.id));
+    }, [receivedBenefits, searchResults]);
 
     if (!open) return null;
 
     const handleSave = () => {
-        const additions = availableBenefits.filter(({ id }) =>
-            selectedIds.includes(id)
-        );
-        onSave([...receivedBenefits, ...additions]);
-        setSelectedIds([]);
+        onSave([...receivedBenefits, ...selectedBenefits]);
+        setSelectedBenefits([]);
     };
 
     return (
@@ -403,68 +532,88 @@ const BenefitAddSheet = ({
                     />
                 </div>
 
-                <div className="mt-4 flex justify-between gap-1.5">
-                    {benefitCategories.map((category) => (
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                    {[
+                        { label: "전체", value: null },
+                        ...subsidyCategoryOptions,
+                    ].map(({ label, value }) => (
                         <button
-                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${selectedCategory === category ? "bg-third text-white" : "bg-line text-text-body"}`}
+                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${selectedCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
                             type="button"
-                            key={category}
-                            onClick={() => setSelectedCategory(category)}
+                            key={value ?? "all"}
+                            onClick={() => setSelectedCategory(value)}
                         >
-                            {category}
+                            {label}
                         </button>
                     ))}
                 </div>
 
                 <div className="mt-8 flex flex-col gap-3">
-                    {visibleBenefits.map((benefit) => {
-                        const selected = selectedIds.includes(benefit.id);
-                        return (
-                            <button
-                                className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-primary bg-selection-light" : "border-line-strong bg-white"}`}
-                                type="button"
-                                key={benefit.id}
-                                onClick={() =>
-                                    setSelectedIds((previous) =>
-                                        selected
-                                            ? previous.filter(
-                                                  (id) => id !== benefit.id
-                                              )
-                                            : [...previous, benefit.id]
-                                    )
-                                }
-                            >
-                                <span
-                                    className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-line-strong"}`}
-                                >
-                                    {selected && <CheckIcon />}
-                                </span>
-                                <span>
-                                    <strong className="block text-[14px]">
-                                        {benefit.title}
-                                    </strong>
-                                    <span className="text-text-subtle mt-1 block text-[12px] font-semibold">
-                                        {benefit.organization}
-                                    </span>
-                                </span>
-                            </button>
-                        );
-                    })}
-                    {visibleBenefits.length === 0 && (
+                    {searching && (
                         <p className="text-text-subtle py-8 text-center text-[13px]">
-                            추가할 수 있는 지원금이 없어요
+                            지원금을 검색하는 중이에요
                         </p>
                     )}
+                    {searchError && (
+                        <p className="text-danger py-8 text-center text-[13px] font-semibold">
+                            지원금을 불러오지 못했어요
+                        </p>
+                    )}
+                    {!searching &&
+                        !searchError &&
+                        visibleBenefits.map((benefit) => {
+                            const selected = selectedBenefits.some(
+                                ({ id }) => id === benefit.id
+                            );
+                            return (
+                                <button
+                                    className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-primary bg-selection-light" : "border-line-strong bg-white"}`}
+                                    type="button"
+                                    key={benefit.id}
+                                    onClick={() =>
+                                        setSelectedBenefits((previous) =>
+                                            selected
+                                                ? previous.filter(
+                                                      ({ id }) =>
+                                                          id !== benefit.id
+                                                  )
+                                                : [...previous, benefit]
+                                        )
+                                    }
+                                >
+                                    <span
+                                        className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-line-strong"}`}
+                                    >
+                                        {selected && <CheckIcon />}
+                                    </span>
+                                    <span>
+                                        <strong className="block text-[14px]">
+                                            {benefit.title}
+                                        </strong>
+                                        <span className="text-text-subtle mt-1 block text-[12px] font-semibold">
+                                            {benefit.organization}
+                                        </span>
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    {!searching &&
+                        !searchError &&
+                        visibleBenefits.length === 0 && (
+                            <p className="text-text-subtle py-8 text-center text-[13px]">
+                                추가할 수 있는 지원금이 없어요
+                            </p>
+                        )}
                 </div>
 
                 <button
                     className="bg-primary disabled:bg-disabled mt-6 h-[48px] w-full cursor-pointer rounded-[14px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
                     type="button"
-                    disabled={selectedIds.length === 0}
+                    disabled={selectedBenefits.length === 0}
                     onClick={handleSave}
                 >
-                    {selectedIds.length > 0
-                        ? `${selectedIds.length}개 추가하기`
+                    {selectedBenefits.length > 0
+                        ? `${selectedBenefits.length}개 추가하기`
                         : "추가할 지원금을 선택해주세요"}
                 </button>
             </section>

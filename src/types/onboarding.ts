@@ -68,6 +68,16 @@ export interface ReceivedSubsidiesResult {
     receivedSubsidyIds: number[];
 }
 
+export interface ReceivedSubsidyItem {
+    subsidyId: number;
+    name: string;
+}
+
+export interface ReceivedSubsidyListResult {
+    content: ReceivedSubsidyItem[];
+    totalCount: number;
+}
+
 /** GET /subsidies 검색 결과 항목 */
 export interface SubsidySearchItem {
     subsidyId: number;
