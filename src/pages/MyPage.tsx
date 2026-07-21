@@ -1,21 +1,21 @@
 import { logoutApi } from "@/api/authApi";
+import { getEstimatedTotalApi } from "@/api/estimatedApi";
+import { getFavoritesApi } from "@/api/favoriteApi";
+import {
+    getMyOnboardingApi,
+    getReceivedSubsidiesApi,
+} from "@/api/onboardingApi";
+import { getRecommendationsApi } from "@/api/recommendationApi";
 import Header from "@/components/common/Header";
 import {
     ChevronRightIcon,
     ConfirmDialog,
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
-import {
-    getFavoritePolicyIds,
-    getMyPageProfile,
-    getReceivedBenefits,
-} from "@/constants/mypageData";
-import {
-    initialRecommendationPolicies,
-    isUrgentRecommendationPolicy,
-} from "@/constants/recommendationData";
+import { employmentLabelOf } from "@/constants/onboardingOptions";
 import { useAuthStore } from "@/stores/authStore";
-import { useState } from "react";
+import type { OnboardingProfile } from "@/types/onboarding";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type MenuItem = {
@@ -28,18 +28,110 @@ type MenuItem = {
 const MyPage = () => {
     const navigate = useNavigate();
     const logout = useAuthStore((state) => state.logout);
+    const user = useAuthStore((state) => state.user);
     const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-    const favoriteCount = getFavoritePolicyIds().length;
-    const receivedCount = getReceivedBenefits().length;
-    const profile = getMyPageProfile();
-    const availableCount = initialRecommendationPolicies.filter(
-        ({ isRecommended }) => isRecommended
-    ).length;
-    const urgentCount = initialRecommendationPolicies.filter(
-        isUrgentRecommendationPolicy
-    ).length;
-    const employmentLabel =
-        profile.employment === "재직중" ? "재직" : profile.employment;
+    const [profile, setProfile] = useState<OnboardingProfile | null>(null);
+    const [receivedCount, setReceivedCount] = useState(0);
+    const [availableCount, setAvailableCount] = useState(0);
+    const [favoriteCount, setFavoriteCount] = useState(0);
+    const [urgentCount, setUrgentCount] = useState(0);
+    const employment = profile
+        ? employmentLabelOf(profile.employmentStatus)
+        : "";
+    const employmentLabel = employment === "재직중" ? "재직" : employment;
+
+    useEffect(() => {
+        let active = true;
+
+        const loadProfile = async () => {
+            try {
+                const response = await getMyOnboardingApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (active) setProfile(response.result);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        void loadProfile();
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadSummaryCounts = async () => {
+            const [estimated, favorites, recommendations] = await Promise.all([
+                getEstimatedTotalApi().catch((error) => {
+                    console.error(error);
+                    return null;
+                }),
+                getFavoritesApi().catch((error) => {
+                    console.error(error);
+                    return null;
+                }),
+                getRecommendationsApi(20).catch((error) => {
+                    console.error(error);
+                    return null;
+                }),
+            ]);
+
+            if (!active) return;
+
+            if (estimated?.isSuccess) {
+                setAvailableCount(estimated.result.totalCount);
+            }
+
+            if (favorites?.isSuccess) {
+                setFavoriteCount(favorites.result.totalCount);
+            }
+
+            if (recommendations?.isSuccess) {
+                setUrgentCount(
+                    recommendations.result.items.filter(
+                        ({ dDay }) => dDay !== null && dDay >= 0 && dDay <= 7
+                    ).length
+                );
+            }
+        };
+
+        void loadSummaryCounts();
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadReceivedCount = async () => {
+            try {
+                const response = await getReceivedSubsidiesApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (active) setReceivedCount(response.result.totalCount);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        void loadReceivedCount();
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     const summaryItems = [
         {
@@ -58,7 +150,7 @@ const MyPage = () => {
         {
             value: `${urgentCount}건`,
             label: "마감 임박 (D-7 이내)",
-            path: "/recommend?tab=all&sort=deadline&filter=urgent",
+            path: "/recommend?tab=recommended&sort=deadline&filter=urgent",
             returnToMyPage: true,
         },
         {
@@ -113,11 +205,12 @@ const MyPage = () => {
                     <span className="bg-secondary size-[46px] shrink-0 rounded-full" />
                     <span className="ml-[18px] min-w-0 flex-1">
                         <strong className="block text-[16px]">
-                            아기삼자 님
+                            {user?.name ?? "사용자"} 님
                         </strong>
                         <span className="text-text-subtle mt-1.5 block truncate text-[13px] font-bold">
-                            카카오 계정 · {profile.city.replace("특별시", "")}{" "}
-                            {profile.district} · {employmentLabel}
+                            {profile
+                                ? `카카오 계정 · ${profile.sido.replace("특별시", "")} ${profile.sigungu} · ${employmentLabel}`
+                                : "프로필 정보를 불러오는 중이에요"}
                         </span>
                     </span>
                     <span className="text-text-muted ml-3">
