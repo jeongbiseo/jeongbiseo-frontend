@@ -33,6 +33,7 @@ import type {
     SubsidyCategory,
     SubsidySearchItem,
 } from "@/types/onboarding";
+import { getDaysInMonth } from "@/utils/date";
 import { getApiErrorCode, handleApiError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
@@ -51,11 +52,11 @@ const years = Array.from(
     (_, index) => currentYear - 14 - index
 );
 const months = Array.from({ length: 12 }, (_, index) => index + 1);
-const days = Array.from({ length: 31 }, (_, index) => index + 1);
 
 const Onboarding = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
+    const [profileSubmitted, setProfileSubmitted] = useState(false);
 
     const {
         control,
@@ -84,6 +85,7 @@ const Onboarding = () => {
         control,
         name: ["birthYear", "birthMonth", "birthDay", "sido"],
     });
+    const days = getDaysInMonth(birthYear, birthMonth);
 
     const age = useMemo(() => {
         const today = new Date();
@@ -103,20 +105,45 @@ const Onboarding = () => {
     };
 
     const onSubmit = async (values: OnboardingFormType) => {
+        let profileSaved = profileSubmitted;
+
         try {
-            const submitted = await submitOnboardingApi(
-                toOnboardingRequest(values)
-            );
-            if (!submitted.isSuccess) throw new Error(submitted.message);
+            if (!profileSaved) {
+                const submitted = await submitOnboardingApi(
+                    toOnboardingRequest(values)
+                );
+                if (!submitted.isSuccess) throw new Error(submitted.message);
+
+                profileSaved = true;
+                setProfileSubmitted(true);
+            }
 
             // 선택이 없어도 빈 배열로 호출해 서버 상태를 화면과 일치시킵니다.
-            await setReceivedSubsidiesApi(values.receivedSubsidyIds);
+            const received = await setReceivedSubsidiesApi(
+                values.receivedSubsidyIds
+            );
+            if (!received.isSuccess) {
+                setError("root", {
+                    message:
+                        "기본정보는 저장됐지만 기수령 지원금을 저장하지 못했어요. 다시 시도해주세요.",
+                });
+                return;
+            }
 
             const { user, login } = useAuthStore.getState();
             if (user) login({ ...user, onboardingCompleted: true });
 
             navigate("/", { replace: true });
         } catch (error) {
+            if (profileSaved) {
+                console.error(error);
+                setError("root", {
+                    message:
+                        "기본정보는 저장됐지만 기수령 지원금을 저장하지 못했어요. 다시 시도해주세요.",
+                });
+                return;
+            }
+
             // 이미 온보딩을 마친 회원이면 홈으로 보냅니다.
             if (getApiErrorCode(error) === "ONB409_1") {
                 navigate("/", { replace: true });
@@ -181,6 +208,10 @@ const Onboarding = () => {
                             setValue={setValue}
                             age={age}
                             sido={sido}
+                            birthYear={birthYear}
+                            birthMonth={birthMonth}
+                            birthDay={birthDay}
+                            days={days}
                         />
                     )}
                     {step === 2 && <StepTwo control={control} />}
@@ -220,9 +251,22 @@ type StepOneProps = {
     setValue: UseFormSetValue<OnboardingFormType>;
     age: number;
     sido: string;
+    birthYear: number;
+    birthMonth: number;
+    birthDay: number;
+    days: number[];
 };
 
-const StepOne = ({ control, setValue, age, sido }: StepOneProps) => (
+const StepOne = ({
+    control,
+    setValue,
+    age,
+    sido,
+    birthYear,
+    birthMonth,
+    birthDay,
+    days,
+}: StepOneProps) => (
     <>
         <StepHeading
             eyebrow="기본정보"
@@ -243,7 +287,17 @@ const StepOne = ({ control, setValue, age, sido }: StepOneProps) => (
                 render={({ field }) => (
                     <Select
                         value={field.value}
-                        onChange={(value) => field.onChange(Number(value))}
+                        onChange={(value) => {
+                            const nextYear = Number(value);
+                            field.onChange(nextYear);
+                            setValue(
+                                "birthDay",
+                                Math.min(
+                                    birthDay,
+                                    getDaysInMonth(nextYear, birthMonth).length
+                                )
+                            );
+                        }}
                     >
                         {years.map((year) => (
                             <option key={year} value={year}>
@@ -259,7 +313,17 @@ const StepOne = ({ control, setValue, age, sido }: StepOneProps) => (
                 render={({ field }) => (
                     <Select
                         value={field.value}
-                        onChange={(value) => field.onChange(Number(value))}
+                        onChange={(value) => {
+                            const nextMonth = Number(value);
+                            field.onChange(nextMonth);
+                            setValue(
+                                "birthDay",
+                                Math.min(
+                                    birthDay,
+                                    getDaysInMonth(birthYear, nextMonth).length
+                                )
+                            );
+                        }}
                     >
                         {months.map((month) => (
                             <option key={month} value={month}>
@@ -464,6 +528,7 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
                 const response = await searchSubsidiesApi({
                     keyword: debouncedQuery,
                     category: category ?? undefined,
+                    includeClosed: true,
                 });
                 if (active) {
                     setResult({

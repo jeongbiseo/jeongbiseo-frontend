@@ -16,7 +16,7 @@ const axiosInstance = axios.create({
     timeout: 10_000,
 });
 
-const NO_TOKEN_PATHS = [REISSUE_PATH] as const;
+const NO_TOKEN_PATHS = [REISSUE_PATH, "/auth/kakao", "/auth/google"] as const;
 // 인증 흐름 엔드포인트는 401이 나도 재발급을 시도하지 않습니다.
 const NO_REISSUE_PATHS = [
     REISSUE_PATH,

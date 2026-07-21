@@ -52,3 +52,7 @@ export const employmentLabelOf = (value: EmploymentStatus) =>
 
 export const incomeLabelOf = (value: IncomeBracket | null) =>
     incomeOptions.find((option) => option.value === value)?.label ?? "";
+
+export const subsidyCategoryLabelOf = (value: SubsidyCategory) =>
+    subsidyCategoryOptions.find((option) => option.value === value)?.label ??
+    value;

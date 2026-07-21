@@ -14,6 +14,7 @@ export const searchSubsidiesApi = async ({
     keyword,
     category,
     sort,
+    includeClosed,
     page = 0,
     size = 20,
 }: SubsidySearchParams = {}) => {
@@ -24,6 +25,7 @@ export const searchSubsidiesApi = async ({
                 keyword: keyword || undefined,
                 category,
                 sort,
+                includeClosed,
                 page,
                 size,
             },

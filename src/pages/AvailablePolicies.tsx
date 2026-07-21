@@ -14,6 +14,7 @@ import {
     getEstimatedTotalApi,
 } from "@/api/estimatedApi";
 import ChevronDownIcon from "@/components/common/ChevronDownIcon";
+import Button from "@/components/common/Button";
 import SummaryPolicyCard, {
     type SummaryPolicyItem,
 } from "@/components/home/SummaryPolicyCard";
@@ -103,6 +104,7 @@ type PageState =
 const AvailablePolicies = () => {
     const [state, setState] = useState<PageState>({ status: "loading" });
     const [voucherExpanded, setVoucherExpanded] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
 
     useEffect(() => {
         let active = true;
@@ -136,7 +138,7 @@ const AvailablePolicies = () => {
         return () => {
             active = false;
         };
-    }, []);
+    }, [reloadKey]);
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
@@ -153,11 +155,20 @@ const AvailablePolicies = () => {
                 )}
 
                 {state.status === "error" && (
-                    <p className="text-text-muted mt-10 text-center text-[14px] font-semibold">
-                        정보를 불러오지 못했어요.
-                        <br />
-                        잠시 후 다시 시도해주세요.
-                    </p>
+                    <div className="mt-10 text-center">
+                        <p className="text-text-muted text-[14px] font-semibold">
+                            정보를 불러오지 못했어요.
+                        </p>
+                        <Button
+                            className="mt-5"
+                            onClick={() => {
+                                setState({ status: "loading" });
+                                setReloadKey((key) => key + 1);
+                            }}
+                        >
+                            다시 시도
+                        </Button>
+                    </div>
                 )}
 
                 {state.status === "ready" && (

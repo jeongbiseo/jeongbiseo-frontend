@@ -87,6 +87,8 @@ export interface SubsidySearchItem {
     category: SubsidyCategory | null;
     /** YYYY-MM-DD, 상시/마감없음이면 null */
     deadline: string | null;
+    estimatedAmountMin: number | null;
+    estimatedAmountMax: number | null;
 }
 
 /** GET /subsidies 질의 조건 */
@@ -95,9 +97,19 @@ export interface SubsidySearchParams {
     category?: SubsidyCategory;
     /** DEADLINE: 마감일 임박순, NAME: 지원금명 가나다순 */
     sort?: "DEADLINE" | "NAME";
+    /** 과거에 마감된 지원금 포함 여부 */
+    includeClosed?: boolean;
     page?: number;
     /** 기본 20, 최대 100 */
     size?: number;
+}
+
+/** 마이페이지 기수령 지원금 편집 화면에서 사용하는 항목입니다. */
+export interface ReceivedBenefit {
+    id: number;
+    title: string;
+    organization: string;
+    categories: SubsidyCategory[];
 }
 
 /** GET /subsidies 페이지 응답 */

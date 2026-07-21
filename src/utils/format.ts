@@ -31,6 +31,18 @@ export const formatAmountRange = (
         : `최대 ${formatWon(upper)}${suffix}`;
 };
 
+/** 상세 화면용 금액 범위입니다. 한쪽 값만 있으면 최소/최대 의미를 보존합니다. */
+export const formatDetailedAmountRange = (
+    min: number | null,
+    max: number | null
+) => {
+    if (min === null && max === null) return "산정 불가";
+    if (min === null && max !== null) return `최대 ${formatWon(max)}`;
+    if (min !== null && max === null) return `최소 ${formatWon(min)}`;
+    if (min === max) return formatWon(min!);
+    return `${formatWon(min!)} ~ ${formatWon(max!)}`;
+};
+
 /** "2026-06-18" → "6.18 마감", 없으면 "상시" */
 export const formatDeadline = (deadline: string | null) => {
     if (!deadline) return "상시";

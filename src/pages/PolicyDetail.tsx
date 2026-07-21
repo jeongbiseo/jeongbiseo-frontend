@@ -2,54 +2,18 @@ import { addFavoriteApi, removeFavoriteApi } from "@/api/favoriteApi";
 import { getSubsidyDetailApi } from "@/api/subsidyApi";
 import Button from "@/components/common/Button";
 import ChevronDownIcon from "@/components/common/ChevronDownIcon";
+import Toast from "@/components/common/Toast";
 import { ConfirmDialog, StarIcon } from "@/components/mypage/MyPageUI";
+import { subsidyCategoryLabelOf } from "@/constants/onboardingOptions";
+import { paymentTypeLabels } from "@/constants/paymentType";
 import type { SubsidyDetailResult } from "@/types/subsidy";
+import { formatDetailedAmountRange, formatWon } from "@/utils/format";
 import axios from "axios";
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 type SectionId = "eligibility" | "application" | "amount";
 type ErrorKind = "not-found" | "unknown";
-
-const categoryLabels: Record<string, string> = {
-    YOUTH: "청년",
-    HOUSING: "주거",
-    EMPLOYMENT: "고용",
-    EDUCATION: "교육",
-    STARTUP: "창업",
-    WELFARE: "복지",
-    ETC: "기타",
-};
-
-const paymentTypeLabels: Record<string, string> = {
-    CASH: "현금",
-    VOUCHER: "바우처",
-    REDUCTION: "감면",
-    SERVICE: "서비스",
-    UNKNOWN: "산정 불가",
-};
-
-const formatMoney = (amount: number) =>
-    `${new Intl.NumberFormat("ko-KR").format(amount)}원`;
-
-const formatEstimatedAmount = ({
-    estimatedAmountMin,
-    estimatedAmountMax,
-}: SubsidyDetailResult) => {
-    if (estimatedAmountMin === null && estimatedAmountMax === null) {
-        return "산정 불가";
-    }
-    if (estimatedAmountMin === null) {
-        return `최대 ${formatMoney(estimatedAmountMax!)}`;
-    }
-    if (estimatedAmountMax === null) {
-        return `최소 ${formatMoney(estimatedAmountMin)}`;
-    }
-    if (estimatedAmountMin === estimatedAmountMax) {
-        return formatMoney(estimatedAmountMin);
-    }
-    return `${formatMoney(estimatedAmountMin)} ~ ${formatMoney(estimatedAmountMax)}`;
-};
 
 const getDeadlineLabel = ({ deadline, dDay }: SubsidyDetailResult) => {
     if (deadline === null) return "마감 없음";
@@ -74,6 +38,7 @@ const PolicyDetail = () => {
     );
     const [favoriteUpdating, setFavoriteUpdating] = useState(false);
     const [externalDialogOpen, setExternalDialogOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     useEffect(() => {
         if (invalidPolicyId) return;
@@ -144,7 +109,7 @@ const PolicyDetail = () => {
             );
         } catch (error) {
             console.error(error);
-            window.alert("즐겨찾기를 변경하지 못했습니다.");
+            setToastMessage("즐겨찾기를 변경하지 못했습니다.");
         } finally {
             setFavoriteUpdating(false);
         }
@@ -203,10 +168,9 @@ const PolicyDetail = () => {
 
     const deadlineLabel = getDeadlineLabel(subsidy);
     const categoryLabel = subsidy.category
-        ? (categoryLabels[subsidy.category] ?? subsidy.category)
+        ? subsidyCategoryLabelOf(subsidy.category)
         : null;
-    const paymentTypeLabel =
-        paymentTypeLabels[subsidy.paymentType] ?? subsidy.paymentType;
+    const paymentTypeLabel = paymentTypeLabels[subsidy.paymentType];
 
     return (
         <>
@@ -303,7 +267,10 @@ const PolicyDetail = () => {
                                 rows={[
                                     {
                                         label: "예상 지원금",
-                                        value: formatEstimatedAmount(subsidy),
+                                        value: formatDetailedAmountRange(
+                                            subsidy.estimatedAmountMin,
+                                            subsidy.estimatedAmountMax
+                                        ),
                                     },
                                     {
                                         label: "지급 유형",
@@ -315,6 +282,69 @@ const PolicyDetail = () => {
                                 {subsidy.description ??
                                     "지원 내용은 담당기관에서 확인해주세요."}
                             </p>
+                            {subsidy.aiExplanation && (
+                                <div className="bg-surface-soft mt-4 rounded-[10px] p-3">
+                                    <h3 className="text-[12px] font-bold">
+                                        AI 금액 산정 근거
+                                    </h3>
+                                    <DetailRows
+                                        rows={[
+                                            ...(subsidy.aiExplanation
+                                                .amountValue !== null
+                                                ? [
+                                                      {
+                                                          label: "1회 지급액",
+                                                          value: formatWon(
+                                                              subsidy
+                                                                  .aiExplanation
+                                                                  .amountValue
+                                                          ),
+                                                      },
+                                                  ]
+                                                : []),
+                                            ...(subsidy.aiExplanation
+                                                .monthlyAmount !== null
+                                                ? [
+                                                      {
+                                                          label: "월 지급액",
+                                                          value: formatWon(
+                                                              subsidy
+                                                                  .aiExplanation
+                                                                  .monthlyAmount
+                                                          ),
+                                                      },
+                                                  ]
+                                                : []),
+                                            ...(subsidy.aiExplanation
+                                                .durationMonths !== null
+                                                ? [
+                                                      {
+                                                          label: "지급 기간",
+                                                          value: `${subsidy.aiExplanation.durationMonths}개월`,
+                                                      },
+                                                  ]
+                                                : []),
+                                            ...(subsidy.aiExplanation
+                                                .conditionExpression
+                                                ? [
+                                                      {
+                                                          label: "산정 조건",
+                                                          value: subsidy
+                                                              .aiExplanation
+                                                              .conditionExpression,
+                                                      },
+                                                  ]
+                                                : []),
+                                        ]}
+                                    />
+                                    {subsidy.aiExplanation.evidence && (
+                                        <p className="text-text-muted mt-3 text-[11px] leading-[1.5] font-medium whitespace-pre-line">
+                                            근거:{" "}
+                                            {subsidy.aiExplanation.evidence}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                         </PolicyAccordion>
                     </div>
 
@@ -338,6 +368,10 @@ const PolicyDetail = () => {
                 variant="external"
                 onCancel={() => setExternalDialogOpen(false)}
                 onConfirm={moveToApplicationPage}
+            />
+            <Toast
+                message={toastMessage}
+                onDismiss={() => setToastMessage(null)}
             />
         </>
     );

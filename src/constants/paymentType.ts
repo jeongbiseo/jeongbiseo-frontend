@@ -11,7 +11,7 @@ export const paymentTypeLabels: Record<PaymentType, string> = {
     VOUCHER: "바우처",
     IN_KIND: "현물",
     REDUCTION: "감면",
-    UNKNOWN: "금액 미확정",
+    UNKNOWN: "미상",
 };
 
 /** 금액이 아니라 바우처·현물 형태로 지급되는 유형입니다. */

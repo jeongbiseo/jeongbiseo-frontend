@@ -18,6 +18,7 @@ import {
 import { getCalendarApi } from "@/api/calendarApi";
 import { getRecommendationsApi } from "@/api/recommendationApi";
 import DeadlineSheet from "@/components/calendar/DeadlineSheet";
+import Button from "@/components/common/Button";
 import { isNonCashPayment, paymentTypeLabels } from "@/constants/paymentType";
 import { useAuthStore } from "@/stores/authStore";
 import type { CalendarResult } from "@/types/calendar";
@@ -51,6 +52,7 @@ const Home = () => {
     const user = useAuthStore((state) => state.user);
     const [state, setState] = useState<HomeState>({ status: "loading" });
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [reloadKey, setReloadKey] = useState(0);
 
     useEffect(() => {
         let active = true;
@@ -101,7 +103,7 @@ const Home = () => {
         return () => {
             active = false;
         };
-    }, []);
+    }, [reloadKey]);
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
@@ -118,11 +120,20 @@ const Home = () => {
                 {state.status === "loading" && <HomeSkeleton />}
 
                 {state.status === "error" && (
-                    <p className="text-text-muted mt-10 text-center text-[14px] font-semibold">
-                        정보를 불러오지 못했어요.
-                        <br />
-                        잠시 후 다시 시도해주세요.
-                    </p>
+                    <div className="mt-10 text-center">
+                        <p className="text-text-muted text-[14px] font-semibold">
+                            정보를 불러오지 못했어요.
+                        </p>
+                        <Button
+                            className="mt-5"
+                            onClick={() => {
+                                setState({ status: "loading" });
+                                setReloadKey((key) => key + 1);
+                            }}
+                        >
+                            다시 시도
+                        </Button>
+                    </div>
                 )}
 
                 {state.status === "ready" && (

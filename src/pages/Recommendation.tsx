@@ -6,12 +6,9 @@ import {
 import { getReceivedSubsidiesApi } from "@/api/onboardingApi";
 import { getRecommendationsApi } from "@/api/recommendationApi";
 import { searchSubsidiesApi } from "@/api/subsidyApi";
+import Toast from "@/components/common/Toast";
 import { BackButton } from "@/components/mypage/MyPageUI";
 import ChevronDownIcon from "@/components/common/ChevronDownIcon";
-import {
-    getFavoritePolicyIds,
-    saveFavoritePolicyIds,
-} from "@/constants/mypageData";
 import {
     isUrgentRecommendationPolicy,
     type RecommendationPolicy,
@@ -19,7 +16,7 @@ import {
 import type { RecommendationItem } from "@/types/recommendation";
 import type { SubsidySearchItem } from "@/types/onboarding";
 import { formatAmountRange, formatDDay } from "@/utils/format";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     Link,
     useLocation,
@@ -43,6 +40,11 @@ const sortOptions: Array<{ key: SortOption; label: string }> = [
     { key: "deadline", label: "마감일순" },
     { key: "title", label: "가나다순" },
 ];
+
+const getSortLabel = (sort: SortOption, tab: RecommendationTab) => {
+    if (sort === "recommended" && tab !== "recommended") return "기본순";
+    return sortOptions.find(({ key }) => key === sort)?.label ?? "추천순";
+};
 
 const getInitialTab = (value: string | null): RecommendationTab =>
     value === "favorites" || value === "all" ? value : "recommended";
@@ -100,8 +102,11 @@ const toAllPolicy = (
         id: item.subsidyId,
         organization: item.agency ?? "기관 정보 없음",
         title: item.name,
-        amount: null,
-        amountLabel: null,
+        amount: item.estimatedAmountMax ?? item.estimatedAmountMin,
+        amountLabel: formatAmountRange(
+            item.estimatedAmountMin,
+            item.estimatedAmountMax
+        ),
         deadlineDays,
         deadlineLabel:
             deadlineDays !== null && deadlineDays < 0
@@ -136,7 +141,17 @@ const Recommendation = () => {
     const [favoritesLoading, setFavoritesLoading] = useState(false);
     const [favoritesError, setFavoritesError] = useState(false);
     const [favoritesReloadKey, setFavoritesReloadKey] = useState(0);
+    const [favoritesInitialized, setFavoritesInitialized] = useState(false);
+    const favoriteIdsRef = useRef<Set<number>>(new Set());
+    const [favoriteUpdatingIds, setFavoriteUpdatingIds] = useState<Set<number>>(
+        () => new Set()
+    );
     const [receivedIds, setReceivedIds] = useState<number[]>([]);
+    const receivedIdsRef = useRef<Set<number>>(new Set());
+    const [receivedStatus, setReceivedStatus] = useState<
+        "loading" | "ready" | "error"
+    >("loading");
+    const [receivedReloadKey, setReceivedReloadKey] = useState(0);
     const [activeTab, setActiveTab] = useState<RecommendationTab>(() =>
         getInitialTab(searchParams.get("tab"))
     );
@@ -147,11 +162,12 @@ const Recommendation = () => {
     const [sortSheetOpen, setSortSheetOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
     const urgentOnly = searchParams.get("filter") === "urgent";
     const cameFromMyPage =
         (location.state as { from?: string } | null)?.from === "mypage";
 
-    const sortLabel = sortOptions.find(({ key }) => key === sortOption)?.label;
+    const sortLabel = getSortLabel(sortOption, activeTab);
 
     const policies = useMemo(() => {
         if (activeTab === "recommended") return recommendedPolicies;
@@ -160,17 +176,21 @@ const Recommendation = () => {
     }, [activeTab, allPolicies, favoritePolicies, recommendedPolicies]);
 
     const loading =
-        activeTab === "recommended"
+        receivedStatus === "loading" ||
+        favoritesLoading ||
+        (activeTab === "recommended"
             ? recommendationLoading
             : activeTab === "all"
-              ? allLoading
-              : favoritesLoading;
+              ? allLoading && allPolicies.length === 0
+              : false);
     const loadError =
-        activeTab === "recommended"
+        receivedStatus === "error" ||
+        favoritesError ||
+        (activeTab === "recommended"
             ? recommendationError
             : activeTab === "all"
               ? allError
-              : favoritesError;
+              : false);
 
     const visiblePolicies = useMemo(() => {
         const normalizedQuery = query.replace(/\s+/g, "").toLowerCase();
@@ -220,6 +240,8 @@ const Recommendation = () => {
     }, [activeTab, allowDuplicates, policies, query, sortOption, urgentOnly]);
 
     const toggleFavorite = async (id: number) => {
+        if (favoriteUpdatingIds.has(id)) return;
+
         const target = policies.find((policy) => policy.id === id);
         if (!target) return;
 
@@ -244,14 +266,11 @@ const Recommendation = () => {
                 return [{ ...target, isFavorite: true }, ...previous];
             });
 
-            const favoriteIds = getFavoritePolicyIds();
-            saveFavoritePolicyIds(
-                isFavorite
-                    ? [...new Set([...favoriteIds, id])]
-                    : favoriteIds.filter((favoriteId) => favoriteId !== id)
-            );
+            if (isFavorite) favoriteIdsRef.current.add(id);
+            else favoriteIdsRef.current.delete(id);
         };
 
+        setFavoriteUpdatingIds((previous) => new Set(previous).add(id));
         updateFavorite(nextFavorite);
 
         try {
@@ -265,7 +284,13 @@ const Recommendation = () => {
         } catch (error) {
             console.error(error);
             updateFavorite(!nextFavorite);
-            window.alert("즐겨찾기를 변경하지 못했습니다.");
+            setToastMessage("즐겨찾기를 변경하지 못했습니다.");
+        } finally {
+            setFavoriteUpdatingIds((previous) => {
+                const next = new Set(previous);
+                next.delete(id);
+                return next;
+            });
         }
     };
 
@@ -273,6 +298,8 @@ const Recommendation = () => {
         let active = true;
 
         const loadReceivedSubsidies = async () => {
+            setReceivedStatus("loading");
+
             try {
                 const response = await getReceivedSubsidiesApi();
 
@@ -286,6 +313,7 @@ const Recommendation = () => {
                     (item) => item.subsidyId
                 );
                 const idSet = new Set(ids);
+                receivedIdsRef.current = idSet;
                 const markReceived = (previous: RecommendationPolicy[]) =>
                     previous.map((policy) => ({
                         ...policy,
@@ -296,8 +324,10 @@ const Recommendation = () => {
                 setRecommendedPolicies(markReceived);
                 setAllPolicies(markReceived);
                 setFavoritePolicies(markReceived);
+                setReceivedStatus("ready");
             } catch (error) {
                 console.error(error);
+                if (active) setReceivedStatus("error");
             }
         };
 
@@ -306,9 +336,11 @@ const Recommendation = () => {
         return () => {
             active = false;
         };
-    }, []);
+    }, [receivedReloadKey]);
 
     useEffect(() => {
+        if (!favoritesInitialized) return;
+
         let active = true;
 
         const loadRecommendations = async () => {
@@ -327,7 +359,7 @@ const Recommendation = () => {
 
                 if (!active) return;
 
-                const favoriteIds = getFavoritePolicyIds();
+                const favoriteIds = [...favoriteIdsRef.current];
                 setRecommendedPolicies(
                     response.result.items.map((item) =>
                         toRecommendationPolicy(item, favoriteIds, receivedIds)
@@ -346,10 +378,15 @@ const Recommendation = () => {
         return () => {
             active = false;
         };
-    }, [allowDuplicates, receivedIds, recommendationReloadKey]);
+    }, [
+        allowDuplicates,
+        favoritesInitialized,
+        receivedIds,
+        recommendationReloadKey,
+    ]);
 
     useEffect(() => {
-        if (activeTab !== "all") return;
+        if (activeTab !== "all" || !favoritesInitialized) return;
 
         let active = true;
         const timer = window.setTimeout(() => {
@@ -371,7 +408,7 @@ const Recommendation = () => {
 
                     if (!active) return;
 
-                    const favoriteIds = getFavoritePolicyIds();
+                    const favoriteIds = [...favoriteIdsRef.current];
                     setAllPolicies(
                         response.result.content.map((item) =>
                             toAllPolicy(item, favoriteIds, receivedIds)
@@ -394,7 +431,14 @@ const Recommendation = () => {
             active = false;
             window.clearTimeout(timer);
         };
-    }, [activeTab, allReloadKey, query, receivedIds, sortOption]);
+    }, [
+        activeTab,
+        allReloadKey,
+        favoritesInitialized,
+        query,
+        receivedIds,
+        sortOption,
+    ]);
 
     const loadMoreAllPolicies = async () => {
         if (allLoadingMore || allLast) return;
@@ -413,7 +457,7 @@ const Recommendation = () => {
                 throw new Error(response.message);
             }
 
-            const favoriteIds = getFavoritePolicyIds();
+            const favoriteIds = [...favoriteIdsRef.current];
             const nextPolicies = response.result.content.map((item) =>
                 toAllPolicy(item, favoriteIds, receivedIds)
             );
@@ -430,20 +474,19 @@ const Recommendation = () => {
             setAllLast(response.result.last);
         } catch (error) {
             console.error(error);
-            window.alert("지원금을 더 불러오지 못했습니다.");
+            setToastMessage("지원금을 더 불러오지 못했습니다.");
         } finally {
             setAllLoadingMore(false);
         }
     };
 
     useEffect(() => {
-        if (activeTab !== "favorites") return;
-
         let active = true;
 
         const loadFavorites = async () => {
             setFavoritesLoading(true);
             setFavoritesError(false);
+            setFavoritesInitialized(false);
 
             try {
                 const response = await getFavoritesApi();
@@ -457,10 +500,12 @@ const Recommendation = () => {
                 const favoriteIds = response.result.content.map(
                     (item) => item.subsidyId
                 );
+                const currentReceivedIds = [...receivedIdsRef.current];
                 const favoriteIdSet = new Set(favoriteIds);
+                favoriteIdsRef.current = favoriteIdSet;
                 setFavoritePolicies(
                     response.result.content.map((item) => ({
-                        ...toAllPolicy(item, favoriteIds, receivedIds),
+                        ...toAllPolicy(item, favoriteIds, currentReceivedIds),
                         isFavorite: true,
                     }))
                 );
@@ -476,7 +521,7 @@ const Recommendation = () => {
                         isFavorite: favoriteIdSet.has(policy.id),
                     }))
                 );
-                saveFavoritePolicyIds(favoriteIds);
+                setFavoritesInitialized(true);
             } catch (error) {
                 console.error(error);
                 if (active) setFavoritesError(true);
@@ -490,7 +535,7 @@ const Recommendation = () => {
         return () => {
             active = false;
         };
-    }, [activeTab, favoritesReloadKey, receivedIds]);
+    }, [favoritesReloadKey]);
 
     useEffect(() => {
         if (!sortSheetOpen) return;
@@ -599,6 +644,7 @@ const Recommendation = () => {
                                         className="peer sr-only"
                                         type="checkbox"
                                         checked={allowDuplicates}
+                                        disabled={receivedStatus !== "ready"}
                                         onChange={(event) =>
                                             setAllowDuplicates(
                                                 event.target.checked
@@ -620,7 +666,15 @@ const Recommendation = () => {
                     ) : loadError ? (
                         <LoadErrorState
                             onRetry={() => {
-                                if (activeTab === "recommended") {
+                                if (receivedStatus === "error") {
+                                    setReceivedReloadKey(
+                                        (previous) => previous + 1
+                                    );
+                                } else if (favoritesError) {
+                                    setFavoritesReloadKey(
+                                        (previous) => previous + 1
+                                    );
+                                } else if (activeTab === "recommended") {
                                     setRecommendationReloadKey(
                                         (previous) => previous + 1
                                     );
@@ -639,6 +693,9 @@ const Recommendation = () => {
                                 <PolicyCard
                                     key={policy.id}
                                     policy={policy}
+                                    favoriteUpdating={favoriteUpdatingIds.has(
+                                        policy.id
+                                    )}
                                     onFavoriteToggle={toggleFavorite}
                                 />
                             ))}
@@ -697,7 +754,9 @@ const Recommendation = () => {
                                             setSortSheetOpen(false);
                                         }}
                                     >
-                                        {label}
+                                        {key === "recommended"
+                                            ? getSortLabel(key, activeTab)
+                                            : label}
                                         {sortOption === key && <CheckIcon />}
                                     </button>
                                 </li>
@@ -706,15 +765,21 @@ const Recommendation = () => {
                     </section>
                 </div>
             )}
+            <Toast
+                message={toastMessage}
+                onDismiss={() => setToastMessage(null)}
+            />
         </>
     );
 };
 
 const PolicyCard = ({
     policy,
+    favoriteUpdating,
     onFavoriteToggle,
 }: {
     policy: RecommendationPolicy;
+    favoriteUpdating: boolean;
     onFavoriteToggle: (id: number) => void;
 }) => {
     const urgent = policy.deadlineDays !== null && policy.deadlineDays <= 7;
@@ -739,8 +804,10 @@ const PolicyCard = ({
             </Link>
 
             <button
-                className="focus-visible:outline-primary absolute top-[12px] right-[21px] flex size-8 cursor-pointer items-center justify-center focus-visible:rounded focus-visible:outline-2"
+                className="focus-visible:outline-primary absolute top-[12px] right-[21px] flex size-8 cursor-pointer items-center justify-center focus-visible:rounded focus-visible:outline-2 disabled:cursor-wait disabled:opacity-60"
                 type="button"
+                disabled={favoriteUpdating}
+                aria-busy={favoriteUpdating}
                 aria-label={
                     policy.isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"
                 }

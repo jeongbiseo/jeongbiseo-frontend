@@ -4,8 +4,8 @@ import {
     ConfirmDialog,
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
+import Toast from "@/components/common/Toast";
 import { withdrawMemberApi } from "@/api/memberApi";
-import { clearMyPageDummyData } from "@/constants/mypageData";
 import { useAuthStore } from "@/stores/authStore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ const Withdrawal = () => {
     const [noticeAgreed, setNoticeAgreed] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [withdrawing, setWithdrawing] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     const handleWithdrawal = async () => {
         if (withdrawing) return;
@@ -38,13 +39,12 @@ const Withdrawal = () => {
                 throw new Error(response.message);
             }
 
-            clearMyPageDummyData();
             logout();
             setConfirmOpen(false);
             navigate("/login", { replace: true });
         } catch (error) {
             console.error(error);
-            window.alert("회원 탈퇴에 실패했습니다. 다시 시도해주세요.");
+            setToastMessage("회원 탈퇴에 실패했습니다. 다시 시도해주세요.");
         } finally {
             setWithdrawing(false);
         }
@@ -142,6 +142,10 @@ const Withdrawal = () => {
                 confirmLabel="탈퇴하기"
                 onCancel={() => setConfirmOpen(false)}
                 onConfirm={handleWithdrawal}
+            />
+            <Toast
+                message={toastMessage}
+                onDismiss={() => setToastMessage(null)}
             />
         </>
     );

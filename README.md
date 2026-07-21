@@ -8,6 +8,17 @@
 
 - `/` — 메인 페이지
 - `/login` — 로그인 페이지
+- `/auth/callback/:provider` — 소셜 로그인 콜백
+- `/terms` — 최초 약관 동의
+- `/onboarding` — 회원 온보딩
+- `/recommend` — 추천·즐겨찾기·전체 지원금
+- `/calendar` — 즐겨찾기 지원금 마감 캘린더
+- `/available-policies` — 신청 가능한 지원금 내역
+- `/policies/:policyId` — 지원금 상세
+- `/mypage` — 마이페이지
+- `/mypage/edit` — 회원 정보 및 기수령 지원금 수정
+- `/mypage/terms` — 약관 및 마케팅 수신 동의 관리
+- `/mypage/withdraw` — 회원 탈퇴
 
 ## 🛠️ 기술 스택
 
@@ -17,7 +28,7 @@
 - **Styling**: Tailwind CSS
 - **Forms**: react-hook-form, Zod, @hookform/resolvers
 - **HTTP Client**: axios
-- **Auth/Storage**: js-cookie
+- **Auth/Storage**: Zustand 메모리 Access Token + HttpOnly Refresh Token 쿠키
 - **UI**: react-calendar
 - **Linting & Formatting**: ESLint, Prettier, Husky, lint-staged
 
