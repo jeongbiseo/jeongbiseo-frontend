@@ -119,8 +119,11 @@ const CalendarPage = () => {
                 <h1 className="-ml-[11px] text-[20px] leading-normal font-bold">
                     마감 캘린더
                 </h1>
+                <p className="mt-[5px] -ml-[10px] text-[12px] leading-[14px] font-bold text-[#4b4b4b]">
+                    즐겨찾기한 지원금 마감 일정이에요!
+                </p>
 
-                <div className="mt-[24px]">
+                <div className="mt-[18px]">
                     <div className="mx-auto w-[320px] rounded-[21px] bg-white pt-[17px] shadow-[0_4px_13px_rgba(0,0,0,0.08)]">
                         <div className="flex items-center gap-2 px-[17px]">
                             <MonthSelect
