@@ -41,6 +41,11 @@ const sortOptions: Array<{ key: SortOption; label: string }> = [
     { key: "title", label: "가나다순" },
 ];
 
+const getSortLabel = (sort: SortOption, tab: RecommendationTab) => {
+    if (sort === "recommended" && tab !== "recommended") return "기본순";
+    return sortOptions.find(({ key }) => key === sort)?.label ?? "추천순";
+};
+
 const getInitialTab = (value: string | null): RecommendationTab =>
     value === "favorites" || value === "all" ? value : "recommended";
 
@@ -142,6 +147,10 @@ const Recommendation = () => {
         () => new Set()
     );
     const [receivedIds, setReceivedIds] = useState<number[]>([]);
+    const [receivedStatus, setReceivedStatus] = useState<
+        "loading" | "ready" | "error"
+    >("loading");
+    const [receivedReloadKey, setReceivedReloadKey] = useState(0);
     const [activeTab, setActiveTab] = useState<RecommendationTab>(() =>
         getInitialTab(searchParams.get("tab"))
     );
@@ -157,7 +166,7 @@ const Recommendation = () => {
     const cameFromMyPage =
         (location.state as { from?: string } | null)?.from === "mypage";
 
-    const sortLabel = sortOptions.find(({ key }) => key === sortOption)?.label;
+    const sortLabel = getSortLabel(sortOption, activeTab);
 
     const policies = useMemo(() => {
         if (activeTab === "recommended") return recommendedPolicies;
@@ -166,6 +175,7 @@ const Recommendation = () => {
     }, [activeTab, allPolicies, favoritePolicies, recommendedPolicies]);
 
     const loading =
+        receivedStatus === "loading" ||
         favoritesLoading ||
         (activeTab === "recommended"
             ? recommendationLoading
@@ -173,6 +183,7 @@ const Recommendation = () => {
               ? allLoading
               : false);
     const loadError =
+        receivedStatus === "error" ||
         favoritesError ||
         (activeTab === "recommended"
             ? recommendationError
@@ -286,6 +297,8 @@ const Recommendation = () => {
         let active = true;
 
         const loadReceivedSubsidies = async () => {
+            setReceivedStatus("loading");
+
             try {
                 const response = await getReceivedSubsidiesApi();
 
@@ -309,8 +322,10 @@ const Recommendation = () => {
                 setRecommendedPolicies(markReceived);
                 setAllPolicies(markReceived);
                 setFavoritePolicies(markReceived);
+                setReceivedStatus("ready");
             } catch (error) {
                 console.error(error);
+                if (active) setReceivedStatus("error");
             }
         };
 
@@ -319,7 +334,7 @@ const Recommendation = () => {
         return () => {
             active = false;
         };
-    }, []);
+    }, [receivedReloadKey]);
 
     useEffect(() => {
         if (!favoritesInitialized) return;
@@ -626,6 +641,7 @@ const Recommendation = () => {
                                         className="peer sr-only"
                                         type="checkbox"
                                         checked={allowDuplicates}
+                                        disabled={receivedStatus !== "ready"}
                                         onChange={(event) =>
                                             setAllowDuplicates(
                                                 event.target.checked
@@ -647,7 +663,11 @@ const Recommendation = () => {
                     ) : loadError ? (
                         <LoadErrorState
                             onRetry={() => {
-                                if (favoritesError) {
+                                if (receivedStatus === "error") {
+                                    setReceivedReloadKey(
+                                        (previous) => previous + 1
+                                    );
+                                } else if (favoritesError) {
                                     setFavoritesReloadKey(
                                         (previous) => previous + 1
                                     );
@@ -731,7 +751,9 @@ const Recommendation = () => {
                                             setSortSheetOpen(false);
                                         }}
                                     >
-                                        {label}
+                                        {key === "recommended"
+                                            ? getSortLabel(key, activeTab)
+                                            : label}
                                         {sortOption === key && <CheckIcon />}
                                     </button>
                                 </li>

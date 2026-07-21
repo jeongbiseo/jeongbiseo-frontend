@@ -21,6 +21,7 @@ import AuthCallback from "@/pages/AuthCallback";
 import CalendarPage from "@/pages/CalendarPage";
 import AvailablePolicies from "@/pages/AvailablePolicies";
 import Home from "@/pages/Home";
+import ErrorPage from "@/pages/ErrorPage";
 import Login from "@/pages/Login";
 import MyPage from "@/pages/MyPage";
 import MyPageEdit from "@/pages/MyPageEdit";
@@ -37,7 +38,7 @@ export const router = createBrowserRouter([
     {
         path: "/",
         element: <App />, // 공통 레이아웃
-        // errorElement: <ErrorPage />, // 에러 페이지
+        errorElement: <ErrorPage />,
         children: [
             {
                 index: true, // path: '/'
@@ -126,6 +127,10 @@ export const router = createBrowserRouter([
                         <Withdrawal />
                     </ProtectedRoute>
                 ),
+            },
+            {
+                path: "*",
+                element: <ErrorPage notFound />,
             },
         ],
     },

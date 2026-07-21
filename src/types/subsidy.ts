@@ -1,6 +1,14 @@
 import type { SubsidyCategory } from "@/types/onboarding";
 import type { PaymentType } from "@/types/estimated";
 
+export type AiExplanation = {
+    amountValue: number | null;
+    monthlyAmount: number | null;
+    durationMonths: number | null;
+    conditionExpression: string | null;
+    evidence: string | null;
+};
+
 export type SubsidyDetailResult = {
     subsidyId: number;
     name: string;
@@ -15,4 +23,5 @@ export type SubsidyDetailResult = {
     description: string | null;
     externalUrl: string | null;
     isFavorite: boolean;
+    aiExplanation: AiExplanation | null;
 };

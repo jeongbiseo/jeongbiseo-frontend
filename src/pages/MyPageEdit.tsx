@@ -22,6 +22,7 @@ import {
 } from "@/api/onboardingApi";
 import { searchSubsidiesApi } from "@/api/subsidyApi";
 import type { ReceivedBenefit, SubsidyCategory } from "@/types/onboarding";
+import { getDaysInMonth } from "@/utils/date";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from(
@@ -29,7 +30,6 @@ const years = Array.from(
     (_, index) => currentYear - 14 - index
 );
 const months = Array.from({ length: 12 }, (_, index) => index + 1);
-const days = Array.from({ length: 31 }, (_, index) => index + 1);
 
 const MyPageEdit = () => {
     const [searchParams] = useSearchParams();
@@ -38,6 +38,7 @@ const MyPageEdit = () => {
     const [birthYear, setBirthYear] = useState(years[0]);
     const [birthMonth, setBirthMonth] = useState(1);
     const [birthDay, setBirthDay] = useState(1);
+    const days = getDaysInMonth(birthYear, birthMonth);
     const [city, setCity] = useState(initialCity);
     const [district, setDistrict] = useState(regions[initialCity][0]);
     const [employment, setEmployment] = useState("");
@@ -261,14 +262,36 @@ const MyPageEdit = () => {
 
                 <FieldLabel>생년월일</FieldLabel>
                 <div className="grid grid-cols-3 gap-[13px]">
-                    <Select value={birthYear} onChange={setBirthYear}>
+                    <Select
+                        value={birthYear}
+                        onChange={(nextYear) => {
+                            setBirthYear(nextYear);
+                            setBirthDay((day) =>
+                                Math.min(
+                                    day,
+                                    getDaysInMonth(nextYear, birthMonth).length
+                                )
+                            );
+                        }}
+                    >
                         {years.map((year) => (
                             <option value={year} key={year}>
                                 {year}년
                             </option>
                         ))}
                     </Select>
-                    <Select value={birthMonth} onChange={setBirthMonth}>
+                    <Select
+                        value={birthMonth}
+                        onChange={(nextMonth) => {
+                            setBirthMonth(nextMonth);
+                            setBirthDay((day) =>
+                                Math.min(
+                                    day,
+                                    getDaysInMonth(birthYear, nextMonth).length
+                                )
+                            );
+                        }}
+                    >
                         {months.map((month) => (
                             <option value={month} key={month}>
                                 {month}월

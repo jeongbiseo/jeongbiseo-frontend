@@ -9,6 +9,7 @@
 
 import { getCalendarApi } from "@/api/calendarApi";
 import DeadlineSheet from "@/components/calendar/DeadlineSheet";
+import Button from "@/components/common/Button";
 import type { CalendarDayElement } from "@/types/calendar";
 import { useEffect, useMemo, useState } from "react";
 import Calendar from "react-calendar";
@@ -39,6 +40,7 @@ const CalendarPage = () => {
     const [month, setMonth] = useState(today.getMonth() + 1);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [state, setState] = useState<LoadState>({ status: "loading" });
+    const [reloadKey, setReloadKey] = useState(0);
 
     const activeStartDate = useMemo(
         () => new Date(year, month - 1, 1),
@@ -78,16 +80,18 @@ const CalendarPage = () => {
         return () => {
             active = false;
         };
-    }, [year, month]);
+    }, [month, reloadKey, year]);
 
     // 월이 바뀌면 이전 달에서 고른 날짜 선택은 해제합니다.
     const handleYearChange = (value: number) => {
         setYear(value);
         setSelectedDate(null);
+        setState({ status: "loading" });
     };
     const handleMonthChange = (value: number) => {
         setMonth(value);
         setSelectedDate(null);
+        setState({ status: "loading" });
     };
 
     const itemsByDate = useMemo(
@@ -204,9 +208,20 @@ const CalendarPage = () => {
                     )}
 
                     {state.status === "error" && (
-                        <p className="text-text-muted mt-8 text-center text-[14px] font-semibold">
-                            마감 정보를 불러오지 못했어요.
-                        </p>
+                        <div className="mt-8 text-center">
+                            <p className="text-text-muted text-[14px] font-semibold">
+                                마감 정보를 불러오지 못했어요.
+                            </p>
+                            <Button
+                                className="mt-5"
+                                onClick={() => {
+                                    setState({ status: "loading" });
+                                    setReloadKey((key) => key + 1);
+                                }}
+                            >
+                                다시 시도
+                            </Button>
+                        </div>
                     )}
 
                     {state.status === "ready" &&

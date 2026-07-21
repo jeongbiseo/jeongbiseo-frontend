@@ -7,7 +7,7 @@ import { ConfirmDialog, StarIcon } from "@/components/mypage/MyPageUI";
 import { subsidyCategoryLabelOf } from "@/constants/onboardingOptions";
 import { paymentTypeLabels } from "@/constants/paymentType";
 import type { SubsidyDetailResult } from "@/types/subsidy";
-import { formatDetailedAmountRange } from "@/utils/format";
+import { formatDetailedAmountRange, formatWon } from "@/utils/format";
 import axios from "axios";
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -282,6 +282,69 @@ const PolicyDetail = () => {
                                 {subsidy.description ??
                                     "지원 내용은 담당기관에서 확인해주세요."}
                             </p>
+                            {subsidy.aiExplanation && (
+                                <div className="bg-surface-soft mt-4 rounded-[10px] p-3">
+                                    <h3 className="text-[12px] font-bold">
+                                        AI 금액 산정 근거
+                                    </h3>
+                                    <DetailRows
+                                        rows={[
+                                            ...(subsidy.aiExplanation
+                                                .amountValue !== null
+                                                ? [
+                                                      {
+                                                          label: "1회 지급액",
+                                                          value: formatWon(
+                                                              subsidy
+                                                                  .aiExplanation
+                                                                  .amountValue
+                                                          ),
+                                                      },
+                                                  ]
+                                                : []),
+                                            ...(subsidy.aiExplanation
+                                                .monthlyAmount !== null
+                                                ? [
+                                                      {
+                                                          label: "월 지급액",
+                                                          value: formatWon(
+                                                              subsidy
+                                                                  .aiExplanation
+                                                                  .monthlyAmount
+                                                          ),
+                                                      },
+                                                  ]
+                                                : []),
+                                            ...(subsidy.aiExplanation
+                                                .durationMonths !== null
+                                                ? [
+                                                      {
+                                                          label: "지급 기간",
+                                                          value: `${subsidy.aiExplanation.durationMonths}개월`,
+                                                      },
+                                                  ]
+                                                : []),
+                                            ...(subsidy.aiExplanation
+                                                .conditionExpression
+                                                ? [
+                                                      {
+                                                          label: "산정 조건",
+                                                          value: subsidy
+                                                              .aiExplanation
+                                                              .conditionExpression,
+                                                      },
+                                                  ]
+                                                : []),
+                                        ]}
+                                    />
+                                    {subsidy.aiExplanation.evidence && (
+                                        <p className="text-text-muted mt-3 text-[11px] leading-[1.5] font-medium whitespace-pre-line">
+                                            근거:{" "}
+                                            {subsidy.aiExplanation.evidence}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                         </PolicyAccordion>
                     </div>
 

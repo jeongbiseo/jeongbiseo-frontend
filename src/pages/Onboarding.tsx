@@ -33,6 +33,7 @@ import type {
     SubsidyCategory,
     SubsidySearchItem,
 } from "@/types/onboarding";
+import { getDaysInMonth } from "@/utils/date";
 import { getApiErrorCode, handleApiError } from "@/utils/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
@@ -51,7 +52,6 @@ const years = Array.from(
     (_, index) => currentYear - 14 - index
 );
 const months = Array.from({ length: 12 }, (_, index) => index + 1);
-const days = Array.from({ length: 31 }, (_, index) => index + 1);
 
 const Onboarding = () => {
     const navigate = useNavigate();
@@ -84,6 +84,7 @@ const Onboarding = () => {
         control,
         name: ["birthYear", "birthMonth", "birthDay", "sido"],
     });
+    const days = getDaysInMonth(birthYear, birthMonth);
 
     const age = useMemo(() => {
         const today = new Date();
@@ -181,6 +182,10 @@ const Onboarding = () => {
                             setValue={setValue}
                             age={age}
                             sido={sido}
+                            birthYear={birthYear}
+                            birthMonth={birthMonth}
+                            birthDay={birthDay}
+                            days={days}
                         />
                     )}
                     {step === 2 && <StepTwo control={control} />}
@@ -220,9 +225,22 @@ type StepOneProps = {
     setValue: UseFormSetValue<OnboardingFormType>;
     age: number;
     sido: string;
+    birthYear: number;
+    birthMonth: number;
+    birthDay: number;
+    days: number[];
 };
 
-const StepOne = ({ control, setValue, age, sido }: StepOneProps) => (
+const StepOne = ({
+    control,
+    setValue,
+    age,
+    sido,
+    birthYear,
+    birthMonth,
+    birthDay,
+    days,
+}: StepOneProps) => (
     <>
         <StepHeading
             eyebrow="기본정보"
@@ -243,7 +261,17 @@ const StepOne = ({ control, setValue, age, sido }: StepOneProps) => (
                 render={({ field }) => (
                     <Select
                         value={field.value}
-                        onChange={(value) => field.onChange(Number(value))}
+                        onChange={(value) => {
+                            const nextYear = Number(value);
+                            field.onChange(nextYear);
+                            setValue(
+                                "birthDay",
+                                Math.min(
+                                    birthDay,
+                                    getDaysInMonth(nextYear, birthMonth).length
+                                )
+                            );
+                        }}
                     >
                         {years.map((year) => (
                             <option key={year} value={year}>
@@ -259,7 +287,17 @@ const StepOne = ({ control, setValue, age, sido }: StepOneProps) => (
                 render={({ field }) => (
                     <Select
                         value={field.value}
-                        onChange={(value) => field.onChange(Number(value))}
+                        onChange={(value) => {
+                            const nextMonth = Number(value);
+                            field.onChange(nextMonth);
+                            setValue(
+                                "birthDay",
+                                Math.min(
+                                    birthDay,
+                                    getDaysInMonth(birthYear, nextMonth).length
+                                )
+                            );
+                        }}
                     >
                         {months.map((month) => (
                             <option key={month} value={month}>
