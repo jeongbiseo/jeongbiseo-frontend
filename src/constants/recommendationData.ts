@@ -14,8 +14,7 @@ export interface RecommendationPolicy {
 export const isUrgentRecommendationPolicy = (policy: RecommendationPolicy) =>
     policy.deadlineDays !== null &&
     policy.deadlineDays >= 0 &&
-    policy.deadlineDays <= 7 &&
-    policy.amount !== null;
+    policy.deadlineDays <= 7;
 
 // API 연동 전 추천 화면 동작 확인을 위한 임시 데이터입니다.
 export const initialRecommendationPolicies: RecommendationPolicy[] = [
