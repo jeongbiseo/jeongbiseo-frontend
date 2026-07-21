@@ -1,4 +1,9 @@
-import { addFavoriteApi, removeFavoriteApi } from "@/api/favoriteApi";
+import {
+    addFavoriteApi,
+    getFavoritesApi,
+    removeFavoriteApi,
+} from "@/api/favoriteApi";
+import { getReceivedSubsidiesApi } from "@/api/onboardingApi";
 import { getRecommendationsApi } from "@/api/recommendationApi";
 import { searchSubsidiesApi } from "@/api/subsidyApi";
 import { BackButton } from "@/components/mypage/MyPageUI";
@@ -23,7 +28,7 @@ import {
 } from "react-router-dom";
 
 type RecommendationTab = "recommended" | "favorites" | "all";
-type SortOption = "recommended" | "amount" | "deadline" | "title";
+type SortOption = "recommended" | "deadline" | "title";
 
 const tabs: Array<{ key: RecommendationTab; label: string }> = [
     { key: "recommended", label: "AI추천" },
@@ -35,7 +40,6 @@ const searchKeywords = ["청년", "월세", "창업"];
 
 const sortOptions: Array<{ key: SortOption; label: string }> = [
     { key: "recommended", label: "추천순" },
-    { key: "amount", label: "지원금액순" },
     { key: "deadline", label: "마감일순" },
     { key: "title", label: "가나다순" },
 ];
@@ -44,13 +48,18 @@ const getInitialTab = (value: string | null): RecommendationTab =>
     value === "favorites" || value === "all" ? value : "recommended";
 
 const getInitialSort = (value: string | null): SortOption =>
-    value === "amount" || value === "deadline" || value === "title"
-        ? value
-        : "recommended";
+    value === "deadline" || value === "title" ? value : "recommended";
+
+const toApiSort = (sortOption: SortOption) => {
+    if (sortOption === "deadline") return "DEADLINE" as const;
+    if (sortOption === "title") return "NAME" as const;
+    return undefined;
+};
 
 const toRecommendationPolicy = (
     item: RecommendationItem,
-    favoriteIds: number[]
+    favoriteIds: number[],
+    receivedIds: number[]
 ): RecommendationPolicy => ({
     id: item.subsidyId,
     organization: item.agency,
@@ -65,7 +74,7 @@ const toRecommendationPolicy = (
     deadlineLabel: formatDDay(item.dDay),
     isFavorite: favoriteIds.includes(item.subsidyId),
     isRecommended: true,
-    isReceived: false,
+    isReceived: receivedIds.includes(item.subsidyId),
 });
 
 const getDeadlineDays = (deadline: string | null) => {
@@ -82,7 +91,8 @@ const getDeadlineDays = (deadline: string | null) => {
 
 const toAllPolicy = (
     item: SubsidySearchItem,
-    favoriteIds: number[]
+    favoriteIds: number[],
+    receivedIds: number[]
 ): RecommendationPolicy => {
     const deadlineDays = getDeadlineDays(item.deadline);
 
@@ -99,7 +109,7 @@ const toAllPolicy = (
                 : formatDDay(deadlineDays),
         isFavorite: favoriteIds.includes(item.subsidyId),
         isRecommended: false,
-        isReceived: false,
+        isReceived: receivedIds.includes(item.subsidyId),
     };
 };
 
@@ -120,6 +130,13 @@ const Recommendation = () => {
     const [allReloadKey, setAllReloadKey] = useState(0);
     const [allPage, setAllPage] = useState(0);
     const [allLast, setAllLast] = useState(true);
+    const [favoritePolicies, setFavoritePolicies] = useState<
+        RecommendationPolicy[]
+    >([]);
+    const [favoritesLoading, setFavoritesLoading] = useState(false);
+    const [favoritesError, setFavoritesError] = useState(false);
+    const [favoritesReloadKey, setFavoritesReloadKey] = useState(0);
+    const [receivedIds, setReceivedIds] = useState<number[]>([]);
     const [activeTab, setActiveTab] = useState<RecommendationTab>(() =>
         getInitialTab(searchParams.get("tab"))
     );
@@ -139,26 +156,21 @@ const Recommendation = () => {
     const policies = useMemo(() => {
         if (activeTab === "recommended") return recommendedPolicies;
         if (activeTab === "all") return allPolicies;
-
-        const uniquePolicies = new Map<number, RecommendationPolicy>();
-        [...recommendedPolicies, ...allPolicies].forEach((policy) => {
-            if (policy.isFavorite) uniquePolicies.set(policy.id, policy);
-        });
-        return [...uniquePolicies.values()];
-    }, [activeTab, allPolicies, recommendedPolicies]);
+        return favoritePolicies;
+    }, [activeTab, allPolicies, favoritePolicies, recommendedPolicies]);
 
     const loading =
         activeTab === "recommended"
             ? recommendationLoading
             : activeTab === "all"
               ? allLoading
-              : false;
+              : favoritesLoading;
     const loadError =
         activeTab === "recommended"
             ? recommendationError
             : activeTab === "all"
               ? allError
-              : false;
+              : favoritesError;
 
     const visiblePolicies = useMemo(() => {
         const normalizedQuery = query.replace(/\s+/g, "").toLowerCase();
@@ -190,10 +202,9 @@ const Recommendation = () => {
             );
         });
 
+        if (activeTab === "all") return filteredPolicies;
+
         return [...filteredPolicies].sort((first, second) => {
-            if (sortOption === "amount") {
-                return (second.amount ?? -1) - (first.amount ?? -1);
-            }
             if (sortOption === "deadline") {
                 return (
                     (first.deadlineDays ?? Number.MAX_SAFE_INTEGER) -
@@ -221,6 +232,17 @@ const Recommendation = () => {
 
             setRecommendedPolicies(updatePolicies);
             setAllPolicies(updatePolicies);
+            setFavoritePolicies((previous) => {
+                if (!isFavorite) {
+                    return previous.filter((policy) => policy.id !== id);
+                }
+
+                if (previous.some((policy) => policy.id === id)) {
+                    return updatePolicies(previous);
+                }
+
+                return [{ ...target, isFavorite: true }, ...previous];
+            });
 
             const favoriteIds = getFavoritePolicyIds();
             saveFavoritePolicyIds(
@@ -250,12 +272,54 @@ const Recommendation = () => {
     useEffect(() => {
         let active = true;
 
+        const loadReceivedSubsidies = async () => {
+            try {
+                const response = await getReceivedSubsidiesApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                const ids = response.result.content.map(
+                    (item) => item.subsidyId
+                );
+                const idSet = new Set(ids);
+                const markReceived = (previous: RecommendationPolicy[]) =>
+                    previous.map((policy) => ({
+                        ...policy,
+                        isReceived: idSet.has(policy.id),
+                    }));
+
+                setReceivedIds(ids);
+                setRecommendedPolicies(markReceived);
+                setAllPolicies(markReceived);
+                setFavoritePolicies(markReceived);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        void loadReceivedSubsidies();
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        let active = true;
+
         const loadRecommendations = async () => {
             setRecommendationLoading(true);
             setRecommendationError(false);
 
             try {
-                const response = await getRecommendationsApi(20);
+                const response = await getRecommendationsApi(
+                    20,
+                    allowDuplicates
+                );
 
                 if (!response.isSuccess) {
                     throw new Error(response.message);
@@ -266,7 +330,7 @@ const Recommendation = () => {
                 const favoriteIds = getFavoritePolicyIds();
                 setRecommendedPolicies(
                     response.result.items.map((item) =>
-                        toRecommendationPolicy(item, favoriteIds)
+                        toRecommendationPolicy(item, favoriteIds, receivedIds)
                     )
                 );
             } catch (error) {
@@ -282,7 +346,7 @@ const Recommendation = () => {
         return () => {
             active = false;
         };
-    }, [recommendationReloadKey]);
+    }, [allowDuplicates, receivedIds, recommendationReloadKey]);
 
     useEffect(() => {
         if (activeTab !== "all") return;
@@ -296,6 +360,7 @@ const Recommendation = () => {
                 try {
                     const response = await searchSubsidiesApi({
                         keyword: query.trim() || undefined,
+                        sort: toApiSort(sortOption),
                         page: 0,
                         size: 20,
                     });
@@ -309,7 +374,7 @@ const Recommendation = () => {
                     const favoriteIds = getFavoritePolicyIds();
                     setAllPolicies(
                         response.result.content.map((item) =>
-                            toAllPolicy(item, favoriteIds)
+                            toAllPolicy(item, favoriteIds, receivedIds)
                         )
                     );
                     setAllPage(response.result.page);
@@ -329,7 +394,7 @@ const Recommendation = () => {
             active = false;
             window.clearTimeout(timer);
         };
-    }, [activeTab, allReloadKey, query]);
+    }, [activeTab, allReloadKey, query, receivedIds, sortOption]);
 
     const loadMoreAllPolicies = async () => {
         if (allLoadingMore || allLast) return;
@@ -339,6 +404,7 @@ const Recommendation = () => {
         try {
             const response = await searchSubsidiesApi({
                 keyword: query.trim() || undefined,
+                sort: toApiSort(sortOption),
                 page: allPage + 1,
                 size: 20,
             });
@@ -349,7 +415,7 @@ const Recommendation = () => {
 
             const favoriteIds = getFavoritePolicyIds();
             const nextPolicies = response.result.content.map((item) =>
-                toAllPolicy(item, favoriteIds)
+                toAllPolicy(item, favoriteIds, receivedIds)
             );
             setAllPolicies((previous) => {
                 const uniquePolicies = new Map(
@@ -369,6 +435,62 @@ const Recommendation = () => {
             setAllLoadingMore(false);
         }
     };
+
+    useEffect(() => {
+        if (activeTab !== "favorites") return;
+
+        let active = true;
+
+        const loadFavorites = async () => {
+            setFavoritesLoading(true);
+            setFavoritesError(false);
+
+            try {
+                const response = await getFavoritesApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                const favoriteIds = response.result.content.map(
+                    (item) => item.subsidyId
+                );
+                const favoriteIdSet = new Set(favoriteIds);
+                setFavoritePolicies(
+                    response.result.content.map((item) => ({
+                        ...toAllPolicy(item, favoriteIds, receivedIds),
+                        isFavorite: true,
+                    }))
+                );
+                setRecommendedPolicies((previous) =>
+                    previous.map((policy) => ({
+                        ...policy,
+                        isFavorite: favoriteIdSet.has(policy.id),
+                    }))
+                );
+                setAllPolicies((previous) =>
+                    previous.map((policy) => ({
+                        ...policy,
+                        isFavorite: favoriteIdSet.has(policy.id),
+                    }))
+                );
+                saveFavoritePolicyIds(favoriteIds);
+            } catch (error) {
+                console.error(error);
+                if (active) setFavoritesError(true);
+            } finally {
+                if (active) setFavoritesLoading(false);
+            }
+        };
+
+        void loadFavorites();
+
+        return () => {
+            active = false;
+        };
+    }, [activeTab, favoritesReloadKey, receivedIds]);
 
     useEffect(() => {
         if (!sortSheetOpen) return;
@@ -502,8 +624,12 @@ const Recommendation = () => {
                                     setRecommendationReloadKey(
                                         (previous) => previous + 1
                                     );
-                                } else {
+                                } else if (activeTab === "all") {
                                     setAllReloadKey((previous) => previous + 1);
+                                } else {
+                                    setFavoritesReloadKey(
+                                        (previous) => previous + 1
+                                    );
                                 }
                             }}
                         />

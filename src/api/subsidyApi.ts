@@ -16,12 +16,21 @@ export type SubsidyDetailFavoriteResult = {
 export const searchSubsidiesApi = async ({
     keyword,
     category,
+    sort,
     page = 0,
     size = 20,
 }: SubsidySearchParams = {}) => {
     const response = await axiosInstance.get<ApiResponse<SubsidyPageResult>>(
         "/subsidies",
-        { params: { keyword: keyword || undefined, category, page, size } }
+        {
+            params: {
+                keyword: keyword || undefined,
+                category,
+                sort,
+                page,
+                size,
+            },
+        }
     );
     return response.data;
 };
