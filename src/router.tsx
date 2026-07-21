@@ -54,11 +54,19 @@ export const router = createBrowserRouter([
             },
             {
                 path: "terms",
-                element: <Terms />,
+                element: (
+                    <ProtectedRoute>
+                        <Terms />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "onboarding",
-                element: <Onboarding />,
+                element: (
+                    <ProtectedRoute>
+                        <Onboarding />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "auth/callback/:provider",

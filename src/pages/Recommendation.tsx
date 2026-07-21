@@ -147,6 +147,7 @@ const Recommendation = () => {
         () => new Set()
     );
     const [receivedIds, setReceivedIds] = useState<number[]>([]);
+    const receivedIdsRef = useRef<Set<number>>(new Set());
     const [receivedStatus, setReceivedStatus] = useState<
         "loading" | "ready" | "error"
     >("loading");
@@ -180,7 +181,7 @@ const Recommendation = () => {
         (activeTab === "recommended"
             ? recommendationLoading
             : activeTab === "all"
-              ? allLoading
+              ? allLoading && allPolicies.length === 0
               : false);
     const loadError =
         receivedStatus === "error" ||
@@ -312,6 +313,7 @@ const Recommendation = () => {
                     (item) => item.subsidyId
                 );
                 const idSet = new Set(ids);
+                receivedIdsRef.current = idSet;
                 const markReceived = (previous: RecommendationPolicy[]) =>
                     previous.map((policy) => ({
                         ...policy,
@@ -498,11 +500,12 @@ const Recommendation = () => {
                 const favoriteIds = response.result.content.map(
                     (item) => item.subsidyId
                 );
+                const currentReceivedIds = [...receivedIdsRef.current];
                 const favoriteIdSet = new Set(favoriteIds);
                 favoriteIdsRef.current = favoriteIdSet;
                 setFavoritePolicies(
                     response.result.content.map((item) => ({
-                        ...toAllPolicy(item, favoriteIds, receivedIds),
+                        ...toAllPolicy(item, favoriteIds, currentReceivedIds),
                         isFavorite: true,
                     }))
                 );
@@ -532,7 +535,7 @@ const Recommendation = () => {
         return () => {
             active = false;
         };
-    }, [favoritesReloadKey, receivedIds]);
+    }, [favoritesReloadKey]);
 
     useEffect(() => {
         if (!sortSheetOpen) return;
