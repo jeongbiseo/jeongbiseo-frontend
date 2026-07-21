@@ -47,7 +47,7 @@ const MyPageTerms = () => {
                 </div>
 
                 <label className="border-primary mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border bg-white px-5 text-[16px] font-bold">
-                    이벤트·혜택 정보 수신 동의
+                    마케팅 정보 수신 동의
                     <input
                         className="peer sr-only"
                         type="checkbox"
