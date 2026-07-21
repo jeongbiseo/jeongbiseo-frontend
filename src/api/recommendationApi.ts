@@ -11,10 +11,13 @@ import type { RecommendationResult } from "@/types/recommendation";
  * [추천 지원금 조회]
  * limit 기본값은 3이며 최대 20까지 요청할 수 있습니다.
  */
-export const getRecommendationsApi = async (limit = 3) => {
+export const getRecommendationsApi = async (
+    limit = 3,
+    includeReceived = true
+) => {
     const response = await axiosInstance.get<ApiResponse<RecommendationResult>>(
         "/recommendations",
-        { params: { limit } }
+        { params: { limit, includeReceived } }
     );
     return response.data;
 };

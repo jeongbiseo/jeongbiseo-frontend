@@ -68,6 +68,16 @@ export interface ReceivedSubsidiesResult {
     receivedSubsidyIds: number[];
 }
 
+export interface ReceivedSubsidyItem {
+    subsidyId: number;
+    name: string;
+}
+
+export interface ReceivedSubsidyListResult {
+    content: ReceivedSubsidyItem[];
+    totalCount: number;
+}
+
 /** GET /subsidies 검색 결과 항목 */
 export interface SubsidySearchItem {
     subsidyId: number;
@@ -83,6 +93,8 @@ export interface SubsidySearchItem {
 export interface SubsidySearchParams {
     keyword?: string;
     category?: SubsidyCategory;
+    /** DEADLINE: 마감일 임박순, NAME: 지원금명 가나다순 */
+    sort?: "DEADLINE" | "NAME";
     page?: number;
     /** 기본 20, 최대 100 */
     size?: number;

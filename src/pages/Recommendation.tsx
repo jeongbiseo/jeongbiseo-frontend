@@ -1,3 +1,11 @@
+import {
+    addFavoriteApi,
+    getFavoritesApi,
+    removeFavoriteApi,
+} from "@/api/favoriteApi";
+import { getReceivedSubsidiesApi } from "@/api/onboardingApi";
+import { getRecommendationsApi } from "@/api/recommendationApi";
+import { searchSubsidiesApi } from "@/api/subsidyApi";
 import { BackButton } from "@/components/mypage/MyPageUI";
 import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import {
@@ -5,10 +13,12 @@ import {
     saveFavoritePolicyIds,
 } from "@/constants/mypageData";
 import {
-    initialRecommendationPolicies,
     isUrgentRecommendationPolicy,
     type RecommendationPolicy,
 } from "@/constants/recommendationData";
+import type { RecommendationItem } from "@/types/recommendation";
+import type { SubsidySearchItem } from "@/types/onboarding";
+import { formatAmountRange, formatDDay } from "@/utils/format";
 import { useEffect, useMemo, useState } from "react";
 import {
     Link,
@@ -18,7 +28,7 @@ import {
 } from "react-router-dom";
 
 type RecommendationTab = "recommended" | "favorites" | "all";
-type SortOption = "recommended" | "amount" | "deadline" | "title";
+type SortOption = "recommended" | "deadline" | "title";
 
 const tabs: Array<{ key: RecommendationTab; label: string }> = [
     { key: "recommended", label: "AI추천" },
@@ -30,7 +40,6 @@ const searchKeywords = ["청년", "월세", "창업"];
 
 const sortOptions: Array<{ key: SortOption; label: string }> = [
     { key: "recommended", label: "추천순" },
-    { key: "amount", label: "지원금액순" },
     { key: "deadline", label: "마감일순" },
     { key: "title", label: "가나다순" },
 ];
@@ -39,21 +48,95 @@ const getInitialTab = (value: string | null): RecommendationTab =>
     value === "favorites" || value === "all" ? value : "recommended";
 
 const getInitialSort = (value: string | null): SortOption =>
-    value === "amount" || value === "deadline" || value === "title"
-        ? value
-        : "recommended";
+    value === "deadline" || value === "title" ? value : "recommended";
+
+const toApiSort = (sortOption: SortOption) => {
+    if (sortOption === "deadline") return "DEADLINE" as const;
+    if (sortOption === "title") return "NAME" as const;
+    return undefined;
+};
+
+const toRecommendationPolicy = (
+    item: RecommendationItem,
+    favoriteIds: number[],
+    receivedIds: number[]
+): RecommendationPolicy => ({
+    id: item.subsidyId,
+    organization: item.agency,
+    title: item.name,
+    amount: item.estimatedAmountMax ?? item.estimatedAmountMin,
+    amountLabel: formatAmountRange(
+        item.estimatedAmountMin,
+        item.estimatedAmountMax,
+        item.paymentType === "MONTHLY" ? " / 월" : ""
+    ),
+    deadlineDays: item.dDay,
+    deadlineLabel: formatDDay(item.dDay),
+    isFavorite: favoriteIds.includes(item.subsidyId),
+    isRecommended: true,
+    isReceived: receivedIds.includes(item.subsidyId),
+});
+
+const getDeadlineDays = (deadline: string | null) => {
+    if (!deadline) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const deadlineDate = new Date(`${deadline}T00:00:00`);
+
+    return Math.ceil(
+        (deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+};
+
+const toAllPolicy = (
+    item: SubsidySearchItem,
+    favoriteIds: number[],
+    receivedIds: number[]
+): RecommendationPolicy => {
+    const deadlineDays = getDeadlineDays(item.deadline);
+
+    return {
+        id: item.subsidyId,
+        organization: item.agency ?? "기관 정보 없음",
+        title: item.name,
+        amount: null,
+        amountLabel: null,
+        deadlineDays,
+        deadlineLabel:
+            deadlineDays !== null && deadlineDays < 0
+                ? "마감"
+                : formatDDay(deadlineDays),
+        isFavorite: favoriteIds.includes(item.subsidyId),
+        isRecommended: false,
+        isReceived: receivedIds.includes(item.subsidyId),
+    };
+};
 
 const Recommendation = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
-    const [policies, setPolicies] = useState(() => {
-        const favoriteIds = getFavoritePolicyIds();
-        return initialRecommendationPolicies.map((policy) => ({
-            ...policy,
-            isFavorite: favoriteIds.includes(policy.id),
-        }));
-    });
+    const [recommendedPolicies, setRecommendedPolicies] = useState<
+        RecommendationPolicy[]
+    >([]);
+    const [recommendationLoading, setRecommendationLoading] = useState(true);
+    const [recommendationError, setRecommendationError] = useState(false);
+    const [recommendationReloadKey, setRecommendationReloadKey] = useState(0);
+    const [allPolicies, setAllPolicies] = useState<RecommendationPolicy[]>([]);
+    const [allLoading, setAllLoading] = useState(false);
+    const [allLoadingMore, setAllLoadingMore] = useState(false);
+    const [allError, setAllError] = useState(false);
+    const [allReloadKey, setAllReloadKey] = useState(0);
+    const [allPage, setAllPage] = useState(0);
+    const [allLast, setAllLast] = useState(true);
+    const [favoritePolicies, setFavoritePolicies] = useState<
+        RecommendationPolicy[]
+    >([]);
+    const [favoritesLoading, setFavoritesLoading] = useState(false);
+    const [favoritesError, setFavoritesError] = useState(false);
+    const [favoritesReloadKey, setFavoritesReloadKey] = useState(0);
+    const [receivedIds, setReceivedIds] = useState<number[]>([]);
     const [activeTab, setActiveTab] = useState<RecommendationTab>(() =>
         getInitialTab(searchParams.get("tab"))
     );
@@ -69,6 +152,25 @@ const Recommendation = () => {
         (location.state as { from?: string } | null)?.from === "mypage";
 
     const sortLabel = sortOptions.find(({ key }) => key === sortOption)?.label;
+
+    const policies = useMemo(() => {
+        if (activeTab === "recommended") return recommendedPolicies;
+        if (activeTab === "all") return allPolicies;
+        return favoritePolicies;
+    }, [activeTab, allPolicies, favoritePolicies, recommendedPolicies]);
+
+    const loading =
+        activeTab === "recommended"
+            ? recommendationLoading
+            : activeTab === "all"
+              ? allLoading
+              : favoritesLoading;
+    const loadError =
+        activeTab === "recommended"
+            ? recommendationError
+            : activeTab === "all"
+              ? allError
+              : favoritesError;
 
     const visiblePolicies = useMemo(() => {
         const normalizedQuery = query.replace(/\s+/g, "").toLowerCase();
@@ -100,10 +202,9 @@ const Recommendation = () => {
             );
         });
 
+        if (activeTab === "all") return filteredPolicies;
+
         return [...filteredPolicies].sort((first, second) => {
-            if (sortOption === "amount") {
-                return (second.amount ?? -1) - (first.amount ?? -1);
-            }
             if (sortOption === "deadline") {
                 return (
                     (first.deadlineDays ?? Number.MAX_SAFE_INTEGER) -
@@ -118,21 +219,278 @@ const Recommendation = () => {
         });
     }, [activeTab, allowDuplicates, policies, query, sortOption, urgentOnly]);
 
-    const toggleFavorite = (id: number) => {
-        setPolicies((previous) => {
-            const nextPolicies = previous.map((policy) =>
-                policy.id === id
-                    ? { ...policy, isFavorite: !policy.isFavorite }
-                    : policy
-            );
+    const toggleFavorite = async (id: number) => {
+        const target = policies.find((policy) => policy.id === id);
+        if (!target) return;
+
+        const nextFavorite = !target.isFavorite;
+        const updateFavorite = (isFavorite: boolean) => {
+            const updatePolicies = (previous: RecommendationPolicy[]) =>
+                previous.map((policy) =>
+                    policy.id === id ? { ...policy, isFavorite } : policy
+                );
+
+            setRecommendedPolicies(updatePolicies);
+            setAllPolicies(updatePolicies);
+            setFavoritePolicies((previous) => {
+                if (!isFavorite) {
+                    return previous.filter((policy) => policy.id !== id);
+                }
+
+                if (previous.some((policy) => policy.id === id)) {
+                    return updatePolicies(previous);
+                }
+
+                return [{ ...target, isFavorite: true }, ...previous];
+            });
+
+            const favoriteIds = getFavoritePolicyIds();
             saveFavoritePolicyIds(
-                nextPolicies
-                    .filter(({ isFavorite }) => isFavorite)
-                    .map(({ id: policyId }) => policyId)
+                isFavorite
+                    ? [...new Set([...favoriteIds, id])]
+                    : favoriteIds.filter((favoriteId) => favoriteId !== id)
             );
-            return nextPolicies;
-        });
+        };
+
+        updateFavorite(nextFavorite);
+
+        try {
+            const response = nextFavorite
+                ? await addFavoriteApi(id)
+                : await removeFavoriteApi(id);
+
+            if (!response.isSuccess) {
+                throw new Error(response.message);
+            }
+        } catch (error) {
+            console.error(error);
+            updateFavorite(!nextFavorite);
+            window.alert("즐겨찾기를 변경하지 못했습니다.");
+        }
     };
+
+    useEffect(() => {
+        let active = true;
+
+        const loadReceivedSubsidies = async () => {
+            try {
+                const response = await getReceivedSubsidiesApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                const ids = response.result.content.map(
+                    (item) => item.subsidyId
+                );
+                const idSet = new Set(ids);
+                const markReceived = (previous: RecommendationPolicy[]) =>
+                    previous.map((policy) => ({
+                        ...policy,
+                        isReceived: idSet.has(policy.id),
+                    }));
+
+                setReceivedIds(ids);
+                setRecommendedPolicies(markReceived);
+                setAllPolicies(markReceived);
+                setFavoritePolicies(markReceived);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        void loadReceivedSubsidies();
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadRecommendations = async () => {
+            setRecommendationLoading(true);
+            setRecommendationError(false);
+
+            try {
+                const response = await getRecommendationsApi(
+                    20,
+                    allowDuplicates
+                );
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                const favoriteIds = getFavoritePolicyIds();
+                setRecommendedPolicies(
+                    response.result.items.map((item) =>
+                        toRecommendationPolicy(item, favoriteIds, receivedIds)
+                    )
+                );
+            } catch (error) {
+                console.error(error);
+                if (active) setRecommendationError(true);
+            } finally {
+                if (active) setRecommendationLoading(false);
+            }
+        };
+
+        void loadRecommendations();
+
+        return () => {
+            active = false;
+        };
+    }, [allowDuplicates, receivedIds, recommendationReloadKey]);
+
+    useEffect(() => {
+        if (activeTab !== "all") return;
+
+        let active = true;
+        const timer = window.setTimeout(() => {
+            const loadAllPolicies = async () => {
+                setAllLoading(true);
+                setAllError(false);
+
+                try {
+                    const response = await searchSubsidiesApi({
+                        keyword: query.trim() || undefined,
+                        sort: toApiSort(sortOption),
+                        page: 0,
+                        size: 20,
+                    });
+
+                    if (!response.isSuccess) {
+                        throw new Error(response.message);
+                    }
+
+                    if (!active) return;
+
+                    const favoriteIds = getFavoritePolicyIds();
+                    setAllPolicies(
+                        response.result.content.map((item) =>
+                            toAllPolicy(item, favoriteIds, receivedIds)
+                        )
+                    );
+                    setAllPage(response.result.page);
+                    setAllLast(response.result.last);
+                } catch (error) {
+                    console.error(error);
+                    if (active) setAllError(true);
+                } finally {
+                    if (active) setAllLoading(false);
+                }
+            };
+
+            void loadAllPolicies();
+        }, 300);
+
+        return () => {
+            active = false;
+            window.clearTimeout(timer);
+        };
+    }, [activeTab, allReloadKey, query, receivedIds, sortOption]);
+
+    const loadMoreAllPolicies = async () => {
+        if (allLoadingMore || allLast) return;
+
+        setAllLoadingMore(true);
+
+        try {
+            const response = await searchSubsidiesApi({
+                keyword: query.trim() || undefined,
+                sort: toApiSort(sortOption),
+                page: allPage + 1,
+                size: 20,
+            });
+
+            if (!response.isSuccess) {
+                throw new Error(response.message);
+            }
+
+            const favoriteIds = getFavoritePolicyIds();
+            const nextPolicies = response.result.content.map((item) =>
+                toAllPolicy(item, favoriteIds, receivedIds)
+            );
+            setAllPolicies((previous) => {
+                const uniquePolicies = new Map(
+                    previous.map((policy) => [policy.id, policy])
+                );
+                nextPolicies.forEach((policy) =>
+                    uniquePolicies.set(policy.id, policy)
+                );
+                return [...uniquePolicies.values()];
+            });
+            setAllPage(response.result.page);
+            setAllLast(response.result.last);
+        } catch (error) {
+            console.error(error);
+            window.alert("지원금을 더 불러오지 못했습니다.");
+        } finally {
+            setAllLoadingMore(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab !== "favorites") return;
+
+        let active = true;
+
+        const loadFavorites = async () => {
+            setFavoritesLoading(true);
+            setFavoritesError(false);
+
+            try {
+                const response = await getFavoritesApi();
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                if (!active) return;
+
+                const favoriteIds = response.result.content.map(
+                    (item) => item.subsidyId
+                );
+                const favoriteIdSet = new Set(favoriteIds);
+                setFavoritePolicies(
+                    response.result.content.map((item) => ({
+                        ...toAllPolicy(item, favoriteIds, receivedIds),
+                        isFavorite: true,
+                    }))
+                );
+                setRecommendedPolicies((previous) =>
+                    previous.map((policy) => ({
+                        ...policy,
+                        isFavorite: favoriteIdSet.has(policy.id),
+                    }))
+                );
+                setAllPolicies((previous) =>
+                    previous.map((policy) => ({
+                        ...policy,
+                        isFavorite: favoriteIdSet.has(policy.id),
+                    }))
+                );
+                saveFavoritePolicyIds(favoriteIds);
+            } catch (error) {
+                console.error(error);
+                if (active) setFavoritesError(true);
+            } finally {
+                if (active) setFavoritesLoading(false);
+            }
+        };
+
+        void loadFavorites();
+
+        return () => {
+            active = false;
+        };
+    }, [activeTab, favoritesReloadKey, receivedIds]);
 
     useEffect(() => {
         if (!sortSheetOpen) return;
@@ -257,7 +615,25 @@ const Recommendation = () => {
                         <div className="bg-line mt-[19px] h-px w-full" />
                     )}
 
-                    {visiblePolicies.length > 0 ? (
+                    {loading ? (
+                        <RecommendationSkeleton />
+                    ) : loadError ? (
+                        <LoadErrorState
+                            onRetry={() => {
+                                if (activeTab === "recommended") {
+                                    setRecommendationReloadKey(
+                                        (previous) => previous + 1
+                                    );
+                                } else if (activeTab === "all") {
+                                    setAllReloadKey((previous) => previous + 1);
+                                } else {
+                                    setFavoritesReloadKey(
+                                        (previous) => previous + 1
+                                    );
+                                }
+                            }}
+                        />
+                    ) : visiblePolicies.length > 0 ? (
                         <div className="mx-auto mt-7 flex w-full max-w-[312px] flex-col gap-4">
                             {visiblePolicies.map((policy) => (
                                 <PolicyCard
@@ -266,6 +642,18 @@ const Recommendation = () => {
                                     onFavoriteToggle={toggleFavorite}
                                 />
                             ))}
+                            {activeTab === "all" && !allLast && (
+                                <button
+                                    className="border-primary text-primary mt-2 h-[44px] cursor-pointer rounded-[12px] border bg-white text-[14px] font-bold disabled:cursor-not-allowed disabled:opacity-60"
+                                    type="button"
+                                    disabled={allLoadingMore}
+                                    onClick={() => void loadMoreAllPolicies()}
+                                >
+                                    {allLoadingMore
+                                        ? "불러오는 중..."
+                                        : "지원금 더 보기"}
+                                </button>
+                            )}
                         </div>
                     ) : query.trim().length > 0 ? (
                         <SearchEmptyState />
@@ -370,6 +758,30 @@ const PolicyCard = ({
         </article>
     );
 };
+
+const RecommendationSkeleton = () => (
+    <div className="mx-auto mt-7 flex w-full max-w-[312px] animate-pulse flex-col gap-4">
+        {[0, 1, 2].map((item) => (
+            <div className="bg-disabled h-[107px] rounded-[20px]" key={item} />
+        ))}
+    </div>
+);
+
+const LoadErrorState = ({ onRetry }: { onRetry: () => void }) => (
+    <div className="mx-auto mt-14 w-full max-w-[330px] px-[14px] text-center">
+        <h2 className="text-[20px] font-bold">추천 정보를 불러오지 못했어요</h2>
+        <p className="text-text-muted mt-2 text-[13px] font-bold">
+            잠시 후 다시 시도해주세요
+        </p>
+        <button
+            className="bg-primary mt-5 cursor-pointer rounded-[12px] px-5 py-3 text-[14px] font-bold text-white"
+            type="button"
+            onClick={onRetry}
+        >
+            다시 시도
+        </button>
+    </div>
+);
 
 const EmptyRecommendation = ({
     onEditProfile,
