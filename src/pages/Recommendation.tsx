@@ -13,6 +13,7 @@ import {
     RecommendationAssessment,
     RecommendationUncertainty,
 } from "@/components/recommendation/RecommendationAssessment";
+import { RecommendationFreshness } from "@/components/recommendation/RecommendationFreshness";
 import {
     isUrgentRecommendationPolicy,
     type RecommendationPolicy,
@@ -142,6 +143,8 @@ const Recommendation = () => {
     const [recommendationLoading, setRecommendationLoading] = useState(true);
     const [recommendationError, setRecommendationError] = useState(false);
     const [recommendationReloadKey, setRecommendationReloadKey] = useState(0);
+    const [recommendationDataUpdatedAt, setRecommendationDataUpdatedAt] =
+        useState<string | null>(null);
     const [allPolicies, setAllPolicies] = useState<RecommendationPolicy[]>([]);
     const [allLoading, setAllLoading] = useState(false);
     const [allLoadingMore, setAllLoadingMore] = useState(false);
@@ -379,6 +382,7 @@ const Recommendation = () => {
                         toRecommendationPolicy(item, favoriteIds, receivedIds)
                     )
                 );
+                setRecommendationDataUpdatedAt(response.result.dataUpdatedAt);
             } catch (error) {
                 console.error(error);
                 if (active) setRecommendationError(true);
@@ -674,6 +678,17 @@ const Recommendation = () => {
                     {!searchOpen && (
                         <div className="bg-line mt-[19px] h-px w-full" />
                     )}
+
+                    {!loading &&
+                        !loadError &&
+                        activeTab === "recommended" &&
+                        recommendationDataUpdatedAt && (
+                            <div className="mx-auto mt-5 w-full max-w-[312px]">
+                                <RecommendationFreshness
+                                    dataUpdatedAt={recommendationDataUpdatedAt}
+                                />
+                            </div>
+                        )}
 
                     {loading ? (
                         <RecommendationSkeleton />

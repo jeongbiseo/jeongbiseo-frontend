@@ -20,6 +20,7 @@ import { getRecommendationsApi } from "@/api/recommendationApi";
 import DeadlineSheet from "@/components/calendar/DeadlineSheet";
 import Button from "@/components/common/Button";
 import { RecommendationAssessment } from "@/components/recommendation/RecommendationAssessment";
+import { RecommendationFreshness } from "@/components/recommendation/RecommendationFreshness";
 import { isNonCashPayment, paymentTypeLabels } from "@/constants/paymentType";
 import { useAuthStore } from "@/stores/authStore";
 import type { CalendarResult } from "@/types/calendar";
@@ -41,6 +42,7 @@ type HomeData = {
     total: EstimatedTotalResult;
     breakdown: EstimatedBreakdownResult;
     recommendations: RecommendationItem[];
+    recommendationDataUpdatedAt: string;
     calendar: CalendarResult | null;
 };
 
@@ -91,6 +93,8 @@ const Home = () => {
                         total: total.result,
                         breakdown: breakdown.result,
                         recommendations: recommendations.result.items,
+                        recommendationDataUpdatedAt:
+                            recommendations.result.dataUpdatedAt,
                         calendar: calendar?.isSuccess ? calendar.result : null,
                     },
                 });
@@ -151,6 +155,11 @@ const Home = () => {
                             to="/recommend"
                         >
                             <div className="ml-auto flex w-[312px] flex-col gap-[18px]">
+                                <RecommendationFreshness
+                                    dataUpdatedAt={
+                                        state.data.recommendationDataUpdatedAt
+                                    }
+                                />
                                 {state.data.recommendations.map(
                                     (recommendation) => (
                                         <RecommendationCard
