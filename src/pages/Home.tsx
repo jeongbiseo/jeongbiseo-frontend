@@ -19,6 +19,8 @@ import { getCalendarApi } from "@/api/calendarApi";
 import { getRecommendationsApi } from "@/api/recommendationApi";
 import DeadlineSheet from "@/components/calendar/DeadlineSheet";
 import Button from "@/components/common/Button";
+import { RecommendationAssessment } from "@/components/recommendation/RecommendationAssessment";
+import { RecommendationFreshness } from "@/components/recommendation/RecommendationFreshness";
 import { isNonCashPayment, paymentTypeLabels } from "@/constants/paymentType";
 import { useAuthStore } from "@/stores/authStore";
 import type { CalendarResult } from "@/types/calendar";
@@ -40,6 +42,7 @@ type HomeData = {
     total: EstimatedTotalResult;
     breakdown: EstimatedBreakdownResult;
     recommendations: RecommendationItem[];
+    recommendationDataUpdatedAt: string;
     calendar: CalendarResult | null;
 };
 
@@ -90,6 +93,8 @@ const Home = () => {
                         total: total.result,
                         breakdown: breakdown.result,
                         recommendations: recommendations.result.items,
+                        recommendationDataUpdatedAt:
+                            recommendations.result.dataUpdatedAt,
                         calendar: calendar?.isSuccess ? calendar.result : null,
                     },
                 });
@@ -150,6 +155,11 @@ const Home = () => {
                             to="/recommend"
                         >
                             <div className="ml-auto flex w-[312px] flex-col gap-[18px]">
+                                <RecommendationFreshness
+                                    dataUpdatedAt={
+                                        state.data.recommendationDataUpdatedAt
+                                    }
+                                />
                                 {state.data.recommendations.map(
                                     (recommendation) => (
                                         <RecommendationCard
@@ -205,8 +215,8 @@ const HomeSkeleton = () => (
         <div className="bg-disabled mx-auto mt-[18px] h-[262px] w-[324px] rounded-[30px]" />
         <div className="mt-[37px] ml-[7px] flex w-[328px] flex-col gap-[18px]">
             <div className="bg-disabled h-[24px] w-[140px] rounded" />
-            <div className="bg-disabled ml-auto h-[107px] w-[312px] rounded-[20px]" />
-            <div className="bg-disabled ml-auto h-[107px] w-[312px] rounded-[20px]" />
+            <div className="bg-disabled ml-auto h-[150px] w-[312px] rounded-[20px]" />
+            <div className="bg-disabled ml-auto h-[150px] w-[312px] rounded-[20px]" />
         </div>
     </div>
 );
@@ -331,7 +341,10 @@ const RecommendationCard = ({
 }) => {
     // 바우처·현물성 지원금은 마감일 대신 지급 방식을 배지로 보여줍니다.
     const nonCash = isNonCashPayment(recommendation.paymentType);
-    const isUrgent = recommendation.dDay !== null && recommendation.dDay <= 7;
+    const isUrgent =
+        recommendation.dDay !== null &&
+        recommendation.dDay >= 0 &&
+        recommendation.dDay <= 7;
     const badgeLabel = nonCash
         ? paymentTypeLabels[recommendation.paymentType]
         : formatDDay(recommendation.dDay);
@@ -344,7 +357,7 @@ const RecommendationCard = ({
 
     return (
         <Link
-            className="border-primary relative block h-[107px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]"
+            className="border-primary relative block min-h-[150px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]"
             to={`/policies/${recommendation.subsidyId}`}
             state={{ bottomNavPath: "/" }}
         >
@@ -355,7 +368,20 @@ const RecommendationCard = ({
                 <h3 className="mt-[6px] truncate text-[16px] leading-none font-bold">
                     {recommendation.name}
                 </h3>
-                <p className="text-success mt-[15px] truncate text-[16px] leading-none font-bold">
+                <RecommendationAssessment
+                    className="mt-3"
+                    confirmedMatchCount={recommendation.confirmedMatchCount}
+                    unverifiedConditionCount={
+                        recommendation.unverifiedConditionCount
+                    }
+                />
+                {recommendation.uncomputable && (
+                    <p className="text-warning mt-2 truncate text-[11px] leading-none font-semibold">
+                        {recommendation.uncomputableReasons[0] ??
+                            "세부 조건을 추가로 확인해주세요"}
+                    </p>
+                )}
+                <p className="text-success mt-3 truncate text-[16px] leading-none font-bold">
                     {formatAmountRange(
                         recommendation.estimatedAmountMin,
                         recommendation.estimatedAmountMax

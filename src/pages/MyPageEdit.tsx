@@ -9,9 +9,9 @@ import {
     employmentOptions,
     incomeLabelOf,
     incomeOptions,
-    subsidyCategoryOptions,
 } from "@/constants/onboardingOptions";
-import { regionNames, regions } from "@/constants/regions";
+import { useRegionOptions } from "@/hooks/useRegionOptions";
+import { useSubsidyCategories } from "@/hooks/useSubsidyCategories";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -34,13 +34,12 @@ const months = Array.from({ length: 12 }, (_, index) => index + 1);
 const MyPageEdit = () => {
     const [searchParams] = useSearchParams();
     const receivedSectionRef = useRef<HTMLDivElement>(null);
-    const initialCity = regionNames[0];
     const [birthYear, setBirthYear] = useState(years[0]);
     const [birthMonth, setBirthMonth] = useState(1);
     const [birthDay, setBirthDay] = useState(1);
     const days = getDaysInMonth(birthYear, birthMonth);
-    const [city, setCity] = useState(initialCity);
-    const [district, setDistrict] = useState(regions[initialCity][0]);
+    const [city, setCity] = useState("");
+    const [district, setDistrict] = useState("");
     const [employment, setEmployment] = useState("");
     const [income, setIncome] = useState("");
     const [householdSize, setHouseholdSize] = useState(1);
@@ -58,6 +57,25 @@ const MyPageEdit = () => {
     const [saved, setSaved] = useState(false);
     const [saving, setSaving] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const {
+        sidoList,
+        sigunguList,
+        sigunguSido,
+        sidoStatus,
+        sigunguStatus,
+        retrySido,
+        retrySigungu,
+    } = useRegionOptions(city);
+    const resolvedCity = sidoList.includes(city) ? city : (sidoList[0] ?? "");
+    const resolvedDistrict = sigunguList.some(({ name }) => name === district)
+        ? district
+        : (sigunguList[0]?.name ?? "");
+    const regionReady =
+        sidoStatus === "ready" &&
+        Boolean(resolvedCity) &&
+        sigunguStatus === "ready" &&
+        sigunguSido === resolvedCity &&
+        Boolean(resolvedDistrict);
 
     useEffect(() => {
         let active = true;
@@ -199,6 +217,11 @@ const MyPageEdit = () => {
             return;
         }
 
+        if (!regionReady) {
+            setToastMessage("거주지 정보를 다시 확인해주세요.");
+            return;
+        }
+
         if (receivedLoading || receivedError) {
             setToastMessage("기수령 지원금을 먼저 불러와주세요.");
             return;
@@ -212,8 +235,8 @@ const MyPageEdit = () => {
         try {
             const profileResponse = await updateMyOnboardingApi({
                 birthDate: `${birthYear}-${String(birthMonth).padStart(2, "0")}-${String(birthDay).padStart(2, "0")}`,
-                sido: city,
-                sigungu: district,
+                sido: resolvedCity,
+                sigungu: resolvedDistrict,
                 employmentStatus,
                 ...(incomeBracket ? { incomeBracket } : {}),
                 householdSize,
@@ -310,23 +333,76 @@ const MyPageEdit = () => {
                 <FieldLabel>거주지</FieldLabel>
                 <div className="grid grid-cols-2 gap-2">
                     <Select
-                        value={city}
+                        value={resolvedCity}
+                        disabled={
+                            sidoStatus !== "ready" || sidoList.length === 0
+                        }
                         onChange={(value) => {
                             const nextCity = String(value);
                             setCity(nextCity);
-                            setDistrict(regions[nextCity][0]);
+                            setDistrict("");
                         }}
                     >
-                        {regionNames.map((region) => (
-                            <option key={region}>{region}</option>
+                        <option value="">
+                            {sidoStatus === "loading"
+                                ? "지역 불러오는 중"
+                                : "시·도 선택"}
+                        </option>
+                        {sidoList.map((region) => (
+                            <option key={region} value={region}>
+                                {region}
+                            </option>
                         ))}
                     </Select>
-                    <Select value={district} onChange={setDistrict}>
-                        {regions[city].map((districtName) => (
-                            <option key={districtName}>{districtName}</option>
+                    <Select
+                        value={resolvedDistrict}
+                        disabled={
+                            sigunguStatus !== "ready" ||
+                            sigunguSido !== resolvedCity ||
+                            sigunguList.length === 0
+                        }
+                        onChange={setDistrict}
+                    >
+                        <option value="">
+                            {sigunguStatus === "loading"
+                                ? "시·군·구 불러오는 중"
+                                : "시·군·구 선택"}
+                        </option>
+                        {sigunguList.map(({ code, name }) => (
+                            <option key={code} value={name}>
+                                {name}
+                            </option>
                         ))}
                     </Select>
                 </div>
+                {sidoStatus === "error" && (
+                    <InlineLoadState
+                        message="지역 목록을 불러오지 못했어요"
+                        onRetry={retrySido}
+                    />
+                )}
+                {sidoStatus === "ready" && sidoList.length === 0 && (
+                    <InlineLoadState
+                        message="선택할 수 있는 지역이 없어요"
+                        onRetry={retrySido}
+                    />
+                )}
+                {sidoStatus === "ready" &&
+                    sidoList.length > 0 &&
+                    sigunguStatus === "error" && (
+                        <InlineLoadState
+                            message="시·군·구 목록을 불러오지 못했어요"
+                            onRetry={retrySigungu}
+                        />
+                    )}
+                {sigunguStatus === "ready" &&
+                    sigunguSido === resolvedCity &&
+                    sigunguList.length === 0 && (
+                        <InlineLoadState
+                            message="선택할 수 있는 시·군·구가 없어요"
+                            onRetry={retrySigungu}
+                        />
+                    )}
 
                 <FieldLabel>고용상태</FieldLabel>
                 <Select value={employment} onChange={setEmployment}>
@@ -457,7 +533,12 @@ const MyPageEdit = () => {
                 <button
                     className="bg-third mt-9 h-[39px] w-[341px] max-w-full cursor-pointer rounded-[15px] text-[16px] font-bold text-white"
                     type="button"
-                    disabled={saving || receivedLoading || receivedError}
+                    disabled={
+                        saving ||
+                        receivedLoading ||
+                        receivedError ||
+                        !regionReady
+                    }
                     onClick={handleSave}
                 >
                     {saving ? "저장 중..." : "저장"}
@@ -509,6 +590,16 @@ const BenefitAddSheet = ({
     const [searchResults, setSearchResults] = useState<ReceivedBenefit[]>([]);
     const [searching, setSearching] = useState(false);
     const [searchError, setSearchError] = useState(false);
+    const {
+        categories,
+        status: categoryStatus,
+        retry: retryCategories,
+    } = useSubsidyCategories(open);
+    const availableCategory = categories.some(
+        ({ code }) => code === selectedCategory
+    )
+        ? selectedCategory
+        : null;
 
     useEffect(() => {
         if (!open) return;
@@ -522,7 +613,7 @@ const BenefitAddSheet = ({
                 try {
                     const response = await searchSubsidiesApi({
                         keyword: query.trim() || undefined,
-                        category: selectedCategory ?? undefined,
+                        category: availableCategory ?? undefined,
                         includeClosed: true,
                         page: 0,
                         size: 50,
@@ -559,7 +650,7 @@ const BenefitAddSheet = ({
             active = false;
             window.clearTimeout(timer);
         };
-    }, [open, query, selectedCategory]);
+    }, [availableCategory, open, query]);
 
     const visibleBenefits = useMemo(() => {
         const receivedIds = new Set(receivedBenefits.map(({ id }) => id));
@@ -608,18 +699,39 @@ const BenefitAddSheet = ({
                 <div className="mt-4 flex flex-wrap gap-1.5">
                     {[
                         { label: "전체", value: null },
-                        ...subsidyCategoryOptions,
+                        ...categories.map(({ code, label }) => ({
+                            label,
+                            value: code,
+                        })),
                     ].map(({ label, value }) => (
                         <button
-                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${selectedCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
+                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${availableCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
                             type="button"
                             key={value ?? "all"}
+                            aria-pressed={availableCategory === value}
                             onClick={() => setSelectedCategory(value)}
                         >
                             {label}
                         </button>
                     ))}
                 </div>
+                {categoryStatus === "loading" && categories.length === 0 && (
+                    <p className="text-text-subtle mt-2 text-[12px] font-semibold">
+                        카테고리를 불러오는 중이에요
+                    </p>
+                )}
+                {categoryStatus === "error" && (
+                    <InlineLoadState
+                        message="카테고리를 불러오지 못했어요"
+                        onRetry={retryCategories}
+                    />
+                )}
+                {categoryStatus === "ready" && categories.length === 0 && (
+                    <InlineLoadState
+                        message="표시할 카테고리가 없어요"
+                        onRetry={retryCategories}
+                    />
+                )}
 
                 <div className="mt-8 flex flex-col gap-3">
                     {searching && (
@@ -698,18 +810,40 @@ const FieldLabel = ({ children }: { children: React.ReactNode }) => (
     <h2 className="mt-6 mb-2 text-[13px] font-bold">{children}</h2>
 );
 
+const InlineLoadState = ({
+    message,
+    onRetry,
+}: {
+    message: string;
+    onRetry: () => void;
+}) => (
+    <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="text-danger text-[12px] font-semibold">{message}</p>
+        <button
+            className="text-primary shrink-0 cursor-pointer text-[12px] font-bold"
+            type="button"
+            onClick={onRetry}
+        >
+            다시 시도
+        </button>
+    </div>
+);
+
 const Select = <T extends string | number>({
     value,
     onChange,
     children,
+    disabled = false,
 }: {
     value: T;
     onChange: (value: T) => void;
     children: React.ReactNode;
+    disabled?: boolean;
 }) => (
     <select
-        className="border-line-strong focus:border-primary h-[48px] w-full cursor-pointer rounded-[10px] border bg-white px-3 text-[13px] font-semibold outline-none"
+        className="border-line-strong focus:border-primary disabled:bg-disabled h-[48px] w-full cursor-pointer rounded-[10px] border bg-white px-3 text-[13px] font-semibold outline-none disabled:cursor-not-allowed"
         value={value}
+        disabled={disabled}
         onChange={(event) =>
             onChange(
                 (typeof value === "number"

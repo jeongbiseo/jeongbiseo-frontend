@@ -19,9 +19,9 @@ import Header from "@/components/common/Header";
 import {
     employmentOptions,
     incomeOptions,
-    subsidyCategoryOptions,
 } from "@/constants/onboardingOptions";
-import { regionNames, regions } from "@/constants/regions";
+import { useRegionOptions } from "@/hooks/useRegionOptions";
+import { useSubsidyCategories } from "@/hooks/useSubsidyCategories";
 import {
     onboardingSchema,
     toOnboardingRequest,
@@ -71,8 +71,8 @@ const Onboarding = () => {
             birthYear: 2000,
             birthMonth: 3,
             birthDay: 14,
-            sido: "서울특별시",
-            sigungu: "강남구",
+            sido: "",
+            sigungu: "",
             employmentStatus: "EMPLOYED",
             incomeBracket: undefined,
             householdSize: 1,
@@ -81,11 +81,46 @@ const Onboarding = () => {
     });
 
     // watch() 대신 useWatch를 사용합니다. (React Compiler 호환)
-    const [birthYear, birthMonth, birthDay, sido] = useWatch({
+    const [birthYear, birthMonth, birthDay, sido, sigungu] = useWatch({
         control,
-        name: ["birthYear", "birthMonth", "birthDay", "sido"],
+        name: ["birthYear", "birthMonth", "birthDay", "sido", "sigungu"],
     });
     const days = getDaysInMonth(birthYear, birthMonth);
+    const {
+        sidoList,
+        sigunguList,
+        sigunguSido,
+        sidoStatus,
+        sigunguStatus,
+        retrySido,
+        retrySigungu,
+    } = useRegionOptions(sido);
+    const regionReady =
+        sidoStatus === "ready" &&
+        sidoList.includes(sido) &&
+        sigunguStatus === "ready" &&
+        sigunguSido === sido &&
+        sigunguList.some(({ name }) => name === sigungu);
+
+    useEffect(() => {
+        if (sidoStatus !== "ready" || sidoList.includes(sido)) return;
+
+        setValue("sido", sidoList[0] ?? "", { shouldValidate: true });
+        setValue("sigungu", "", { shouldValidate: true });
+    }, [setValue, sido, sidoList, sidoStatus]);
+
+    useEffect(() => {
+        if (
+            sigunguStatus !== "ready" ||
+            sigunguList.some(({ name }) => name === sigungu)
+        ) {
+            return;
+        }
+
+        setValue("sigungu", sigunguList[0]?.name ?? "", {
+            shouldValidate: true,
+        });
+    }, [setValue, sigungu, sigunguList, sigunguStatus]);
 
     const age = useMemo(() => {
         const today = new Date();
@@ -207,11 +242,16 @@ const Onboarding = () => {
                             control={control}
                             setValue={setValue}
                             age={age}
-                            sido={sido}
                             birthYear={birthYear}
                             birthMonth={birthMonth}
                             birthDay={birthDay}
                             days={days}
+                            sidoList={sidoList}
+                            sigunguList={sigunguList.map(({ name }) => name)}
+                            sidoStatus={sidoStatus}
+                            sigunguStatus={sigunguStatus}
+                            retrySido={retrySido}
+                            retrySigungu={retrySigungu}
                         />
                     )}
                     {step === 2 && <StepTwo control={control} />}
@@ -226,7 +266,7 @@ const Onboarding = () => {
 
                 <Button
                     className="mt-7"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || (step === 1 && !regionReady)}
                     onClick={step === 3 ? handleSubmit(onSubmit) : goNext}
                 >
                     {isSubmitting ? "저장 중..." : step === 3 ? "완료" : "다음"}
@@ -250,22 +290,32 @@ type StepOneProps = {
     control: Control<OnboardingFormType>;
     setValue: UseFormSetValue<OnboardingFormType>;
     age: number;
-    sido: string;
     birthYear: number;
     birthMonth: number;
     birthDay: number;
     days: number[];
+    sidoList: string[];
+    sigunguList: string[];
+    sidoStatus: "idle" | "loading" | "ready" | "error";
+    sigunguStatus: "idle" | "loading" | "ready" | "error";
+    retrySido: () => void;
+    retrySigungu: () => void;
 };
 
 const StepOne = ({
     control,
     setValue,
     age,
-    sido,
     birthYear,
     birthMonth,
     birthDay,
     days,
+    sidoList,
+    sigunguList,
+    sidoStatus,
+    sigunguStatus,
+    retrySido,
+    retrySigungu,
 }: StepOneProps) => (
     <>
         <StepHeading
@@ -369,14 +419,25 @@ const StepOne = ({
                 render={({ field }) => (
                     <Select
                         value={field.value}
+                        disabled={
+                            sidoStatus !== "ready" || sidoList.length === 0
+                        }
                         onChange={(value) => {
                             field.onChange(value);
-                            // 시/도가 바뀌면 시군구를 해당 지역의 첫 항목으로 초기화합니다.
-                            setValue("sigungu", regions[value][0]);
+                            setValue("sigungu", "", {
+                                shouldValidate: true,
+                            });
                         }}
                     >
-                        {regionNames.map((region) => (
-                            <option key={region}>{region}</option>
+                        <option value="">
+                            {sidoStatus === "loading"
+                                ? "지역 불러오는 중"
+                                : "시·도 선택"}
+                        </option>
+                        {sidoList.map((region) => (
+                            <option key={region} value={region}>
+                                {region}
+                            </option>
                         ))}
                     </Select>
                 )}
@@ -385,14 +446,54 @@ const StepOne = ({
                 control={control}
                 name="sigungu"
                 render={({ field }) => (
-                    <Select value={field.value} onChange={field.onChange}>
-                        {regions[sido].map((districtName) => (
-                            <option key={districtName}>{districtName}</option>
+                    <Select
+                        value={field.value}
+                        disabled={
+                            sigunguStatus !== "ready" ||
+                            sigunguList.length === 0
+                        }
+                        onChange={field.onChange}
+                    >
+                        <option value="">
+                            {sigunguStatus === "loading"
+                                ? "시·군·구 불러오는 중"
+                                : "시·군·구 선택"}
+                        </option>
+                        {sigunguList.map((districtName) => (
+                            <option key={districtName} value={districtName}>
+                                {districtName}
+                            </option>
                         ))}
                     </Select>
                 )}
             />
         </div>
+        {sidoStatus === "error" && (
+            <InlineLoadState
+                message="지역 목록을 불러오지 못했어요"
+                onRetry={retrySido}
+            />
+        )}
+        {sidoStatus === "ready" && sidoList.length === 0 && (
+            <InlineLoadState
+                message="선택할 수 있는 지역이 없어요"
+                onRetry={retrySido}
+            />
+        )}
+        {sidoStatus === "ready" &&
+            sidoList.length > 0 &&
+            sigunguStatus === "error" && (
+                <InlineLoadState
+                    message="시·군·구 목록을 불러오지 못했어요"
+                    onRetry={retrySigungu}
+                />
+            )}
+        {sigunguStatus === "ready" && sigunguList.length === 0 && (
+            <InlineLoadState
+                message="선택할 수 있는 시·군·구가 없어요"
+                onRetry={retrySigungu}
+            />
+        )}
 
         <FieldLabel>고용상태(필수)</FieldLabel>
         <Controller
@@ -501,8 +602,15 @@ const StepTwo = ({ control }: { control: Control<OnboardingFormType> }) => (
 const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
-    // null이면 전체 조회입니다. 백엔드 카탈로그에 카테고리가 채워지면 칩 필터가 동작합니다.
     const [category, setCategory] = useState<SubsidyCategory | null>(null);
+    const {
+        categories,
+        status: categoryStatus,
+        retry: retryCategories,
+    } = useSubsidyCategories();
+    const selectedCategory = categories.some(({ code }) => code === category)
+        ? category
+        : null;
     // 조회 결과를 검색 조건(key)과 함께 저장해, 로딩 여부를 파생값으로 계산합니다.
     // (effect 안에서 setState를 동기 호출하지 않기 위한 구조입니다)
     const [result, setResult] = useState<{
@@ -510,7 +618,7 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
         items: SubsidySearchItem[];
     } | null>(null);
 
-    const searchKey = `${category ?? ""}|${debouncedQuery}`;
+    const searchKey = `${selectedCategory ?? ""}|${debouncedQuery}`;
     const subsidies = result?.key === searchKey ? result.items : [];
     const searching = result?.key !== searchKey;
 
@@ -527,7 +635,7 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
             try {
                 const response = await searchSubsidiesApi({
                     keyword: debouncedQuery,
-                    category: category ?? undefined,
+                    category: selectedCategory ?? undefined,
                     includeClosed: true,
                 });
                 if (active) {
@@ -548,7 +656,7 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
         return () => {
             active = false;
         };
-    }, [searchKey, debouncedQuery, category]);
+    }, [searchKey, debouncedQuery, selectedCategory]);
 
     return (
         <>
@@ -596,19 +704,39 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
             <div className="mt-3 flex w-full items-center gap-1.5 overflow-x-auto pb-1">
                 {[
                     { label: "전체", value: null },
-                    ...subsidyCategoryOptions,
+                    ...categories.map(({ code, label }) => ({
+                        label,
+                        value: code,
+                    })),
                 ].map(({ label, value }) => (
                     <button
-                        className={`shrink-0 cursor-pointer rounded-full px-[10px] py-[6px] text-[13px] leading-[16px] font-bold whitespace-nowrap ${category === value ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
+                        className={`shrink-0 cursor-pointer rounded-full px-[10px] py-[6px] text-[13px] leading-[16px] font-bold whitespace-nowrap ${selectedCategory === value ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
                         type="button"
-                        key={label}
-                        aria-pressed={category === value}
+                        key={value ?? "all"}
+                        aria-pressed={selectedCategory === value}
                         onClick={() => setCategory(value)}
                     >
                         {label}
                     </button>
                 ))}
             </div>
+            {categoryStatus === "loading" && categories.length === 0 && (
+                <p className="text-text-muted mt-2 text-[12px] font-semibold">
+                    카테고리를 불러오는 중이에요
+                </p>
+            )}
+            {categoryStatus === "error" && (
+                <InlineLoadState
+                    message="카테고리를 불러오지 못했어요"
+                    onRetry={retryCategories}
+                />
+            )}
+            {categoryStatus === "ready" && categories.length === 0 && (
+                <InlineLoadState
+                    message="표시할 카테고리가 없어요"
+                    onRetry={retryCategories}
+                />
+            )}
 
             <FieldLabel>요즘 많이 찾는 지원금</FieldLabel>
             <Controller
@@ -693,18 +821,40 @@ const FieldLabel = ({ children }: { children: React.ReactNode }) => (
     <h2 className="mt-7 mb-2.5 text-[13px] font-bold">{children}</h2>
 );
 
+const InlineLoadState = ({
+    message,
+    onRetry,
+}: {
+    message: string;
+    onRetry: () => void;
+}) => (
+    <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="text-danger text-[12px] font-semibold">{message}</p>
+        <button
+            className="text-primary shrink-0 cursor-pointer text-[12px] font-bold"
+            type="button"
+            onClick={onRetry}
+        >
+            다시 시도
+        </button>
+    </div>
+);
+
 const Select = ({
     value,
     onChange,
     children,
+    disabled = false,
 }: {
     value: string | number;
     onChange: (value: string) => void;
     children: React.ReactNode;
+    disabled?: boolean;
 }) => (
     <select
-        className="focus:border-primary h-[48px] w-full cursor-pointer rounded-[10px] border border-[#d8d8d8] bg-white px-3 text-[13px] font-semibold outline-none"
+        className="focus:border-primary disabled:bg-disabled h-[48px] w-full cursor-pointer rounded-[10px] border border-[#d8d8d8] bg-white px-3 text-[13px] font-semibold outline-none disabled:cursor-not-allowed"
         value={value}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
     >
         {children}

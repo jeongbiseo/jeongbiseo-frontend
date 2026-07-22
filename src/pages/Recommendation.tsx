@@ -10,6 +10,11 @@ import Toast from "@/components/common/Toast";
 import { BackButton } from "@/components/mypage/MyPageUI";
 import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import {
+    RecommendationAssessment,
+    RecommendationUncertainty,
+} from "@/components/recommendation/RecommendationAssessment";
+import { RecommendationFreshness } from "@/components/recommendation/RecommendationFreshness";
+import {
     isUrgentRecommendationPolicy,
     type RecommendationPolicy,
 } from "@/constants/recommendationData";
@@ -74,6 +79,11 @@ const toRecommendationPolicy = (
     ),
     deadlineDays: item.dDay,
     deadlineLabel: formatDDay(item.dDay),
+    eligibilitySummary: item.eligibilitySummary,
+    confirmedMatchCount: item.confirmedMatchCount,
+    unverifiedConditionCount: item.unverifiedConditionCount,
+    uncomputable: item.uncomputable,
+    uncomputableReasons: item.uncomputableReasons,
     isFavorite: favoriteIds.includes(item.subsidyId),
     isRecommended: true,
     isReceived: receivedIds.includes(item.subsidyId),
@@ -112,6 +122,11 @@ const toAllPolicy = (
             deadlineDays !== null && deadlineDays < 0
                 ? "마감"
                 : formatDDay(deadlineDays),
+        eligibilitySummary: null,
+        confirmedMatchCount: null,
+        unverifiedConditionCount: null,
+        uncomputable: false,
+        uncomputableReasons: [],
         isFavorite: favoriteIds.includes(item.subsidyId),
         isRecommended: false,
         isReceived: receivedIds.includes(item.subsidyId),
@@ -128,6 +143,8 @@ const Recommendation = () => {
     const [recommendationLoading, setRecommendationLoading] = useState(true);
     const [recommendationError, setRecommendationError] = useState(false);
     const [recommendationReloadKey, setRecommendationReloadKey] = useState(0);
+    const [recommendationDataUpdatedAt, setRecommendationDataUpdatedAt] =
+        useState<string | null>(null);
     const [allPolicies, setAllPolicies] = useState<RecommendationPolicy[]>([]);
     const [allLoading, setAllLoading] = useState(false);
     const [allLoadingMore, setAllLoadingMore] = useState(false);
@@ -365,6 +382,7 @@ const Recommendation = () => {
                         toRecommendationPolicy(item, favoriteIds, receivedIds)
                     )
                 );
+                setRecommendationDataUpdatedAt(response.result.dataUpdatedAt);
             } catch (error) {
                 console.error(error);
                 if (active) setRecommendationError(true);
@@ -661,6 +679,17 @@ const Recommendation = () => {
                         <div className="bg-line mt-[19px] h-px w-full" />
                     )}
 
+                    {!loading &&
+                        !loadError &&
+                        activeTab === "recommended" &&
+                        recommendationDataUpdatedAt && (
+                            <div className="mx-auto mt-5 w-full max-w-[312px]">
+                                <RecommendationFreshness
+                                    dataUpdatedAt={recommendationDataUpdatedAt}
+                                />
+                            </div>
+                        )}
+
                     {loading ? (
                         <RecommendationSkeleton />
                     ) : loadError ? (
@@ -782,25 +811,57 @@ const PolicyCard = ({
     favoriteUpdating: boolean;
     onFavoriteToggle: (id: number) => void;
 }) => {
-    const urgent = policy.deadlineDays !== null && policy.deadlineDays <= 7;
+    const urgent =
+        policy.deadlineDays !== null &&
+        policy.deadlineDays >= 0 &&
+        policy.deadlineDays <= 7;
     const scheduled = policy.deadlineDays !== null;
+    const hasAssessment =
+        policy.confirmedMatchCount !== null &&
+        policy.unverifiedConditionCount !== null;
 
     return (
         <article className="border-primary relative min-h-[107px] rounded-[20px] border bg-white px-[21px] py-[15px]">
             <Link
-                className="block pr-[82px]"
+                className="block"
                 to={`/policies/${policy.id}`}
                 state={{ bottomNavPath: "/recommend" }}
             >
-                <p className="text-[13px] leading-none font-bold text-[#8e98a8]">
+                <p className="pr-10 text-[13px] leading-none font-bold text-[#8e98a8]">
                     {policy.organization}
                 </p>
-                <h2 className="mt-[6px] text-[16px] leading-tight font-bold">
+                <h2 className="mt-[6px] pr-10 text-[16px] leading-tight font-bold">
                     {policy.title}
                 </h2>
-                <p className="text-green-dark mt-[15px] text-[16px] leading-none font-bold">
-                    {policy.amountLabel ?? "산정 불가"}
-                </p>
+                {hasAssessment && (
+                    <RecommendationAssessment
+                        className="mt-3"
+                        confirmedMatchCount={policy.confirmedMatchCount!}
+                        unverifiedConditionCount={
+                            policy.unverifiedConditionCount!
+                        }
+                    />
+                )}
+                {policy.eligibilitySummary && (
+                    <p className="text-text-muted mt-2 line-clamp-2 text-[11px] leading-[1.45] font-medium whitespace-pre-line">
+                        {policy.eligibilitySummary}
+                    </p>
+                )}
+                <div className="mt-3 flex items-end justify-between gap-3">
+                    <p className="text-green-dark text-[16px] leading-none font-bold">
+                        {policy.amountLabel ?? "산정 불가"}
+                    </p>
+                    <span
+                        className={`shrink-0 rounded-[13px] px-[9px] py-[6px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : scheduled ? "bg-green-light text-green-dark" : "bg-disabled text-text-muted"}`}
+                    >
+                        {policy.deadlineLabel}
+                    </span>
+                </div>
+                {policy.uncomputable && (
+                    <RecommendationUncertainty
+                        reasons={policy.uncomputableReasons}
+                    />
+                )}
             </Link>
 
             <button
@@ -816,12 +877,6 @@ const PolicyCard = ({
             >
                 <StarIcon filled={policy.isFavorite} />
             </button>
-
-            <span
-                className={`absolute right-[21px] bottom-[14px] rounded-[13px] px-[9px] py-[6px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : scheduled ? "bg-green-light text-green-dark" : "bg-disabled text-text-muted"}`}
-            >
-                {policy.deadlineLabel}
-            </span>
         </article>
     );
 };
@@ -829,7 +884,7 @@ const PolicyCard = ({
 const RecommendationSkeleton = () => (
     <div className="mx-auto mt-7 flex w-full max-w-[312px] animate-pulse flex-col gap-4">
         {[0, 1, 2].map((item) => (
-            <div className="bg-disabled h-[107px] rounded-[20px]" key={item} />
+            <div className="bg-disabled h-[164px] rounded-[20px]" key={item} />
         ))}
     </div>
 );

@@ -6,6 +6,11 @@ export interface RecommendationPolicy {
     amountLabel: string | null;
     deadlineDays: number | null;
     deadlineLabel: string;
+    eligibilitySummary: string | null;
+    confirmedMatchCount: number | null;
+    unverifiedConditionCount: number | null;
+    uncomputable: boolean;
+    uncomputableReasons: string[];
     isFavorite: boolean;
     isRecommended: boolean;
     isReceived: boolean;

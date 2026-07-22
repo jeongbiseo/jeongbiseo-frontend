@@ -1,6 +1,6 @@
 /*
  * 온보딩 · 마이페이지 수정에서 공통으로 사용하는 선택지 상수입니다.
- * 화면 라벨과 백엔드 enum 값을 한 곳에서 관리해 두 화면이 어긋나지 않게 합니다.
+ * 지원금 검색 카테고리 선택지는 GET /subsidies/categories 응답을 사용합니다.
  */
 
 import type {
@@ -34,25 +34,22 @@ export const incomeOptions: { label: string; value: IncomeBracket }[] = [
     { label: "월 600만원 이상", value: "OVER_600" },
 ];
 
-export const subsidyCategoryOptions: {
-    label: string;
-    value: SubsidyCategory;
-}[] = [
-    { label: "청년", value: "YOUTH" },
-    { label: "주거", value: "HOUSING" },
-    { label: "고용", value: "EMPLOYMENT" },
-    { label: "교육", value: "EDUCATION" },
-    { label: "창업", value: "STARTUP" },
-    { label: "복지", value: "WELFARE" },
-    { label: "기타", value: "ETC" },
-];
-
 export const employmentLabelOf = (value: EmploymentStatus) =>
     employmentOptions.find((option) => option.value === value)?.label ?? "";
 
 export const incomeLabelOf = (value: IncomeBracket | null) =>
     incomeOptions.find((option) => option.value === value)?.label ?? "";
 
+/** 상세 API는 카테고리 라벨을 주지 않으므로 enum 표시용으로만 사용합니다. */
+const subsidyCategoryLabels: Record<SubsidyCategory, string> = {
+    YOUTH: "청년",
+    HOUSING: "주거",
+    EMPLOYMENT: "고용",
+    EDUCATION: "교육",
+    STARTUP: "창업",
+    WELFARE: "복지",
+    ETC: "기타",
+};
+
 export const subsidyCategoryLabelOf = (value: SubsidyCategory) =>
-    subsidyCategoryOptions.find((option) => option.value === value)?.label ??
-    value;
+    subsidyCategoryLabels[value];

@@ -1,10 +1,20 @@
 import axiosInstance from "@/api/axiosInstance";
 import type { ApiResponse } from "@/types/api";
 import type {
+    SubsidyCategoryOption,
     SubsidyPageResult,
     SubsidySearchParams,
 } from "@/types/onboarding";
 import type { SubsidyDetailResult } from "@/types/subsidy";
+
+/** 지원금 검색 필터에 사용할 카테고리 코드와 라벨을 조회합니다. */
+export const getSubsidyCategoriesApi = async () => {
+    const response = await axiosInstance.get<
+        ApiResponse<SubsidyCategoryOption[]>
+    >("/subsidies/categories");
+
+    return response.data;
+};
 
 /**
  * 지원금을 검색합니다. 온보딩 3단계(기수령 지원금 선택)에서
