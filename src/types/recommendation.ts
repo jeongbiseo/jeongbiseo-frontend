@@ -20,6 +20,10 @@ export interface RecommendationItem {
     /** 금액 산정이 불가한 경우 true */
     uncomputable: boolean;
     uncomputableReasons: string[];
+    /** 사용자 정보로 통과가 확인된 개인 조건 수 (지역 제외, 0~4) */
+    confirmedMatchCount: number;
+    /** 조건 미공개·정보 미입력 등으로 추가 확인이 필요한 조건 수 (0~4) */
+    unverifiedConditionCount: number;
 }
 
 /** GET /recommendations 응답 */
