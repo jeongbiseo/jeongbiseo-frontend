@@ -9,9 +9,9 @@ import {
     employmentOptions,
     incomeLabelOf,
     incomeOptions,
-    subsidyCategoryOptions,
 } from "@/constants/onboardingOptions";
 import { useRegionOptions } from "@/hooks/useRegionOptions";
+import { useSubsidyCategories } from "@/hooks/useSubsidyCategories";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -376,13 +376,13 @@ const MyPageEdit = () => {
                     </Select>
                 </div>
                 {sidoStatus === "error" && (
-                    <RegionLoadError
+                    <InlineLoadState
                         message="지역 목록을 불러오지 못했어요"
                         onRetry={retrySido}
                     />
                 )}
                 {sidoStatus === "ready" && sidoList.length === 0 && (
-                    <RegionLoadError
+                    <InlineLoadState
                         message="선택할 수 있는 지역이 없어요"
                         onRetry={retrySido}
                     />
@@ -390,7 +390,7 @@ const MyPageEdit = () => {
                 {sidoStatus === "ready" &&
                     sidoList.length > 0 &&
                     sigunguStatus === "error" && (
-                        <RegionLoadError
+                        <InlineLoadState
                             message="시·군·구 목록을 불러오지 못했어요"
                             onRetry={retrySigungu}
                         />
@@ -398,7 +398,7 @@ const MyPageEdit = () => {
                 {sigunguStatus === "ready" &&
                     sigunguSido === resolvedCity &&
                     sigunguList.length === 0 && (
-                        <RegionLoadError
+                        <InlineLoadState
                             message="선택할 수 있는 시·군·구가 없어요"
                             onRetry={retrySigungu}
                         />
@@ -590,6 +590,16 @@ const BenefitAddSheet = ({
     const [searchResults, setSearchResults] = useState<ReceivedBenefit[]>([]);
     const [searching, setSearching] = useState(false);
     const [searchError, setSearchError] = useState(false);
+    const {
+        categories,
+        status: categoryStatus,
+        retry: retryCategories,
+    } = useSubsidyCategories(open);
+    const availableCategory = categories.some(
+        ({ code }) => code === selectedCategory
+    )
+        ? selectedCategory
+        : null;
 
     useEffect(() => {
         if (!open) return;
@@ -603,7 +613,7 @@ const BenefitAddSheet = ({
                 try {
                     const response = await searchSubsidiesApi({
                         keyword: query.trim() || undefined,
-                        category: selectedCategory ?? undefined,
+                        category: availableCategory ?? undefined,
                         includeClosed: true,
                         page: 0,
                         size: 50,
@@ -640,7 +650,7 @@ const BenefitAddSheet = ({
             active = false;
             window.clearTimeout(timer);
         };
-    }, [open, query, selectedCategory]);
+    }, [availableCategory, open, query]);
 
     const visibleBenefits = useMemo(() => {
         const receivedIds = new Set(receivedBenefits.map(({ id }) => id));
@@ -689,18 +699,39 @@ const BenefitAddSheet = ({
                 <div className="mt-4 flex flex-wrap gap-1.5">
                     {[
                         { label: "전체", value: null },
-                        ...subsidyCategoryOptions,
+                        ...categories.map(({ code, label }) => ({
+                            label,
+                            value: code,
+                        })),
                     ].map(({ label, value }) => (
                         <button
-                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${selectedCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
+                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${availableCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
                             type="button"
                             key={value ?? "all"}
+                            aria-pressed={availableCategory === value}
                             onClick={() => setSelectedCategory(value)}
                         >
                             {label}
                         </button>
                     ))}
                 </div>
+                {categoryStatus === "loading" && categories.length === 0 && (
+                    <p className="text-text-subtle mt-2 text-[12px] font-semibold">
+                        카테고리를 불러오는 중이에요
+                    </p>
+                )}
+                {categoryStatus === "error" && (
+                    <InlineLoadState
+                        message="카테고리를 불러오지 못했어요"
+                        onRetry={retryCategories}
+                    />
+                )}
+                {categoryStatus === "ready" && categories.length === 0 && (
+                    <InlineLoadState
+                        message="표시할 카테고리가 없어요"
+                        onRetry={retryCategories}
+                    />
+                )}
 
                 <div className="mt-8 flex flex-col gap-3">
                     {searching && (
@@ -779,7 +810,7 @@ const FieldLabel = ({ children }: { children: React.ReactNode }) => (
     <h2 className="mt-6 mb-2 text-[13px] font-bold">{children}</h2>
 );
 
-const RegionLoadError = ({
+const InlineLoadState = ({
     message,
     onRetry,
 }: {

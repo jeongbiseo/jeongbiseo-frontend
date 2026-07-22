@@ -27,6 +27,12 @@ export type SubsidyCategory =
     | "WELFARE"
     | "ETC";
 
+/** GET /subsidies/categories 응답 항목 */
+export interface SubsidyCategoryOption {
+    code: SubsidyCategory;
+    label: string;
+}
+
 /**
  * 온보딩 제출/수정 요청 바디입니다.
  * POST /onboarding 과 PUT /members/me/onboarding 이 동일한 형식을 사용합니다.

@@ -19,9 +19,9 @@ import Header from "@/components/common/Header";
 import {
     employmentOptions,
     incomeOptions,
-    subsidyCategoryOptions,
 } from "@/constants/onboardingOptions";
 import { useRegionOptions } from "@/hooks/useRegionOptions";
+import { useSubsidyCategories } from "@/hooks/useSubsidyCategories";
 import {
     onboardingSchema,
     toOnboardingRequest,
@@ -469,13 +469,13 @@ const StepOne = ({
             />
         </div>
         {sidoStatus === "error" && (
-            <RegionLoadError
+            <InlineLoadState
                 message="지역 목록을 불러오지 못했어요"
                 onRetry={retrySido}
             />
         )}
         {sidoStatus === "ready" && sidoList.length === 0 && (
-            <RegionLoadError
+            <InlineLoadState
                 message="선택할 수 있는 지역이 없어요"
                 onRetry={retrySido}
             />
@@ -483,13 +483,13 @@ const StepOne = ({
         {sidoStatus === "ready" &&
             sidoList.length > 0 &&
             sigunguStatus === "error" && (
-                <RegionLoadError
+                <InlineLoadState
                     message="시·군·구 목록을 불러오지 못했어요"
                     onRetry={retrySigungu}
                 />
             )}
         {sigunguStatus === "ready" && sigunguList.length === 0 && (
-            <RegionLoadError
+            <InlineLoadState
                 message="선택할 수 있는 시·군·구가 없어요"
                 onRetry={retrySigungu}
             />
@@ -602,8 +602,15 @@ const StepTwo = ({ control }: { control: Control<OnboardingFormType> }) => (
 const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
-    // null이면 전체 조회입니다. 백엔드 카탈로그에 카테고리가 채워지면 칩 필터가 동작합니다.
     const [category, setCategory] = useState<SubsidyCategory | null>(null);
+    const {
+        categories,
+        status: categoryStatus,
+        retry: retryCategories,
+    } = useSubsidyCategories();
+    const selectedCategory = categories.some(({ code }) => code === category)
+        ? category
+        : null;
     // 조회 결과를 검색 조건(key)과 함께 저장해, 로딩 여부를 파생값으로 계산합니다.
     // (effect 안에서 setState를 동기 호출하지 않기 위한 구조입니다)
     const [result, setResult] = useState<{
@@ -611,7 +618,7 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
         items: SubsidySearchItem[];
     } | null>(null);
 
-    const searchKey = `${category ?? ""}|${debouncedQuery}`;
+    const searchKey = `${selectedCategory ?? ""}|${debouncedQuery}`;
     const subsidies = result?.key === searchKey ? result.items : [];
     const searching = result?.key !== searchKey;
 
@@ -628,7 +635,7 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
             try {
                 const response = await searchSubsidiesApi({
                     keyword: debouncedQuery,
-                    category: category ?? undefined,
+                    category: selectedCategory ?? undefined,
                     includeClosed: true,
                 });
                 if (active) {
@@ -649,7 +656,7 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
         return () => {
             active = false;
         };
-    }, [searchKey, debouncedQuery, category]);
+    }, [searchKey, debouncedQuery, selectedCategory]);
 
     return (
         <>
@@ -697,19 +704,39 @@ const StepThree = ({ control }: { control: Control<OnboardingFormType> }) => {
             <div className="mt-3 flex w-full items-center gap-1.5 overflow-x-auto pb-1">
                 {[
                     { label: "전체", value: null },
-                    ...subsidyCategoryOptions,
+                    ...categories.map(({ code, label }) => ({
+                        label,
+                        value: code,
+                    })),
                 ].map(({ label, value }) => (
                     <button
-                        className={`shrink-0 cursor-pointer rounded-full px-[10px] py-[6px] text-[13px] leading-[16px] font-bold whitespace-nowrap ${category === value ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
+                        className={`shrink-0 cursor-pointer rounded-full px-[10px] py-[6px] text-[13px] leading-[16px] font-bold whitespace-nowrap ${selectedCategory === value ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
                         type="button"
-                        key={label}
-                        aria-pressed={category === value}
+                        key={value ?? "all"}
+                        aria-pressed={selectedCategory === value}
                         onClick={() => setCategory(value)}
                     >
                         {label}
                     </button>
                 ))}
             </div>
+            {categoryStatus === "loading" && categories.length === 0 && (
+                <p className="text-text-muted mt-2 text-[12px] font-semibold">
+                    카테고리를 불러오는 중이에요
+                </p>
+            )}
+            {categoryStatus === "error" && (
+                <InlineLoadState
+                    message="카테고리를 불러오지 못했어요"
+                    onRetry={retryCategories}
+                />
+            )}
+            {categoryStatus === "ready" && categories.length === 0 && (
+                <InlineLoadState
+                    message="표시할 카테고리가 없어요"
+                    onRetry={retryCategories}
+                />
+            )}
 
             <FieldLabel>요즘 많이 찾는 지원금</FieldLabel>
             <Controller
@@ -794,7 +821,7 @@ const FieldLabel = ({ children }: { children: React.ReactNode }) => (
     <h2 className="mt-7 mb-2.5 text-[13px] font-bold">{children}</h2>
 );
 
-const RegionLoadError = ({
+const InlineLoadState = ({
     message,
     onRetry,
 }: {
