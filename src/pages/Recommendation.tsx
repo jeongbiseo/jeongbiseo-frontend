@@ -171,6 +171,7 @@ const Recommendation = () => {
     const [sortSheetOpen, setSortSheetOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
+    const tabBeforeSearchRef = useRef<RecommendationTab | null>(null);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const urgentOnly = searchParams.get("filter") === "urgent";
     const cameFromMyPage =
@@ -535,12 +536,19 @@ const Recommendation = () => {
                         allowDuplicates={allowDuplicates}
                         duplicatesDisabled={receivedStatus !== "ready"}
                         onToggleSearch={() => {
-                            setSearchOpen((previous) => !previous);
                             if (searchOpen) {
+                                setSearchOpen(false);
                                 setQuery("");
-                            } else {
-                                setActiveTab("all");
+                                if (tabBeforeSearchRef.current) {
+                                    setActiveTab(tabBeforeSearchRef.current);
+                                }
+                                tabBeforeSearchRef.current = null;
+                                return;
                             }
+
+                            tabBeforeSearchRef.current = activeTab;
+                            setActiveTab("all");
+                            setSearchOpen(true);
                         }}
                         onQueryChange={setQuery}
                         onTabChange={setActiveTab}
@@ -598,7 +606,7 @@ const Recommendation = () => {
                             ))}
                             {activeTab === "all" && !allLast && (
                                 <button
-                                    className="border-primary text-primary mt-2 h-[44px] cursor-pointer rounded-[12px] border bg-white text-[14px] font-bold disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="border-primary text-primary mt-2 h-[44px] cursor-pointer rounded-[12px] border bg-white text-[13px] font-bold disabled:cursor-not-allowed disabled:opacity-60"
                                     type="button"
                                     disabled={allLoadingMore}
                                     onClick={() => void loadMoreAllPolicies()}

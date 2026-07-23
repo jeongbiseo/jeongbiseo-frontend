@@ -15,10 +15,10 @@ const ErrorPage = ({ notFound = false }: { notFound?: boolean }) => {
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col items-center justify-center px-10 text-center">
-                <p className="text-primary text-[14px] font-bold">
+                <p className="text-primary text-[13px] font-bold">
                     {isNotFound ? "404" : "오류"}
                 </p>
-                <h1 className="mt-2 text-[22px] font-bold">
+                <h1 className="mt-2 text-[24px] font-bold">
                     {isNotFound
                         ? "페이지를 찾을 수 없어요"
                         : "문제가 발생했어요"}

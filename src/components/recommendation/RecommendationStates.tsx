@@ -15,7 +15,7 @@ export const LoadErrorState = ({ onRetry }: { onRetry: () => void }) => (
             잠시 후 다시 시도해주세요
         </p>
         <button
-            className="bg-primary mt-5 cursor-pointer rounded-[12px] px-5 py-3 text-[14px] font-bold text-white"
+            className="bg-primary mt-5 cursor-pointer rounded-[12px] px-5 py-3 text-[13px] font-bold text-white"
             type="button"
             onClick={onRetry}
         >

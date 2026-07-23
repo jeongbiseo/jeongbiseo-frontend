@@ -68,7 +68,7 @@ const Withdrawal = () => {
                     회원 탈퇴
                 </h1>
 
-                <h2 className="mt-8 text-[18px] font-bold">
+                <h2 className="mt-8 text-[16px] font-bold">
                     탈퇴하기 전에 꼭 확인해 주세요
                 </h2>
                 <ul className="border-green-normal text-text-muted mt-4 flex min-h-[147px] list-disc flex-col justify-center space-y-3 rounded-[20px] border-[0.5px] bg-white px-10 py-4 text-[13px] leading-[1.45] font-semibold">
@@ -82,7 +82,7 @@ const Withdrawal = () => {
                     </li>
                 </ul>
 
-                <h2 className="mt-8 text-[18px] font-bold">
+                <h2 className="mt-8 text-[16px] font-bold">
                     탈퇴하시는 이유가 궁금해요(선택)
                 </h2>
                 <div className="border-green-normal mt-3 flex h-[94px] flex-col justify-center rounded-[20px] border-[0.5px] bg-white px-[30px] py-2">

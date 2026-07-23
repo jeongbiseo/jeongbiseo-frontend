@@ -204,14 +204,14 @@ const CalendarPage = () => {
                     </h2>
 
                     {state.status === "loading" && (
-                        <p className="text-text-muted mt-8 text-center text-[14px] font-semibold">
+                        <p className="text-text-muted mt-8 text-center text-[13px] font-bold">
                             불러오는 중이에요...
                         </p>
                     )}
 
                     {state.status === "error" && (
                         <div className="mt-8 text-center">
-                            <p className="text-text-muted text-[14px] font-semibold">
+                            <p className="text-text-muted text-[13px] font-bold">
                                 마감 정보를 불러오지 못했어요.
                             </p>
                             <Button

@@ -352,7 +352,7 @@ export const OnboardingStepTwo = ({
                         >
                             −
                         </CounterButton>
-                        <span className="text-[15px] font-bold">{size}명</span>
+                        <span className="text-[16px] font-bold">{size}명</span>
                         <CounterButton
                             size="compact"
                             label="가구원 수 늘리기"
@@ -468,7 +468,7 @@ export const OnboardingStepThree = ({
                     />
                 </svg>
                 <input
-                    className="focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
+                    className="focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] bg-white pr-4 pl-11 text-[13px] font-bold outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
                     aria-label="기수령 지원금 검색"
                     value={query}
                     placeholder="지원금명 또는 기관명으로 검색해보세요"

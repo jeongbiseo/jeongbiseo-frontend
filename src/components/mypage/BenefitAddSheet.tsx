@@ -130,7 +130,7 @@ export const BenefitAddSheet = ({
                     <SearchIcon />
                     <input
                         data-dialog-initial-focus
-                        className="placeholder:text-text-subtle focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] pr-4 pl-11 text-[13px] outline-none focus-visible:outline-2 focus-visible:outline-offset-1"
+                        className="placeholder:text-text-subtle focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] pr-4 pl-11 text-[13px] font-bold outline-none focus-visible:outline-2 focus-visible:outline-offset-1"
                         aria-label="지원금 검색"
                         value={query}
                         placeholder="지원금명 또는 기관명으로 검색해보세요"

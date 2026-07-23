@@ -74,7 +74,7 @@ export const RecommendationControls = ({
                         <SearchIcon className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2" />
                         <input
                             ref={searchInputRef}
-                            className="focus:border-primary focus-visible:outline-primary h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
+                            className="focus:border-primary focus-visible:outline-primary h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 text-[13px] font-bold outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
                             aria-label="지원금 검색"
                             value={query}
                             placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -129,7 +129,7 @@ export const RecommendationControls = ({
                             <ChevronDownIcon />
                         </button>
 
-                        <label className="flex cursor-pointer items-center gap-2 text-[16px] font-semibold">
+                        <label className="flex cursor-pointer items-center gap-2 text-[16px] font-bold">
                             중복허용
                             <input
                                 className="peer sr-only"

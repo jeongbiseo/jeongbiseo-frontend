@@ -221,7 +221,7 @@ const Terms = () => {
                     >
                         <header className="flex items-start justify-between gap-4">
                             <div>
-                                <p className="text-primary text-[14px] font-semibold">
+                                <p className="text-primary text-[13px] font-bold">
                                     {selectedAgreementItem.required
                                         ? "필수 약관"
                                         : "선택 약관"}
@@ -256,7 +256,7 @@ const Terms = () => {
                             </button>
                         </header>
 
-                        <div className="bg-ground mt-6 flex-1 overflow-y-auto rounded-[15px] p-5 text-[15px] leading-[1.7] text-[#606060]">
+                        <div className="bg-ground mt-6 flex-1 overflow-y-auto rounded-[15px] p-5 text-[13px] leading-[1.7] text-[#606060]">
                             <p className="font-semibold text-[#303030]">
                                 {selectedAgreementDetail.summary}
                             </p>
@@ -265,7 +265,7 @@ const Terms = () => {
                                 {selectedAgreementDetail.sections.map(
                                     ({ title, paragraphs, bullets }) => (
                                         <section key={title}>
-                                            <h3 className="text-text-strong font-bold">
+                                            <h3 className="text-text-strong text-[16px] font-bold">
                                                 {title}
                                             </h3>
 
@@ -294,7 +294,7 @@ const Terms = () => {
                         </div>
 
                         <button
-                            className="bg-green-normal focus-visible:outline-third mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-[18px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2"
+                            className="bg-green-normal focus-visible:outline-third mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-[20px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2"
                             type="button"
                             onClick={() => setSelectedAgreement(null)}
                         >

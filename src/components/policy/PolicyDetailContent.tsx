@@ -179,8 +179,8 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
             >
                 <h3 className="text-[12px] font-bold">AI 해석 준비 중</h3>
                 <p className="text-text-muted mt-1.5 text-[11px] leading-[1.5] font-medium">
-                    검증된 AI 해석이 준비되기 전까지 기존 금액 정보와 공고
-                    원문을 제공해드려요.
+                    검증된 AI 해석이 준비되기 전까지 기존 금액 정보를
+                    제공해드려요.
                 </p>
             </div>
         );
