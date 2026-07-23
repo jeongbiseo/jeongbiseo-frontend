@@ -1,0 +1,84 @@
+import type { ReactNode } from "react";
+
+export const FieldLabel = ({
+    children,
+    spacing = "default",
+}: {
+    children: ReactNode;
+    spacing?: "default" | "onboarding";
+}) => (
+    <h2
+        className={`${spacing === "onboarding" ? "mt-7 mb-2.5" : "mt-6 mb-2"} text-[13px] font-bold`}
+    >
+        {children}
+    </h2>
+);
+
+export const InlineLoadState = ({
+    message,
+    onRetry,
+}: {
+    message: string;
+    onRetry: () => void;
+}) => (
+    <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="text-danger text-[12px] font-semibold">{message}</p>
+        <button
+            className="text-primary shrink-0 cursor-pointer text-[12px] font-bold"
+            type="button"
+            onClick={onRetry}
+        >
+            다시 시도
+        </button>
+    </div>
+);
+
+export const FormSelect = <T extends string | number>({
+    value,
+    onChange,
+    children,
+    disabled = false,
+    border = "default",
+}: {
+    value: T;
+    onChange: (value: T) => void;
+    children: ReactNode;
+    disabled?: boolean;
+    border?: "default" | "soft";
+}) => (
+    <select
+        className={`${border === "soft" ? "border-[#d8d8d8]" : "border-line-strong"} focus:border-primary disabled:bg-disabled h-[48px] w-full cursor-pointer rounded-[10px] border bg-white px-3 text-[13px] font-semibold outline-none disabled:cursor-not-allowed`}
+        value={value}
+        disabled={disabled}
+        onChange={(event) =>
+            onChange(
+                (typeof value === "number"
+                    ? Number(event.target.value)
+                    : event.target.value) as T
+            )
+        }
+    >
+        {children}
+    </select>
+);
+
+export const CounterButton = ({
+    children,
+    label,
+    onClick,
+    size = "default",
+}: {
+    children: ReactNode;
+    label: string;
+    onClick: () => void;
+    size?: "default" | "compact";
+}) => (
+    <button
+        className={`${size === "compact" ? "size-7 text-[20px]" : "size-8 text-[22px]"} border-line-strong flex cursor-pointer items-center justify-center rounded-full border leading-none`}
+        type="button"
+        aria-label={label}
+        onClick={onClick}
+    >
+        {children}
+    </button>
+);
