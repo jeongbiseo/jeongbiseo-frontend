@@ -172,7 +172,7 @@ export const RecommendationSortSheet = ({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/35"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-[#bababa]/60"
             role="presentation"
             onClick={(event) => {
                 if (event.target === event.currentTarget) onClose();
@@ -181,12 +181,12 @@ export const RecommendationSortSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="w-full max-w-[390px] rounded-t-[28px] bg-white px-[21px] pt-[21px] pb-8"
+                className="w-full max-w-[390px] rounded-t-[30px] bg-white px-[21px] pt-[22px] pb-8"
                 role="dialog"
                 aria-modal="true"
                 aria-label="정렬 방식 선택"
             >
-                <div className="bg-disabled mx-auto mb-4 h-1 w-[39px] rounded-full" />
+                <div className="bg-disabled mx-auto mb-[25px] h-1 w-[39px] rounded-full" />
                 <ul>
                     {recommendationSortOptions.map(({ key, label }) => (
                         <li className="border-line border-b" key={key}>

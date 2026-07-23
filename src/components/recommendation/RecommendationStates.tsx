@@ -29,14 +29,14 @@ export const EmptyRecommendation = ({
 }: {
     onEditProfile: () => void;
 }) => (
-    <div className="mx-auto mt-6 w-full max-w-[330px] px-[14px]">
+    <div className="mx-auto mt-6 w-full max-w-[330px]">
         <h2 className="text-[20px] font-bold">추천 지원금 0건</h2>
         <p className="text-text-muted mt-2 text-[13px] font-bold">
             현재 입력하신 조건에 맞는 지원금을 찾지 못했어요
         </p>
-        <div className="border-primary mt-7 rounded-[20px] border px-[21px] py-6">
+        <div className="border-primary mx-auto mt-[25px] h-[216px] w-[302px] rounded-[20px] border-[0.5px] px-[21px] pt-6">
             <h3 className="text-[20px] font-bold">이런 이유일 수 있어요</h3>
-            <ol className="text-text-muted mt-4 list-decimal space-y-[15px] pl-5 text-[13px] leading-[1.45] font-bold">
+            <ol className="text-text-muted mt-[15px] list-decimal space-y-[15px] pl-5 text-[13px] leading-normal font-bold">
                 <li>
                     거주지·고용상태·연령 조건이 지원 자격과 맞지 않을 수 있어요.
                 </li>
@@ -51,7 +51,7 @@ export const EmptyRecommendation = ({
             </ol>
         </div>
         <button
-            className="bg-primary mt-6 h-[55px] w-full cursor-pointer rounded-[15px] text-[20px] font-bold text-white shadow-[3px_11px_8px_var(--color-green-light-active)] active:scale-[0.99]"
+            className="bg-primary mx-auto mt-[25px] block h-[55px] w-[302px] cursor-pointer rounded-[15px] text-[20px] font-bold text-white shadow-[3px_11px_8px_var(--color-green-light-active)] active:scale-[0.99]"
             type="button"
             onClick={onEditProfile}
         >
@@ -80,14 +80,14 @@ export const SearchEmptyState = () => (
         className="mx-auto mt-[177px] flex w-full max-w-[341px] flex-col items-center gap-[34px] text-center"
         role="status"
     >
-        <div className="bg-disabled flex size-[118px] items-center justify-center rounded-full text-white">
-            <SearchIcon className="size-[46px]" />
+        <div className="bg-disabled flex size-[95px] items-center justify-center rounded-full text-white">
+            <SearchIcon className="size-[39px]" />
         </div>
         <div className="flex w-full max-w-[313px] flex-col items-center gap-[15px]">
-            <h2 className="text-[20px] leading-none font-bold">
+            <h2 className="text-[24px] leading-none font-bold">
                 검색 내역이 없어요
             </h2>
-            <p className="text-text-muted text-[16px] leading-normal font-semibold">
+            <p className="text-text-muted text-[20px] leading-normal font-semibold">
                 단어의 철자나 띄어쓰기가 맞는지
                 <br />
                 다시 확인해 주세요
