@@ -4,6 +4,7 @@
  */
 
 import type { CalendarDayElement } from "@/types/calendar";
+import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
 import { Link } from "react-router-dom";
 
@@ -22,6 +23,7 @@ const DeadlineSheet = ({
 }) => {
     const [, month, day] = date.split("-");
     const dialogRef = useDialogAccessibility<HTMLElement>(true, onClose);
+    const isCalendarPage = bottomNavPath === "/calendar";
 
     return (
         <>
@@ -35,7 +37,7 @@ const DeadlineSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="fixed bottom-[57px] left-1/2 z-30 flex h-[302px] max-h-[calc(100svh-57px)] w-full max-w-[390px] -translate-x-1/2 flex-col items-center rounded-t-[30px] bg-white px-[21px] pt-[22px]"
+                className={`fixed bottom-[57px] left-1/2 z-30 flex max-h-[calc(100svh-57px)] w-full max-w-[390px] -translate-x-1/2 flex-col items-center rounded-t-[30px] bg-white px-[21px] ${isCalendarPage ? "h-[347px] pt-4" : "h-[302px] pt-[22px]"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-label={`${Number(month)}월 ${Number(day)}일 마감 목록`}
@@ -48,7 +50,9 @@ const DeadlineSheet = ({
                     onClick={onClose}
                 />
 
-                <header className="mt-[25px] flex w-[335px] max-w-full shrink-0 items-end justify-between">
+                <header
+                    className={`${isCalendarPage ? "mt-[17px]" : "mt-[25px]"} flex w-[335px] max-w-full shrink-0 items-end justify-between`}
+                >
                     <h2 className="text-[16px] leading-none font-bold">
                         {Number(month)}월 {Number(day)}일 마감
                     </h2>
@@ -58,27 +62,64 @@ const DeadlineSheet = ({
                 </header>
 
                 {items.length > 0 ? (
-                    <ul className="mt-[25px] flex min-h-0 w-full flex-1 flex-col items-center gap-3 overflow-y-auto pb-4">
+                    <ul
+                        className={`${isCalendarPage ? "gap-0" : "gap-3"} mt-[25px] flex min-h-0 w-full flex-1 flex-col items-center overflow-y-auto pb-4`}
+                    >
                         {items.map((item) => {
                             const urgent = item.dDay >= 0 && item.dDay <= 7;
 
                             return (
-                                <li key={item.subsidyId}>
+                                <li
+                                    className={
+                                        isCalendarPage
+                                            ? "w-[337px] max-w-full"
+                                            : ""
+                                    }
+                                    key={item.subsidyId}
+                                >
                                     <Link
-                                        className="border-primary relative flex h-[73px] w-[312px] max-w-full items-center rounded-[20px] border-[0.5px] bg-white px-[21px] pr-[76px]"
+                                        className={
+                                            isCalendarPage
+                                                ? "border-line flex h-[74px] w-full items-center border-b"
+                                                : "border-primary relative flex h-[73px] w-[312px] max-w-full items-center rounded-[20px] border-[0.5px] bg-white px-[21px] pr-[76px]"
+                                        }
                                         to={`/policies/${item.subsidyId}`}
                                         state={{ bottomNavPath }}
                                     >
-                                        <span className="block truncate text-[16px] leading-normal font-bold">
-                                            {item.name}
-                                        </span>
-                                        <span
-                                            className={`absolute top-[22px] right-[21px] rounded-[13px] px-[7px] py-[6px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
-                                        >
-                                            {item.dDay === 0
-                                                ? "D-0"
-                                                : `D-${item.dDay}`}
-                                        </span>
+                                        {isCalendarPage ? (
+                                            <>
+                                                <span
+                                                    className={`flex h-[43px] w-[45px] shrink-0 items-center justify-center rounded-[20px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
+                                                >
+                                                    {item.dDay === 0
+                                                        ? "D-0"
+                                                        : `D-${item.dDay}`}
+                                                </span>
+                                                <span className="ml-[11px] min-w-0 flex-1">
+                                                    <strong className="block truncate text-[13px] leading-normal font-bold">
+                                                        {item.name}
+                                                    </strong>
+                                                    <span className="mt-1 block text-[13px] leading-normal font-bold text-black/50">
+                                                        {Number(month)}.
+                                                        {Number(day)} 마감
+                                                    </span>
+                                                </span>
+                                                <ChevronDownIcon className="h-2 w-3 -rotate-90" />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="block truncate text-[16px] leading-normal font-bold">
+                                                    {item.name}
+                                                </span>
+                                                <span
+                                                    className={`absolute top-[22px] right-[21px] rounded-[13px] px-[7px] py-[6px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
+                                                >
+                                                    {item.dDay === 0
+                                                        ? "D-0"
+                                                        : `D-${item.dDay}`}
+                                                </span>
+                                            </>
+                                        )}
                                     </Link>
                                 </li>
                             );

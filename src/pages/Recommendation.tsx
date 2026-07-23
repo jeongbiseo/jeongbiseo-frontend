@@ -551,7 +551,7 @@ const Recommendation = () => {
                         !loadError &&
                         activeTab === "recommended" &&
                         recommendationDataUpdatedAt && (
-                            <div className="mx-auto mt-5 w-full max-w-[312px]">
+                            <div className="mx-auto mt-5 w-full max-w-[298px]">
                                 <RecommendationFreshness
                                     dataUpdatedAt={recommendationDataUpdatedAt}
                                 />
@@ -585,7 +585,7 @@ const Recommendation = () => {
                             }}
                         />
                     ) : visiblePolicies.length > 0 ? (
-                        <div className="mx-auto mt-7 flex w-full max-w-[312px] flex-col gap-4">
+                        <div className="mx-auto mt-7 flex w-full max-w-[298px] flex-col gap-4">
                             {visiblePolicies.map((policy) => (
                                 <RecommendationPolicyCard
                                     key={policy.id}

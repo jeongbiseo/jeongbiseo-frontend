@@ -1,7 +1,7 @@
 import { SearchIcon } from "@/components/recommendation/RecommendationIcons";
 
 export const RecommendationSkeleton = () => (
-    <div className="mx-auto mt-7 flex w-full max-w-[312px] animate-pulse flex-col gap-4">
+    <div className="mx-auto mt-7 flex w-full max-w-[298px] animate-pulse flex-col gap-4">
         {[0, 1, 2].map((item) => (
             <div className="bg-disabled h-[164px] rounded-[20px]" key={item} />
         ))}

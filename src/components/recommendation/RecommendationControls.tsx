@@ -53,7 +53,7 @@ export const RecommendationControls = ({
 
     return (
         <>
-            <header className="px-5">
+            <header className={searchOpen ? "px-[25px]" : "px-[26px]"}>
                 {cameFromMyPage && <BackButton label="마이페이지로 돌아가기" />}
                 <div className="flex items-center justify-between px-0">
                     <h1 className="text-[24px] leading-none font-bold">
@@ -86,7 +86,7 @@ export const RecommendationControls = ({
                 )}
 
                 {searchOpen ? (
-                    <div className="mt-[14px] flex items-center gap-[9px] px-1.5">
+                    <div className="mt-[14px] flex items-center gap-[9px] px-px">
                         {recommendationSearchKeywords.map((keyword) => (
                             <button
                                 className="bg-third h-[37px] cursor-pointer rounded-full px-[13px] text-[16px] font-bold text-white"

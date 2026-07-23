@@ -67,6 +67,16 @@ const MyPageTerms = () => {
     const getConsent = (type: TermConsentType) =>
         termConsents.find((term) => term.type === type);
 
+    const getConsentLabel = (type: TermConsentType) => {
+        const consent = getConsent(type);
+        if (!consent?.agreed) return "동의 내역 없음";
+        if (!consent.agreedAt) return "동의 완료";
+
+        const date = new Date(consent.agreedAt);
+        if (Number.isNaN(date.getTime())) return "동의 완료";
+        return `동의 ${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+    };
+
     const handleMarketingChange = async (agreed: boolean) => {
         if (marketingSaving) return;
 
@@ -121,7 +131,7 @@ const MyPageTerms = () => {
                 )}
 
                 {status === "ready" && (
-                    <div className="border-primary mt-8 overflow-hidden rounded-[20px] border bg-white">
+                    <div className="border-primary mx-[7px] mt-8 overflow-hidden rounded-[20px] border-[0.5px] bg-white">
                         {terms.map((term, index) => (
                             <button
                                 className={`flex h-[79px] w-full cursor-pointer items-center justify-between px-4 text-left ${index > 0 ? "border-line border-t" : ""}`}
@@ -134,9 +144,7 @@ const MyPageTerms = () => {
                                         {term.label}
                                     </strong>
                                     <span className="text-text-muted mt-2 block text-[13px] font-bold">
-                                        {getConsent(term.type)?.agreed
-                                            ? "동의 완료"
-                                            : "동의 내역 없음"}
+                                        {getConsentLabel(term.type)}
                                     </span>
                                 </span>
                                 <span className="text-text-muted">
@@ -148,7 +156,7 @@ const MyPageTerms = () => {
                 )}
 
                 {status === "ready" && (
-                    <label className="border-primary mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border bg-white px-5 text-[16px] font-bold">
+                    <label className="border-green-normal mx-[7px] mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border-[0.5px] bg-white px-5 text-[16px] font-bold">
                         마케팅 정보 수신 동의
                         <input
                             className="peer sr-only"

@@ -2,7 +2,7 @@
     width: 320px;
     min-height: 278px;
     height: auto;
-    padding: 17px;
+    padding: 47px 17px 12px;
     border: 0;
     border-radius: 21px;
     background: #fff;
@@ -59,13 +59,13 @@
     color: #fff;
 }
 
-/* 선택한 날짜: 초록 링 (오늘과 겹치면 선택 표시가 우선) */
+/* 선택한 날짜: 최신 디자인처럼 숫자만 초록색으로 강조합니다. */
 .jeongbiseo-calendar .react-calendar__tile--active,
 .jeongbiseo-calendar .react-calendar__tile--active:enabled:hover,
 .jeongbiseo-calendar .react-calendar__tile--active:enabled:focus {
-    border: 1px solid var(--color-primary);
-    background: var(--color-green-light);
-    color: var(--color-primary);
+    border: 0;
+    background: transparent;
+    color: var(--color-green-normal-hover);
 }
 
 .jeongbiseo-calendar .react-calendar__month-view__days__day--weekend {

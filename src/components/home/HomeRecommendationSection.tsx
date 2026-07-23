@@ -19,7 +19,9 @@ export const HomeSection = ({
     className?: string;
     children: ReactNode;
 }) => (
-    <section className={`ml-[7px] w-[328px] ${className ?? ""}`}>
+    <section
+        className={`ml-[7px] w-[calc(100%-14px)] max-w-[328px] ${className ?? ""}`}
+    >
         <div className="flex items-center justify-between">
             <h2 className="text-[24px] leading-normal font-bold">{title}</h2>
             <Link
@@ -115,7 +117,7 @@ export const HomeRecommendationSection = ({
         linkLabel="전체보기"
         to="/recommend"
     >
-        <div className="ml-auto flex w-[312px] flex-col gap-[18px]">
+        <div className="ml-[15px] flex w-[calc(100%-23px)] max-w-[305px] flex-col gap-[18px]">
             <RecommendationFreshness dataUpdatedAt={dataUpdatedAt} />
             {recommendations.map((recommendation) => (
                 <RecommendationCard
