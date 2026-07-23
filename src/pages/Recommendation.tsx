@@ -31,6 +31,7 @@ import {
 import type { RecommendationItem } from "@/types/recommendation";
 import type { SubsidySearchItem } from "@/types/onboarding";
 import { formatAmountRange, formatDDay } from "@/utils/format";
+import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
@@ -182,6 +183,10 @@ const Recommendation = () => {
     );
     const [allowDuplicates, setAllowDuplicates] = useState(true);
     const [sortSheetOpen, setSortSheetOpen] = useState(false);
+    const sortDialogRef = useDialogAccessibility<HTMLElement>(
+        sortSheetOpen,
+        () => setSortSheetOpen(false)
+    );
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -560,17 +565,6 @@ const Recommendation = () => {
         };
     }, [favoritesReloadKey]);
 
-    useEffect(() => {
-        if (!sortSheetOpen) return;
-
-        const handleEscape = (event: KeyboardEvent) => {
-            if (event.key === "Escape") setSortSheetOpen(false);
-        };
-
-        document.addEventListener("keydown", handleEscape);
-        return () => document.removeEventListener("keydown", handleEscape);
-    }, [sortSheetOpen]);
-
     return (
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
@@ -606,7 +600,8 @@ const Recommendation = () => {
                             <div className="relative mt-4">
                                 <SearchIcon className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2" />
                                 <input
-                                    className="focus:border-primary h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#8e98a8]"
+                                    className="focus:border-primary focus-visible:outline-primary h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
+                                    aria-label="지원금 검색"
                                     value={query}
                                     autoFocus
                                     placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -674,7 +669,7 @@ const Recommendation = () => {
                                             )
                                         }
                                     />
-                                    <span className="bg-disabled peer-checked:bg-primary relative h-5 w-[34px] rounded-full transition-colors after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
+                                    <span className="bg-disabled peer-checked:bg-primary peer-focus-visible:outline-primary relative h-5 w-[34px] rounded-full transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
                                 </label>
                             </div>
                         )}
@@ -770,6 +765,8 @@ const Recommendation = () => {
                     onClick={() => setSortSheetOpen(false)}
                 >
                     <section
+                        ref={sortDialogRef}
+                        tabIndex={-1}
                         className="w-full max-w-[390px] rounded-t-[28px] bg-white px-[21px] pt-[21px] pb-8"
                         role="dialog"
                         aria-modal="true"

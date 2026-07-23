@@ -287,6 +287,7 @@ const MyPageEdit = () => {
                 <FieldLabel>생년월일</FieldLabel>
                 <div className="grid grid-cols-3 gap-[13px]">
                     <Select
+                        ariaLabel="출생 연도"
                         value={birthYear}
                         onChange={(nextYear) => {
                             setBirthYear(nextYear);
@@ -305,6 +306,7 @@ const MyPageEdit = () => {
                         ))}
                     </Select>
                     <Select
+                        ariaLabel="출생 월"
                         value={birthMonth}
                         onChange={(nextMonth) => {
                             setBirthMonth(nextMonth);
@@ -322,7 +324,11 @@ const MyPageEdit = () => {
                             </option>
                         ))}
                     </Select>
-                    <Select value={birthDay} onChange={setBirthDay}>
+                    <Select
+                        ariaLabel="출생 일"
+                        value={birthDay}
+                        onChange={setBirthDay}
+                    >
                         {days.map((day) => (
                             <option value={day} key={day}>
                                 {day}일
@@ -334,6 +340,7 @@ const MyPageEdit = () => {
                 <FieldLabel>거주지</FieldLabel>
                 <div className="grid grid-cols-2 gap-2">
                     <Select
+                        ariaLabel="거주 시·도"
                         value={resolvedCity}
                         disabled={
                             sidoStatus !== "ready" || sidoList.length === 0
@@ -356,6 +363,7 @@ const MyPageEdit = () => {
                         ))}
                     </Select>
                     <Select
+                        ariaLabel="거주 시·군·구"
                         value={resolvedDistrict}
                         disabled={
                             sigunguStatus !== "ready" ||
@@ -406,14 +414,22 @@ const MyPageEdit = () => {
                     )}
 
                 <FieldLabel>고용상태</FieldLabel>
-                <Select value={employment} onChange={setEmployment}>
+                <Select
+                    ariaLabel="고용상태"
+                    value={employment}
+                    onChange={setEmployment}
+                >
                     {employmentOptions.map(({ label, value }) => (
                         <option key={value}>{label}</option>
                     ))}
                 </Select>
 
                 <FieldLabel>월 소득구간</FieldLabel>
-                <Select value={income} onChange={setIncome}>
+                <Select
+                    ariaLabel="월 소득구간"
+                    value={income}
+                    onChange={setIncome}
+                >
                     <option value="">선택 안 함</option>
                     {incomeOptions.map(({ label, value }) => (
                         <option key={value}>{label}</option>

@@ -1,3 +1,4 @@
+import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -117,6 +118,8 @@ export const ConfirmDialog = ({
     onConfirm: () => void;
     variant?: "default" | "external";
 }) => {
+    const dialogRef = useDialogAccessibility<HTMLElement>(open, onCancel);
+
     if (!open) return null;
 
     const external = variant === "external";
@@ -128,6 +131,8 @@ export const ConfirmDialog = ({
             onClick={onCancel}
         >
             <section
+                ref={dialogRef}
+                tabIndex={-1}
                 className={`w-full rounded-[10px] bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-[21px] pt-[25px] pb-[13px] text-left" : "max-w-[318px] px-6 py-5 text-center"}`}
                 role="dialog"
                 aria-modal="true"
@@ -146,6 +151,7 @@ export const ConfirmDialog = ({
                     className={`flex gap-3 ${external ? "mt-[9px] justify-end" : "mt-5 justify-center"}`}
                 >
                     <button
+                        data-dialog-initial-focus
                         className={`border-text-muted cursor-pointer rounded-[5px] border text-[13px] font-bold ${external ? "h-[26px] px-[14px]" : "h-[34px] px-4"}`}
                         type="button"
                         onClick={onCancel}

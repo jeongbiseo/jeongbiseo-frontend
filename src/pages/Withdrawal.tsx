@@ -92,14 +92,14 @@ const Withdrawal = () => {
                             key={reason}
                         >
                             <input
-                                className="sr-only"
+                                className="peer sr-only"
                                 type="checkbox"
                                 name="withdrawal-reason"
                                 checked={selectedReasons.includes(reason)}
                                 onChange={() => toggleReason(reason)}
                             />
                             <span
-                                className={`flex size-5 items-center justify-center ${selectedReasons.includes(reason) ? "text-primary" : "text-disabled"}`}
+                                className={`peer-focus-visible:outline-primary flex size-5 items-center justify-center rounded-sm peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 ${selectedReasons.includes(reason) ? "text-primary" : "text-disabled"}`}
                             >
                                 <CheckIcon className="size-5" />
                             </span>
@@ -117,7 +117,7 @@ const Withdrawal = () => {
                             setNoticeAgreed(event.target.checked)
                         }
                     />
-                    <span className="bg-disabled peer-checked:bg-primary flex size-[22px] shrink-0 items-center justify-center rounded-[5px] text-white">
+                    <span className="bg-disabled peer-checked:bg-primary peer-focus-visible:outline-primary flex size-[22px] shrink-0 items-center justify-center rounded-[5px] text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
                         {noticeAgreed && <CheckIcon className="size-4" />}
                     </span>
                     [필수] 안내사항을 모두 확인했으며,

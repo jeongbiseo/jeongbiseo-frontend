@@ -21,7 +21,7 @@ export const InlineLoadState = ({
     message: string;
     onRetry: () => void;
 }) => (
-    <div className="mt-2 flex items-center justify-between gap-3">
+    <div className="mt-2 flex items-center justify-between gap-3" role="alert">
         <p className="text-danger text-[12px] font-semibold">{message}</p>
         <button
             className="text-primary shrink-0 cursor-pointer text-[12px] font-bold"
@@ -37,18 +37,21 @@ export const FormSelect = <T extends string | number>({
     value,
     onChange,
     children,
+    ariaLabel,
     disabled = false,
     border = "default",
 }: {
     value: T;
     onChange: (value: T) => void;
     children: ReactNode;
+    ariaLabel: string;
     disabled?: boolean;
     border?: "default" | "soft";
 }) => (
     <select
-        className={`${border === "soft" ? "border-[#d8d8d8]" : "border-line-strong"} focus:border-primary disabled:bg-disabled h-[48px] w-full cursor-pointer rounded-[10px] border bg-white px-3 text-[13px] font-semibold outline-none disabled:cursor-not-allowed`}
+        className={`${border === "soft" ? "border-[#d8d8d8]" : "border-line-strong"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled h-[48px] w-full cursor-pointer rounded-[10px] border bg-white px-3 text-[13px] font-semibold outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
         value={value}
+        aria-label={ariaLabel}
         disabled={disabled}
         onChange={(event) =>
             onChange(
@@ -74,7 +77,7 @@ export const CounterButton = ({
     size?: "default" | "compact";
 }) => (
     <button
-        className={`${size === "compact" ? "size-7 text-[20px]" : "size-8 text-[22px]"} border-line-strong flex cursor-pointer items-center justify-center rounded-full border leading-none`}
+        className={`${size === "compact" ? "size-7 text-[20px]" : "size-8 text-[22px]"} border-line-strong focus-visible:outline-primary flex cursor-pointer items-center justify-center rounded-full border leading-none focus-visible:outline-2 focus-visible:outline-offset-2`}
         type="button"
         aria-label={label}
         onClick={onClick}

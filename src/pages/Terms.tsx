@@ -3,7 +3,8 @@ import Button from "@/components/common/Button";
 import Header from "@/components/common/Header";
 import Toast from "@/components/common/Toast";
 import { agreementDetails, type AgreementKey } from "@/constants/termsContent";
-import { useEffect, useState } from "react";
+import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Agreements = Record<AgreementKey, boolean>;
@@ -53,6 +54,10 @@ const Terms = () => {
         useState<AgreementKey | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const termsDialogRef = useDialogAccessibility<HTMLElement>(
+        selectedAgreement !== null,
+        () => setSelectedAgreement(null)
+    );
 
     const selectedAgreementItem = agreementItems.find(
         ({ key }) => key === selectedAgreement
@@ -105,22 +110,6 @@ const Terms = () => {
             setSubmitting(false);
         }
     };
-
-    useEffect(() => {
-        if (!selectedAgreement) {
-            return;
-        }
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                setSelectedAgreement(null);
-            }
-        };
-
-        document.addEventListener("keydown", handleKeyDown);
-
-        return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [selectedAgreement]);
 
     return (
         <>
@@ -219,6 +208,8 @@ const Terms = () => {
                     onClick={() => setSelectedAgreement(null)}
                 >
                     <section
+                        ref={termsDialogRef}
+                        tabIndex={-1}
                         className="flex max-h-[75svh] min-h-[360px] w-full max-w-[390px] flex-col rounded-t-[24px] bg-white px-6 pt-6 pb-8 shadow-2xl"
                         role="dialog"
                         aria-modal="true"

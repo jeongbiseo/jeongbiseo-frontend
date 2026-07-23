@@ -2,6 +2,7 @@ import { searchSubsidiesApi } from "@/api/subsidyApi";
 import { InlineLoadState } from "@/components/common/form/FormControls";
 import { CheckIcon } from "@/components/mypage/MyPageUI";
 import { useSubsidyCategories } from "@/hooks/useSubsidyCategories";
+import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
 import type { ReceivedBenefit, SubsidyCategory } from "@/types/onboarding";
 import { useEffect, useMemo, useState } from "react";
 
@@ -16,6 +17,7 @@ export const BenefitAddSheet = ({
     onClose: () => void;
     onSave: (benefits: ReceivedBenefit[]) => void;
 }) => {
+    const dialogRef = useDialogAccessibility<HTMLElement>(open, onClose);
     const [query, setQuery] = useState("");
     const [selectedCategory, setSelectedCategory] =
         useState<SubsidyCategory | null>(null);
@@ -107,6 +109,8 @@ export const BenefitAddSheet = ({
             onClick={onClose}
         >
             <section
+                ref={dialogRef}
+                tabIndex={-1}
                 className="max-h-[82svh] w-full max-w-[390px] overflow-y-auto rounded-t-[28px] bg-white px-6 pt-4 pb-8"
                 role="dialog"
                 aria-modal="true"
@@ -124,7 +128,9 @@ export const BenefitAddSheet = ({
                 <div className="relative mt-5">
                     <SearchIcon />
                     <input
-                        className="border-line-strong placeholder:text-text-subtle focus:border-primary h-[50px] w-full rounded-[10px] border pr-4 pl-11 text-[13px] outline-none"
+                        data-dialog-initial-focus
+                        className="border-line-strong placeholder:text-text-subtle focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border pr-4 pl-11 text-[13px] outline-none focus-visible:outline-2 focus-visible:outline-offset-1"
+                        aria-label="지원금 검색"
                         value={query}
                         placeholder="지원금명 또는 기관명으로 검색해보세요"
                         onChange={(event) => setQuery(event.target.value)}
@@ -168,7 +174,11 @@ export const BenefitAddSheet = ({
                     />
                 )}
 
-                <div className="mt-8 flex flex-col gap-3">
+                <div
+                    className="mt-8 flex flex-col gap-3"
+                    aria-live="polite"
+                    aria-busy={searching}
+                >
                     {searching && (
                         <p className="text-text-subtle py-8 text-center text-[13px]">
                             지원금을 검색하는 중이에요
@@ -190,6 +200,7 @@ export const BenefitAddSheet = ({
                                     className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-primary bg-selection-light" : "border-line-strong bg-white"}`}
                                     type="button"
                                     key={benefit.id}
+                                    aria-pressed={selected}
                                     onClick={() =>
                                         setSelectedBenefits((previous) =>
                                             selected

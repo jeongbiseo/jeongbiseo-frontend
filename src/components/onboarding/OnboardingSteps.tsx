@@ -81,6 +81,7 @@ export const OnboardingStepOne = ({
                 name="birthYear"
                 render={({ field }) => (
                     <Select
+                        ariaLabel="출생 연도"
                         border="soft"
                         value={field.value}
                         onChange={(value) => {
@@ -108,6 +109,7 @@ export const OnboardingStepOne = ({
                 name="birthMonth"
                 render={({ field }) => (
                     <Select
+                        ariaLabel="출생 월"
                         border="soft"
                         value={field.value}
                         onChange={(value) => {
@@ -136,6 +138,7 @@ export const OnboardingStepOne = ({
                 render={({ field, fieldState }) => (
                     <>
                         <Select
+                            ariaLabel="출생 일"
                             border="soft"
                             value={field.value}
                             onChange={(value) => field.onChange(Number(value))}
@@ -166,6 +169,7 @@ export const OnboardingStepOne = ({
                 name="sido"
                 render={({ field }) => (
                     <Select
+                        ariaLabel="거주 시·도"
                         border="soft"
                         value={field.value}
                         disabled={
@@ -196,6 +200,7 @@ export const OnboardingStepOne = ({
                 name="sigungu"
                 render={({ field }) => (
                     <Select
+                        ariaLabel="거주 시·군·구"
                         border="soft"
                         value={field.value}
                         disabled={
@@ -258,6 +263,7 @@ export const OnboardingStepOne = ({
                                 className={`relative h-[46px] cursor-pointer rounded-[10px] border text-[14px] font-semibold ${selected ? "border-primary bg-green-light text-green-dark" : "border-[#d8d8d8] bg-white"}`}
                                 type="button"
                                 key={value}
+                                aria-pressed={selected}
                                 onClick={() => field.onChange(value)}
                             >
                                 {label}
@@ -304,6 +310,7 @@ export const OnboardingStepTwo = ({
             name="incomeBracket"
             render={({ field }) => (
                 <Select
+                    ariaLabel="월 소득구간"
                     border="soft"
                     value={field.value ?? ""}
                     onChange={(value) =>
@@ -455,7 +462,8 @@ export const OnboardingStepThree = ({
                     />
                 </svg>
                 <input
-                    className="focus:border-primary h-[50px] w-full rounded-[10px] border border-[#d8d8d8] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#9a9a9a]"
+                    className="focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border border-[#d8d8d8] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
+                    aria-label="기수령 지원금 검색"
                     value={query}
                     placeholder="지원금명 또는 기관명으로 검색해보세요"
                     onChange={(event) => setQuery(event.target.value)}
@@ -504,7 +512,11 @@ export const OnboardingStepThree = ({
                 control={control}
                 name="receivedSubsidyIds"
                 render={({ field }) => (
-                    <div className="flex flex-col gap-2.5">
+                    <div
+                        className="flex flex-col gap-2.5"
+                        aria-live="polite"
+                        aria-busy={searching}
+                    >
                         {subsidies.map((subsidy) => {
                             const selected = field.value.includes(
                                 subsidy.subsidyId
@@ -514,6 +526,7 @@ export const OnboardingStepThree = ({
                                     className={`flex min-h-[66px] cursor-pointer items-center gap-4 rounded-[10px] border px-4 text-left ${selected ? "border-primary bg-green-light" : "border-[#d8d8d8] bg-white"}`}
                                     type="button"
                                     key={subsidy.subsidyId}
+                                    aria-pressed={selected}
                                     onClick={() =>
                                         field.onChange(
                                             selected
