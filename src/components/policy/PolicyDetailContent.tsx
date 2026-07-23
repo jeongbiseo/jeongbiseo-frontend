@@ -152,10 +152,6 @@ export const PolicyDetailContent = ({
                                 },
                             ]}
                         />
-                        <p className="text-text-muted mt-3 text-[11px] leading-[1.5] font-medium whitespace-pre-line">
-                            {subsidy.description ??
-                                "지원 내용은 담당기관에서 확인해주세요."}
-                        </p>
                         <AiExplanation subsidy={subsidy} />
                     </PolicyAccordion>
                 </div>
