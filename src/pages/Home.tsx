@@ -108,7 +108,7 @@ const Home = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-5 pt-[69px] pb-[104px]">
+            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-5 pt-5 pb-[104px]">
                 <header className="px-[7px]">
                     <p className="text-text-muted text-[16px] leading-normal font-bold">
                         {user?.name ?? "회원"}님, 반가워요

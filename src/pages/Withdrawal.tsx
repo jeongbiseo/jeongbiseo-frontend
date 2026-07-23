@@ -62,7 +62,7 @@ const Withdrawal = () => {
 
     return (
         <>
-            <MyPageLayout className="px-[30px] pt-[56px]">
+            <MyPageLayout className="px-[30px] pt-[30px]">
                 <BackButton className="-ml-5" />
                 <h1 className="mt-0 -ml-[7px] text-[24px] font-bold">
                     회원 탈퇴

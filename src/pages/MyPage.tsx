@@ -209,7 +209,7 @@ const MyPage = () => {
 
     return (
         <>
-            <MyPageLayout className="px-[25px]">
+            <MyPageLayout className="px-[25px] pt-[25px]">
                 <Header title="마이페이지" />
 
                 <button

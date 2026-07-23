@@ -91,7 +91,7 @@ const MyPageTerms = () => {
 
     return (
         <>
-            <MyPageLayout className="px-[31px] pt-[56px]">
+            <MyPageLayout className="px-[31px] pt-[31px]">
                 <BackButton className="-ml-3" />
                 <h1 className="mt-0 text-[24px] font-bold">
                     이용약관 · 개인정보처리방침

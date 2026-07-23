@@ -164,7 +164,7 @@ const MyPageEdit = () => {
 
     if (profileStatus !== "ready") {
         return (
-            <MyPageLayout className="pt-[56px]">
+            <MyPageLayout>
                 <BackButton />
                 <div className="flex min-h-[65svh] flex-col items-center justify-center px-6 text-center">
                     <h1 className="text-[20px] font-bold">
@@ -260,7 +260,7 @@ const MyPageEdit = () => {
 
     return (
         <>
-            <MyPageLayout className="pt-[56px]">
+            <MyPageLayout>
                 <BackButton />
                 <MyPageProfileForm
                     birthYear={birthYear}

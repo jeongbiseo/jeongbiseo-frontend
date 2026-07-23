@@ -114,7 +114,7 @@ const Terms = () => {
     return (
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
-                <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-[72px] pb-8">
+                <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-8 pb-8">
                     <Header showBack />
 
                     <h1 className="mt-3 -ml-[5px] text-[24px] leading-[1.2] font-bold text-black">
