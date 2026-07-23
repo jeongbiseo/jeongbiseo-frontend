@@ -157,7 +157,7 @@ export const PolicyDetailContent = ({
                 </div>
 
                 <Button
-                    className={`${openSections.size > 0 ? "mt-5" : "mt-10"} whitespace-nowrap`}
+                    className={`${openSections.size > 0 ? "mt-5" : "mt-10"} !h-auto min-h-[55px] py-3`}
                     disabled={!subsidy.externalUrl}
                     onClick={onOpenApplication}
                 >

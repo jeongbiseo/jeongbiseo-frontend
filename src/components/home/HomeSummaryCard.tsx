@@ -29,7 +29,7 @@ export const HomeSummaryCard = ({
     const { voucherLike, unconfirmed } = countBadges(breakdown);
 
     return (
-        <article className="bg-primary relative mx-auto mt-[18px] h-[262px] w-full max-w-[305px] overflow-hidden rounded-[30px] px-[19px] pt-7 text-white">
+        <article className="bg-primary relative mx-auto mt-[18px] min-h-[262px] w-full max-w-[305px] overflow-hidden rounded-[30px] px-[19px] pt-7 text-white">
             <SummaryDecoration />
 
             <div className="relative z-10">
@@ -40,7 +40,7 @@ export const HomeSummaryCard = ({
                     {total.totalCount}건
                 </p>
 
-                <div className="mt-[13px] flex items-center gap-3 text-[13px] font-bold">
+                <div className="mt-[13px] flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] font-bold">
                     <span>
                         {hasConfirmedAmount
                             ? `금액 확정 ${total.itemCount}건`
@@ -53,7 +53,7 @@ export const HomeSummaryCard = ({
                     )}
                 </div>
 
-                <div className="mt-[13px] flex items-center gap-[14px]">
+                <div className="mt-[13px] flex flex-wrap items-center gap-x-[14px] gap-y-2">
                     {[
                         `현금 ${total.itemCount}`,
                         `바우처·현물 ${voucherLike}`,

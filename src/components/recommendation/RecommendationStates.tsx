@@ -34,7 +34,7 @@ export const EmptyRecommendation = ({
         <p className="text-text-muted mt-2 text-[13px] font-bold">
             현재 입력하신 조건에 맞는 지원금을 찾지 못했어요
         </p>
-        <div className="border-primary mx-auto mt-[25px] h-[216px] w-[302px] rounded-[20px] border-[0.5px] px-[21px] pt-6">
+        <div className="border-primary mx-auto mt-[25px] h-[216px] w-full max-w-[302px] rounded-[20px] border-[0.5px] px-[21px] pt-6">
             <h3 className="text-[20px] font-bold">이런 이유일 수 있어요</h3>
             <ol className="text-text-muted mt-[15px] list-decimal space-y-[15px] pl-5 text-[13px] leading-normal font-bold">
                 <li>
@@ -51,7 +51,7 @@ export const EmptyRecommendation = ({
             </ol>
         </div>
         <button
-            className="bg-primary mx-auto mt-[25px] block h-[55px] w-[302px] cursor-pointer rounded-[15px] text-[20px] font-bold text-white shadow-[3px_11px_8px_var(--color-green-light-active)] active:scale-[0.99]"
+            className="bg-primary mx-auto mt-[25px] block h-[55px] w-full max-w-[302px] cursor-pointer rounded-[15px] text-[20px] font-bold text-white shadow-[3px_11px_8px_var(--color-green-light-active)] active:scale-[0.99]"
             type="button"
             onClick={onEditProfile}
         >
