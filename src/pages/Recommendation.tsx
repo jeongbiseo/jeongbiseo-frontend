@@ -33,6 +33,13 @@ import {
 import type { RecommendationItem } from "@/types/recommendation";
 import type { SubsidySearchItem } from "@/types/onboarding";
 import { formatAmountRange, formatDDay } from "@/utils/format";
+import {
+    mergeUniquePolicies,
+    reconcilePolicyFavorites,
+    reconcileReceivedPolicies,
+    updateFavoriteCollection,
+    updatePolicyFavorite,
+} from "@/utils/recommendationPolicyState";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
@@ -250,23 +257,13 @@ const Recommendation = () => {
         const nextFavorite = !target.isFavorite;
         const updateFavorite = (isFavorite: boolean) => {
             const updatePolicies = (previous: RecommendationPolicy[]) =>
-                previous.map((policy) =>
-                    policy.id === id ? { ...policy, isFavorite } : policy
-                );
+                updatePolicyFavorite(previous, id, isFavorite);
 
             setRecommendedPolicies(updatePolicies);
             setAllPolicies(updatePolicies);
-            setFavoritePolicies((previous) => {
-                if (!isFavorite) {
-                    return previous.filter((policy) => policy.id !== id);
-                }
-
-                if (previous.some((policy) => policy.id === id)) {
-                    return updatePolicies(previous);
-                }
-
-                return [{ ...target, isFavorite: true }, ...previous];
-            });
+            setFavoritePolicies((previous) =>
+                updateFavoriteCollection(previous, target, isFavorite)
+            );
 
             if (isFavorite) favoriteIdsRef.current.add(id);
             else favoriteIdsRef.current.delete(id);
@@ -317,10 +314,7 @@ const Recommendation = () => {
                 const idSet = new Set(ids);
                 receivedIdsRef.current = idSet;
                 const markReceived = (previous: RecommendationPolicy[]) =>
-                    previous.map((policy) => ({
-                        ...policy,
-                        isReceived: idSet.has(policy.id),
-                    }));
+                    reconcileReceivedPolicies(previous, idSet);
 
                 setReceivedIds(ids);
                 setRecommendedPolicies(markReceived);
@@ -464,15 +458,9 @@ const Recommendation = () => {
             const nextPolicies = response.result.content.map((item) =>
                 toAllPolicy(item, favoriteIds, receivedIds)
             );
-            setAllPolicies((previous) => {
-                const uniquePolicies = new Map(
-                    previous.map((policy) => [policy.id, policy])
-                );
-                nextPolicies.forEach((policy) =>
-                    uniquePolicies.set(policy.id, policy)
-                );
-                return [...uniquePolicies.values()];
-            });
+            setAllPolicies((previous) =>
+                mergeUniquePolicies(previous, nextPolicies)
+            );
             setAllPage(response.result.page);
             setAllLast(response.result.last);
         } catch (error) {
@@ -513,16 +501,10 @@ const Recommendation = () => {
                     }))
                 );
                 setRecommendedPolicies((previous) =>
-                    previous.map((policy) => ({
-                        ...policy,
-                        isFavorite: favoriteIdSet.has(policy.id),
-                    }))
+                    reconcilePolicyFavorites(previous, favoriteIdSet)
                 );
                 setAllPolicies((previous) =>
-                    previous.map((policy) => ({
-                        ...policy,
-                        isFavorite: favoriteIdSet.has(policy.id),
-                    }))
+                    reconcilePolicyFavorites(previous, favoriteIdSet)
                 );
                 setFavoritesInitialized(true);
             } catch (error) {
