@@ -18,7 +18,7 @@ type ButtonSize = "md" | "lg";
 
 const variantStyles: Record<ButtonVariant, string> = {
     primary:
-        "bg-primary text-white shadow-[3px_11px_16.3px_var(--color-green-light-active)]",
+        "bg-green-normal text-white shadow-[3px_11px_16.3px_var(--color-green-light-active)]",
     kakao: "bg-kakao text-text-strong",
     google: "bg-[#f2f2f2] text-black",
     dark: "bg-third text-white",

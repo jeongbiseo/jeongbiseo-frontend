@@ -207,13 +207,13 @@ const Onboarding = () => {
             <section className="bg-ground text-text-strong flex min-h-svh w-full max-w-[390px] flex-col px-6 pt-6 pb-8">
                 <Header showBack onBack={handleBack} />
 
-                <div className="bg-line mt-3 h-[5px] overflow-hidden rounded-full">
+                <div className="bg-line mt-3 h-[6px] overflow-hidden rounded-full">
                     <div
-                        className="bg-primary h-full rounded-full transition-[width] duration-300"
+                        className="bg-green-normal h-full rounded-full transition-[width] duration-300"
                         style={{ width: `${(step / 3) * 100}%` }}
                     />
                 </div>
-                <p className="mt-2 text-[12px] font-semibold text-[#888]">
+                <p className="text-text-subtle mt-2 text-[13px] font-bold">
                     {step}/3 단계
                 </p>
 

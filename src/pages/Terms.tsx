@@ -132,7 +132,7 @@ const Terms = () => {
                             onClick={handleAllAgreement}
                         >
                             <span
-                                className={`flex size-[26px] items-center justify-center rounded-full ${allAgreed ? "bg-primary" : "bg-disabled"}`}
+                                className={`flex size-[26px] items-center justify-center rounded-full ${allAgreed ? "bg-green-normal" : "bg-disabled"}`}
                             >
                                 <svg
                                     className="h-[10px] w-[14px]"
@@ -294,7 +294,7 @@ const Terms = () => {
                         </div>
 
                         <button
-                            className="bg-primary focus-visible:outline-third mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-[18px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2"
+                            className="bg-green-normal focus-visible:outline-third mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-[18px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2"
                             type="button"
                             onClick={() => setSelectedAgreement(null)}
                         >
