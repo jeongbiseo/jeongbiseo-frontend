@@ -2,19 +2,20 @@ import type {
     EstimatedBreakdownResult,
     EstimatedTotalResult,
 } from "@/types/estimated";
+import { classifySeparateBenefits } from "@/utils/estimated";
 import { formatWon } from "@/utils/format";
 import { Link } from "react-router-dom";
 
 /** 지급 방식별로 배지에 표시할 건수를 계산합니다. */
 const countBadges = (breakdown: EstimatedBreakdownResult) => {
-    const voucherLike = breakdown.separateBenefits.filter(({ paymentType }) =>
-        ["VOUCHER", "IN_KIND", "REDUCTION"].includes(paymentType)
-    ).length;
-    const unknown = breakdown.separateBenefits.filter(
-        ({ paymentType }) => paymentType === "UNKNOWN"
-    ).length;
+    const { voucherLike, unconfirmed } = classifySeparateBenefits(
+        breakdown.separateBenefits
+    );
 
-    return { voucherLike, unknown };
+    return {
+        voucherLike: voucherLike.length,
+        unconfirmed: unconfirmed.length,
+    };
 };
 
 export const HomeSummaryCard = ({
@@ -25,7 +26,7 @@ export const HomeSummaryCard = ({
     breakdown: EstimatedBreakdownResult;
 }) => {
     const hasConfirmedAmount = total.itemCount > 0;
-    const { voucherLike, unknown } = countBadges(breakdown);
+    const { voucherLike, unconfirmed } = countBadges(breakdown);
 
     return (
         <article className="bg-primary relative mx-auto mt-[18px] h-[262px] w-[324px] overflow-hidden rounded-[30px] px-[19px] pt-7 text-white">
@@ -56,7 +57,7 @@ export const HomeSummaryCard = ({
                     {[
                         `현금 ${total.itemCount}`,
                         `바우처·현물 ${voucherLike}`,
-                        `금액 미확정 ${unknown}`,
+                        `금액 미확정 ${unconfirmed}`,
                     ].map((label) => (
                         <span
                             className="rounded-full bg-[#32e5a9] px-2 py-[5px] text-[12px] leading-none font-bold whitespace-nowrap"

@@ -16,6 +16,7 @@
  */
 
 import App from "@/App";
+import { OnboardingFlowRoute } from "@/components/route/OnboardingFlowRoute";
 import { ProtectedRoute } from "@/components/route/ProtectedRoute";
 import { RouteLoading } from "@/components/route/RouteLoading";
 import ErrorPage from "@/pages/ErrorPage";
@@ -45,6 +46,9 @@ const protectedPage = (page: ReactNode) => (
     <ProtectedRoute>{lazyPage(page)}</ProtectedRoute>
 );
 
+const onboardingFlowPage = (page: ReactNode) =>
+    protectedPage(<OnboardingFlowRoute>{page}</OnboardingFlowRoute>);
+
 // 라우트 정의
 export const router = createBrowserRouter([
     {
@@ -62,11 +66,11 @@ export const router = createBrowserRouter([
             },
             {
                 path: "terms",
-                element: protectedPage(<Terms />),
+                element: onboardingFlowPage(<Terms />),
             },
             {
                 path: "onboarding",
-                element: protectedPage(<Onboarding />),
+                element: onboardingFlowPage(<Onboarding />),
             },
             {
                 path: "auth/callback/:provider",
