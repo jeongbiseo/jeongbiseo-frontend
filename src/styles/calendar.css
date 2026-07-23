@@ -1,5 +1,6 @@
 .jeongbiseo-calendar.react-calendar {
-    width: 320px;
+    width: 100%;
+    max-width: 320px;
     min-height: 278px;
     height: auto;
     padding: 47px 17px 12px;

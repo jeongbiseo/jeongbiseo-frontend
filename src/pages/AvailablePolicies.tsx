@@ -243,7 +243,7 @@ const AvailablePoliciesContent = ({
             />
             {sections.voucher.length > 3 && (
                 <button
-                    className="border-primary mx-auto mt-[14px] flex h-[23px] w-[306px] cursor-pointer items-center justify-center rounded-[5px] border-[0.5px] bg-white"
+                    className="border-primary mx-auto mt-[14px] flex h-[23px] w-full max-w-[306px] cursor-pointer items-center justify-center rounded-[5px] border-[0.5px] bg-white"
                     type="button"
                     aria-expanded={voucherExpanded}
                     aria-label={
@@ -301,7 +301,7 @@ const PolicyListSection = ({
             {title}
         </h2>
         {items.length > 0 ? (
-            <div className="mx-auto mt-[14px] flex w-[306px] flex-col gap-[14px]">
+            <div className="mx-auto mt-[14px] flex w-full max-w-[306px] flex-col gap-[14px]">
                 {items.map((item) => (
                     <SummaryPolicyCard compact item={item} key={item.rowId} />
                 ))}

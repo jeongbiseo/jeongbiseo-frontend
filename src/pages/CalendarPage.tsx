@@ -130,7 +130,7 @@ const CalendarPage = () => {
                 </header>
 
                 <div className="mt-[18px]">
-                    <div className="relative mx-auto w-[320px]">
+                    <div className="relative mx-auto w-full max-w-[320px]">
                         <div className="absolute top-[17px] left-[17px] z-10 flex items-center gap-2">
                             <MonthSelect
                                 label="연도 선택"
