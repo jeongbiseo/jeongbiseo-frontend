@@ -21,7 +21,7 @@ const Login = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col items-center justify-center px-6 py-6">
+            <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col items-center justify-center px-[26px] py-6">
                 <header className="text-center">
                     <h1 className="text-[48px] leading-none font-bold tracking-[-2.4px] text-black">
                         정<span className="text-primary">비서</span>

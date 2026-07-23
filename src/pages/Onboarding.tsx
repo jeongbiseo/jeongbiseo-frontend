@@ -204,7 +204,7 @@ const Onboarding = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong flex min-h-svh w-full max-w-[390px] flex-col px-6 pt-6 pb-8">
+            <section className="bg-ground text-text-strong flex min-h-svh w-full max-w-[390px] flex-col px-[26px] pt-6 pb-8">
                 <Header showBack onBack={handleBack} />
 
                 <div className="bg-line mt-3 h-[6px] overflow-hidden rounded-full">

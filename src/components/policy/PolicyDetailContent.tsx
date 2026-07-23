@@ -17,6 +17,13 @@ const getDeadlineLabel = ({ deadline, dDay }: SubsidyDetailResult) => {
     return "마감";
 };
 
+const formatApplicationDeadline = (deadline: string | null) => {
+    if (!deadline) return "마감일 정보 없음";
+
+    const [year, month, day] = deadline.split("-");
+    return `${year}년 ${String(Number(month)).padStart(2, "0")}월 ${String(Number(day)).padStart(2, "0")}일`;
+};
+
 export const PolicyDetailContent = ({
     subsidy,
     openSections,
@@ -43,7 +50,7 @@ export const PolicyDetailContent = ({
             <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[39px] pt-[39px] pb-[104px]">
                 <article className="border-primary bg-green-light relative min-h-[124px] rounded-[10px] border-[0.5px] px-[21px] pt-[18px] pb-[15px]">
                     <div className="pr-8">
-                        <h1 className="text-green-darker truncate text-[24px] leading-normal font-bold">
+                        <h1 className="text-green-darker text-[24px] leading-normal font-bold">
                             {subsidy.name}
                         </h1>
                         <p className="text-text-subtle mt-0.5 text-[13px] leading-normal font-bold">
@@ -65,7 +72,10 @@ export const PolicyDetailContent = ({
                         aria-pressed={subsidy.isFavorite}
                         onClick={onToggleFavorite}
                     >
-                        <StarIcon filled={subsidy.isFavorite} />
+                        <StarIcon
+                            filled={subsidy.isFavorite}
+                            className="size-6"
+                        />
                     </button>
 
                     <div className="mt-[15px] flex flex-wrap gap-[11px]">
@@ -103,8 +113,9 @@ export const PolicyDetailContent = ({
                             rows={[
                                 {
                                     label: "신청 마감",
-                                    value:
-                                        subsidy.deadline ?? "마감일 정보 없음",
+                                    value: formatApplicationDeadline(
+                                        subsidy.deadline
+                                    ),
                                 },
                                 {
                                     label: "담당기관",

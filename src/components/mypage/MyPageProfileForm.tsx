@@ -99,7 +99,7 @@ export const MyPageProfileForm = ({
     return (
         <>
             <header className="mt-0">
-                <p className="text-[16px] font-semibold">내 정보 수정</p>
+                <p className="text-[16px] font-bold">내 정보 수정</p>
                 <h1 className="mt-1 text-[20px] font-bold">추천 기준 정보</h1>
                 <p className="text-text-subtle mt-2 text-[13px] font-semibold">
                     아래 정보는 지원금 추천에 직접 사용됩니다.
@@ -110,6 +110,8 @@ export const MyPageProfileForm = ({
             <div className="grid grid-cols-3 gap-[13px]">
                 <Select
                     ariaLabel="출생 연도"
+                    border="strong"
+                    size="onboarding"
                     value={birthYear}
                     onChange={(nextYear) => {
                         onBirthYearChange(nextYear);
@@ -129,6 +131,8 @@ export const MyPageProfileForm = ({
                 </Select>
                 <Select
                     ariaLabel="출생 월"
+                    border="strong"
+                    size="onboarding"
                     value={birthMonth}
                     onChange={(nextMonth) => {
                         onBirthMonthChange(nextMonth);
@@ -148,6 +152,8 @@ export const MyPageProfileForm = ({
                 </Select>
                 <Select
                     ariaLabel="출생 일"
+                    border="strong"
+                    size="onboarding"
                     value={birthDay}
                     onChange={onBirthDayChange}
                 >
@@ -163,6 +169,8 @@ export const MyPageProfileForm = ({
             <div className="grid grid-cols-2 gap-2">
                 <Select
                     ariaLabel="거주 시·도"
+                    border="strong"
+                    size="compact"
                     value={city}
                     disabled={sidoStatus !== "ready" || sidoList.length === 0}
                     onChange={(value) => onCityChange(String(value))}
@@ -180,6 +188,8 @@ export const MyPageProfileForm = ({
                 </Select>
                 <Select
                     ariaLabel="거주 시·군·구"
+                    border="strong"
+                    size="compact"
                     value={district}
                     disabled={
                         sigunguStatus !== "ready" ||
@@ -232,6 +242,8 @@ export const MyPageProfileForm = ({
             <FieldLabel>고용상태</FieldLabel>
             <Select
                 ariaLabel="고용상태"
+                border="strong"
+                size="compact"
                 value={employment}
                 onChange={onEmploymentChange}
             >
@@ -245,6 +257,8 @@ export const MyPageProfileForm = ({
             <FieldLabel>월 소득구간</FieldLabel>
             <Select
                 ariaLabel="월 소득구간"
+                border="strong"
+                size="compact"
                 value={income}
                 onChange={onIncomeChange}
             >
@@ -255,12 +269,12 @@ export const MyPageProfileForm = ({
                     </option>
                 ))}
             </Select>
-            <p className="text-text-subtle mt-2 text-[12px] font-semibold">
+            <p className="text-text-muted mt-2 text-[13px]">
                 중위소득 기준 지원금 매칭에 활용돼요
             </p>
 
             <FieldLabel>가구원 수</FieldLabel>
-            <div className="border-line-strong flex h-[48px] items-center justify-between rounded-[10px] border bg-white px-7">
+            <div className="flex h-[47px] items-center justify-between rounded-[10px] border-[0.5px] border-[#808080] bg-white px-7">
                 <CounterButton
                     label="가구원 수 줄이기"
                     onClick={() =>
@@ -281,13 +295,13 @@ export const MyPageProfileForm = ({
                     ＋
                 </CounterButton>
             </div>
-            <p className="text-text-subtle mt-2 text-[12px] font-semibold">
+            <p className="text-text-muted mt-2 text-[13px]">
                 가구원 수에 따라 주거 · 육아 지원금 범위가 달라져요
             </p>
 
             <div className="scroll-mt-6 pt-9" ref={receivedSectionRef}>
                 <h2 className="text-[20px] font-bold">기존 수령중인 지원금</h2>
-                <p className="text-text-subtle mt-2 text-[12px] font-semibold">
+                <p className="text-text-muted mt-2 text-[13px]">
                     이미 받고 있는 지원금을 선택하면 중복 추천을 줄여드립니다
                 </p>
 
@@ -322,14 +336,14 @@ export const MyPageProfileForm = ({
                         !receivedError &&
                         receivedBenefits.map((benefit) => (
                             <div
-                                className="bg-success-light flex min-h-[54px] items-center justify-between rounded-[10px] px-6"
+                                className="bg-green-light flex h-[53px] items-center justify-between rounded-[10px] px-[23px]"
                                 key={benefit.id}
                             >
-                                <strong className="text-[14px]">
+                                <strong className="text-[16px] font-semibold">
                                     {benefit.title}
                                 </strong>
                                 <button
-                                    className="border-text-muted cursor-pointer rounded-full border px-3 py-1 text-[12px] font-bold"
+                                    className="border-green-darker cursor-pointer rounded-[10px] border-[0.5px] bg-white px-[10px] py-[5px] text-[13px] font-bold"
                                     type="button"
                                     aria-label={`${benefit.title} 삭제`}
                                     onClick={() => onRemoveReceived(benefit.id)}
@@ -341,7 +355,7 @@ export const MyPageProfileForm = ({
                 </div>
 
                 <button
-                    className="bg-primary mt-4 h-[42px] cursor-pointer rounded-[15px] px-5 text-[15px] font-bold text-white shadow-[3px_8px_10px_var(--color-green-shadow)]"
+                    className="bg-green-normal mt-[14px] h-[39px] w-[190px] cursor-pointer rounded-[15px] text-[16px] font-bold text-white shadow-[3px_2px_7px_var(--color-green-light-active)]"
                     type="button"
                     disabled={receivedLoading || receivedError}
                     onClick={onOpenBenefitSheet}

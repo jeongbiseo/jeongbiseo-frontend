@@ -117,7 +117,7 @@ const Terms = () => {
                 <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-8 pb-8">
                     <Header showBack />
 
-                    <h1 className="mt-3 -ml-[5px] text-[24px] leading-[1.2] font-bold text-black">
+                    <h1 className="mt-3 -ml-[6px] text-[24px] leading-[1.2] font-bold text-black">
                         서비스 이용을 위해
                         <br />
                         약관에 동의해주세요
