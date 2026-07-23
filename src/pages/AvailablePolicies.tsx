@@ -19,8 +19,9 @@ import SummaryPolicyCard, {
     type SummaryPolicyItem,
 } from "@/components/home/SummaryPolicyCard";
 import { BackButton } from "@/components/mypage/MyPageUI";
-import { isNonCashPayment, paymentTypeLabels } from "@/constants/paymentType";
+import { paymentTypeLabels } from "@/constants/paymentType";
 import type { EstimatedBreakdownResult } from "@/types/estimated";
+import { classifySeparateBenefits } from "@/utils/estimated";
 import { formatAmountRange, formatWon } from "@/utils/format";
 import { useEffect, useState } from "react";
 
@@ -61,25 +62,24 @@ const toSections = (breakdown: EstimatedBreakdownResult): Sections => {
         })),
     ];
 
-    const voucher = breakdown.separateBenefits
-        .filter(({ paymentType }) => isNonCashPayment(paymentType))
-        .map((item) => ({
-            rowId: `voucher-${item.subsidyId}`,
-            policyId: item.subsidyId,
-            title: item.name,
-            value: paymentTypeLabels[item.paymentType],
-            valueTone: "voucher" as const,
-        }));
+    const { voucherLike, unconfirmed: unconfirmedBenefits } =
+        classifySeparateBenefits(breakdown.separateBenefits);
 
-    const unconfirmed = breakdown.separateBenefits
-        .filter(({ paymentType }) => paymentType === "UNKNOWN")
-        .map((item) => ({
-            rowId: `unconfirmed-${item.subsidyId}`,
-            policyId: item.subsidyId,
-            title: item.name,
-            value: "금액 미확정",
-            valueTone: "muted" as const,
-        }));
+    const voucher = voucherLike.map((item) => ({
+        rowId: `voucher-${item.subsidyId}`,
+        policyId: item.subsidyId,
+        title: item.name,
+        value: paymentTypeLabels[item.paymentType],
+        valueTone: "voucher" as const,
+    }));
+
+    const unconfirmed = unconfirmedBenefits.map((item) => ({
+        rowId: `unconfirmed-${item.subsidyId}`,
+        policyId: item.subsidyId,
+        title: item.name,
+        value: "금액 미확정",
+        valueTone: "muted" as const,
+    }));
 
     return {
         cash,
