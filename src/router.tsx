@@ -17,21 +17,33 @@
 
 import App from "@/App";
 import { ProtectedRoute } from "@/components/route/ProtectedRoute";
-import AuthCallback from "@/pages/AuthCallback";
-import CalendarPage from "@/pages/CalendarPage";
-import AvailablePolicies from "@/pages/AvailablePolicies";
-import Home from "@/pages/Home";
+import { RouteLoading } from "@/components/route/RouteLoading";
 import ErrorPage from "@/pages/ErrorPage";
-import Login from "@/pages/Login";
-import MyPage from "@/pages/MyPage";
-import MyPageEdit from "@/pages/MyPageEdit";
-import MyPageTerms from "@/pages/MyPageTerms";
-import Onboarding from "@/pages/Onboarding";
-import PolicyDetail from "@/pages/PolicyDetail";
-import Recommendation from "@/pages/Recommendation";
-import Terms from "@/pages/Terms";
-import Withdrawal from "@/pages/Withdrawal";
+import {
+    AuthCallback,
+    AvailablePolicies,
+    CalendarPage,
+    Home,
+    Login,
+    MyPage,
+    MyPageEdit,
+    MyPageTerms,
+    Onboarding,
+    PolicyDetail,
+    Recommendation,
+    Terms,
+    Withdrawal,
+} from "@/routes/lazyPages";
+import { Suspense, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
+
+const lazyPage = (page: ReactNode) => (
+    <Suspense fallback={<RouteLoading />}>{page}</Suspense>
+);
+
+const protectedPage = (page: ReactNode) => (
+    <ProtectedRoute>{lazyPage(page)}</ProtectedRoute>
+);
 
 // 라우트 정의
 export const router = createBrowserRouter([
@@ -42,99 +54,55 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true, // path: '/'
-                element: (
-                    <ProtectedRoute>
-                        <Home />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<Home />),
             },
             {
                 path: "login",
-                element: <Login />,
+                element: lazyPage(<Login />),
             },
             {
                 path: "terms",
-                element: (
-                    <ProtectedRoute>
-                        <Terms />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<Terms />),
             },
             {
                 path: "onboarding",
-                element: (
-                    <ProtectedRoute>
-                        <Onboarding />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<Onboarding />),
             },
             {
                 path: "auth/callback/:provider",
-                element: <AuthCallback />,
+                element: lazyPage(<AuthCallback />),
             },
             {
                 path: "recommend",
-                element: (
-                    <ProtectedRoute>
-                        <Recommendation />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<Recommendation />),
             },
             {
                 path: "calendar",
-                element: (
-                    <ProtectedRoute>
-                        <CalendarPage />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<CalendarPage />),
             },
             {
                 path: "available-policies",
-                element: (
-                    <ProtectedRoute>
-                        <AvailablePolicies />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<AvailablePolicies />),
             },
             {
                 path: "policies/:policyId",
-                element: (
-                    <ProtectedRoute>
-                        <PolicyDetail />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<PolicyDetail />),
             },
             {
                 path: "mypage",
-                element: (
-                    <ProtectedRoute>
-                        <MyPage />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<MyPage />),
             },
             {
                 path: "mypage/edit",
-                element: (
-                    <ProtectedRoute>
-                        <MyPageEdit />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<MyPageEdit />),
             },
             {
                 path: "mypage/terms",
-                element: (
-                    <ProtectedRoute>
-                        <MyPageTerms />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<MyPageTerms />),
             },
             {
                 path: "mypage/withdraw",
-                element: (
-                    <ProtectedRoute>
-                        <Withdrawal />
-                    </ProtectedRoute>
-                ),
+                element: protectedPage(<Withdrawal />),
             },
             {
                 path: "*",
