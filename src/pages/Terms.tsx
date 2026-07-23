@@ -3,7 +3,8 @@ import Button from "@/components/common/Button";
 import Header from "@/components/common/Header";
 import Toast from "@/components/common/Toast";
 import { agreementDetails, type AgreementKey } from "@/constants/termsContent";
-import { useEffect, useState } from "react";
+import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Agreements = Record<AgreementKey, boolean>;
@@ -53,6 +54,10 @@ const Terms = () => {
         useState<AgreementKey | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const termsDialogRef = useDialogAccessibility<HTMLElement>(
+        selectedAgreement !== null,
+        () => setSelectedAgreement(null)
+    );
 
     const selectedAgreementItem = agreementItems.find(
         ({ key }) => key === selectedAgreement
@@ -105,22 +110,6 @@ const Terms = () => {
             setSubmitting(false);
         }
     };
-
-    useEffect(() => {
-        if (!selectedAgreement) {
-            return;
-        }
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                setSelectedAgreement(null);
-            }
-        };
-
-        document.addEventListener("keydown", handleKeyDown);
-
-        return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [selectedAgreement]);
 
     return (
         <>
@@ -216,14 +205,19 @@ const Terms = () => {
                 <div
                     className="fixed inset-0 z-50 flex items-end justify-center bg-black/40"
                     role="presentation"
-                    onClick={() => setSelectedAgreement(null)}
+                    onClick={(event) => {
+                        if (event.target === event.currentTarget) {
+                            setSelectedAgreement(null);
+                        }
+                    }}
                 >
                     <section
+                        ref={termsDialogRef}
+                        tabIndex={-1}
                         className="flex max-h-[75svh] min-h-[360px] w-full max-w-[390px] flex-col rounded-t-[24px] bg-white px-6 pt-6 pb-8 shadow-2xl"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="terms-detail-title"
-                        onClick={(event) => event.stopPropagation()}
                     >
                         <header className="flex items-start justify-between gap-4">
                             <div>
@@ -244,7 +238,6 @@ const Terms = () => {
                                 className="text-text-strong focus-visible:outline-primary flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#f2f2f2] focus-visible:outline-2 focus-visible:outline-offset-2"
                                 type="button"
                                 aria-label="약관 상세 닫기"
-                                autoFocus
                                 onClick={() => setSelectedAgreement(null)}
                             >
                                 <svg

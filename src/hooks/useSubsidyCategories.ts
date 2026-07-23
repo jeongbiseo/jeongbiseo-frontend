@@ -1,53 +1,29 @@
 import { getSubsidyCategoriesApi } from "@/api/subsidyApi";
 import type { SubsidyCategoryOption } from "@/types/onboarding";
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useApiResource } from "@/hooks/useApiResource";
 
 export type CategoryLoadStatus = "idle" | "loading" | "ready" | "error";
 
+const EMPTY_CATEGORIES: SubsidyCategoryOption[] = [];
+
 /** 지원금 카테고리 필터 목록을 불러옵니다. */
 export const useSubsidyCategories = (enabled = true) => {
-    const [categories, setCategories] = useState<SubsidyCategoryOption[]>([]);
-    const [status, setStatus] = useState<CategoryLoadStatus>("loading");
-    const [reloadKey, setReloadKey] = useState(0);
+    const loadCategories = useCallback(async () => {
+        const response = await getSubsidyCategoriesApi();
+        if (!response.isSuccess) throw new Error(response.message);
+        return response.result;
+    }, []);
 
-    useEffect(() => {
-        if (!enabled) return;
-
-        let active = true;
-
-        const loadCategories = async () => {
-            setStatus("loading");
-
-            try {
-                const response = await getSubsidyCategoriesApi();
-
-                if (!response.isSuccess) {
-                    throw new Error(response.message);
-                }
-
-                if (!active) return;
-
-                setCategories(response.result);
-                setStatus("ready");
-            } catch (error) {
-                console.error(error);
-                if (!active) return;
-
-                setCategories([]);
-                setStatus("error");
-            }
-        };
-
-        void loadCategories();
-
-        return () => {
-            active = false;
-        };
-    }, [enabled, reloadKey]);
+    const { data, status, retry } = useApiResource({
+        load: loadCategories,
+        initialData: EMPTY_CATEGORIES,
+        enabled,
+    });
 
     return {
-        categories: enabled ? categories : [],
-        status: enabled ? status : ("idle" as const),
-        retry: () => setReloadKey((previous) => previous + 1),
+        categories: data,
+        status: status as CategoryLoadStatus,
+        retry,
     };
 };

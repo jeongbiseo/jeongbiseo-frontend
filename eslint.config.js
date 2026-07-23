@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import prettierConfig from "eslint-config-prettier";
+import jsxA11y from "eslint-plugin-jsx-a11y";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import { defineConfig, globalIgnores } from "eslint/config";
@@ -15,6 +16,7 @@ export default defineConfig([
             tseslint.configs.recommended,
             reactHooks.configs.flat.recommended,
             reactRefresh.configs.vite,
+            jsxA11y.flatConfigs.recommended,
             prettierConfig, // 반드시 마지막 — Prettier와 충돌하는 스타일 규칙 비활성화
         ],
         languageOptions: {

@@ -10,6 +10,7 @@ import {
     MyPageLayout,
 } from "@/components/mypage/MyPageUI";
 import { agreementDetails, type AgreementKey } from "@/constants/termsContent";
+import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
 import type { TermConsentItem, TermConsentType } from "@/types/terms";
 import { useEffect, useState } from "react";
 
@@ -158,7 +159,7 @@ const MyPageTerms = () => {
                                 void handleMarketingChange(event.target.checked)
                             }
                         />
-                        <span className="bg-disabled peer-checked:bg-primary relative h-5 w-[34px] rounded-full transition-colors after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
+                        <span className="bg-disabled peer-checked:bg-primary peer-focus-visible:outline-primary relative h-5 w-[34px] rounded-full transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
                     </label>
                 )}
             </MyPageLayout>
@@ -182,6 +183,9 @@ const TermsDetailSheet = ({
     termKey: AgreementKey | null;
     onClose: () => void;
 }) => {
+    const open = termKey !== null;
+    const dialogRef = useDialogAccessibility<HTMLElement>(open, onClose);
+
     if (!termKey) return null;
 
     const detail = agreementDetails[termKey];
@@ -192,14 +196,17 @@ const TermsDetailSheet = ({
         <div
             className="fixed inset-0 z-50 flex items-end justify-center bg-black/30"
             role="presentation"
-            onClick={onClose}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) onClose();
+            }}
         >
             <section
+                ref={dialogRef}
+                tabIndex={-1}
                 className="max-h-[86svh] w-full max-w-[390px] overflow-y-auto rounded-t-[28px] bg-white px-6 pt-4 pb-10"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="terms-detail-title"
-                onClick={(event) => event.stopPropagation()}
             >
                 <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
                 <div className="mt-5 flex items-start justify-between gap-4">
@@ -215,6 +222,7 @@ const TermsDetailSheet = ({
                         </p>
                     </div>
                     <button
+                        data-dialog-initial-focus
                         className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
                         type="button"
                         aria-label="약관 상세 닫기"

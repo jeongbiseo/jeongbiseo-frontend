@@ -58,6 +58,28 @@ npm run preview
 
 > Husky는 `npm install` 시 `prepare` 스크립트를 통해 자동 설정됩니다.
 
+## 🔐 환경변수 및 소셜 로그인 설정
+
+루트의 `.env.example`을 복사해 `.env`를 만들고 환경별 값을 설정합니다.
+
+| 변수                    | 설명                              | 로컬 예시               |
+| ----------------------- | --------------------------------- | ----------------------- |
+| `VITE_API_URL`          | 백엔드 서버 Origin                | `https://cartlab.store` |
+| `VITE_APP_URL`          | OAuth 콜백 기준 프론트엔드 Origin | `http://localhost:5173` |
+| `VITE_KAKAO_CLIENT_ID`  | 카카오 REST API 키                | 팀에서 전달받은 값      |
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth Client ID            | 팀에서 전달받은 값      |
+
+로컬 개발 서버는 OAuth 콜백 주소가 바뀌지 않도록 `localhost:5173`으로 고정합니다. `VITE_APP_URL`에는 경로나 마지막 `/`를 포함하지 않습니다.
+
+소셜 로그인 제공자 콘솔에는 다음 Redirect URI를 등록합니다.
+
+| 환경       | 카카오                                                       | Google                                                        |
+| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------- |
+| Local      | `http://localhost:5173/auth/callback/kakao`                  | `http://localhost:5173/auth/callback/google`                  |
+| Production | `https://jeongbiseo-frontend.vercel.app/auth/callback/kakao` | `https://jeongbiseo-frontend.vercel.app/auth/callback/google` |
+
+Vercel Production 환경의 `VITE_APP_URL`은 `https://jeongbiseo-frontend.vercel.app`으로 설정합니다. Preview 배포에서 소셜 로그인을 사용하려면 해당 Preview Origin도 각 제공자 콘솔에 별도로 등록해야 합니다.
+
 ## 💻 개발 환경 설정 (필수!)
 
 프로젝트의 코드 품질과 일관성을 위해 모든 팀원은 아래 개발 환경을 반드시 설정해야 합니다.
