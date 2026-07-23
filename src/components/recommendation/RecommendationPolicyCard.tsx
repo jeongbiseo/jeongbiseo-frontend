@@ -26,7 +26,7 @@ export const RecommendationPolicyCard = ({
         policy.unverifiedConditionCount !== null;
 
     return (
-        <article className="border-primary relative min-h-[107px] rounded-[20px] border bg-white px-[21px] py-[15px]">
+        <article className="border-primary relative min-h-[107px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]">
             <Link
                 className="block"
                 to={`/policies/${policy.id}`}

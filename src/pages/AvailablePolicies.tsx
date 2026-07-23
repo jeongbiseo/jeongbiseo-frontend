@@ -142,7 +142,7 @@ const AvailablePolicies = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[29px] pt-[72px] pb-[96px]">
+            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[29px] pt-[29px] pb-[96px]">
                 <BackButton className="-ml-1" />
                 <h1 className="mt-[2px] ml-[10px] text-[24px] leading-normal font-bold">
                     지금 신청 가능한 지원금

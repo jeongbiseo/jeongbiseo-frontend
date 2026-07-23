@@ -21,7 +21,7 @@ const Login = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col items-center px-6 pt-[clamp(48px,11svh,104px)] pb-8">
+            <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col items-center justify-center px-6 py-6">
                 <header className="text-center">
                     <h1 className="text-[48px] leading-none font-bold tracking-[-2.4px] text-black">
                         정<span className="text-primary">비서</span>
@@ -34,14 +34,14 @@ const Login = () => {
                 </header>
 
                 <img
-                    className="mt-[clamp(36px,6.4svh,60px)] aspect-square w-[clamp(220px,66.67vw,260px)]"
+                    className="mt-[55px] size-[215px]"
                     src={supportIllustration}
                     alt="정부지원금을 챙겨주는 정비서"
                 />
 
-                <div className="mt-[clamp(36px,6.4svh,60px)] flex w-full flex-col gap-[21px]">
+                <div className="mt-[55px] flex w-full flex-col gap-[21px]">
                     <button
-                        className="bg-kakao text-text-strong focus-visible:outline-text-strong flex h-[70px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-[15px] text-[20px] font-bold transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 active:scale-[0.99]"
+                        className="bg-kakao text-text-strong focus-visible:outline-text-strong flex h-[55px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-[15px] text-[20px] font-bold transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 active:scale-[0.99]"
                         type="button"
                         onClick={() => handleSocialLogin("kakao")}
                     >
@@ -54,7 +54,7 @@ const Login = () => {
                     </button>
 
                     <button
-                        className="flex h-[70px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-[15px] bg-[#f2f2f2] text-[20px] font-bold text-black transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#4285f4] active:scale-[0.99]"
+                        className="flex h-[55px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-[15px] bg-[#f2f2f2] text-[20px] font-bold text-black transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#4285f4] active:scale-[0.99]"
                         type="button"
                         onClick={() => handleSocialLogin("google")}
                     >

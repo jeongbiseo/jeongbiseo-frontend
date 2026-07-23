@@ -114,7 +114,7 @@ const Terms = () => {
     return (
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
-                <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-[72px] pb-8">
+                <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-8 pb-8">
                     <Header showBack />
 
                     <h1 className="mt-3 -ml-[5px] text-[24px] leading-[1.2] font-bold text-black">
@@ -132,7 +132,7 @@ const Terms = () => {
                             onClick={handleAllAgreement}
                         >
                             <span
-                                className={`flex size-[26px] items-center justify-center rounded-full ${allAgreed ? "bg-primary" : "bg-disabled"}`}
+                                className={`flex size-[26px] items-center justify-center rounded-full ${allAgreed ? "bg-green-normal" : "bg-disabled"}`}
                             >
                                 <svg
                                     className="h-[10px] w-[14px]"
@@ -294,7 +294,7 @@ const Terms = () => {
                         </div>
 
                         <button
-                            className="bg-primary focus-visible:outline-third mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-[18px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2"
+                            className="bg-green-normal focus-visible:outline-third mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-[18px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2"
                             type="button"
                             onClick={() => setSelectedAgreement(null)}
                         >

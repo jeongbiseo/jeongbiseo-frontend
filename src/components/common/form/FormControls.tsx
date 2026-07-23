@@ -40,6 +40,7 @@ export const FormSelect = <T extends string | number>({
     ariaLabel,
     disabled = false,
     border = "default",
+    size = "default",
 }: {
     value: T;
     onChange: (value: T) => void;
@@ -47,9 +48,10 @@ export const FormSelect = <T extends string | number>({
     ariaLabel: string;
     disabled?: boolean;
     border?: "default" | "soft";
+    size?: "default" | "onboarding";
 }) => (
     <select
-        className={`${border === "soft" ? "border-[#d8d8d8]" : "border-line-strong"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled h-[48px] w-full cursor-pointer rounded-[10px] border bg-white px-3 text-[13px] font-semibold outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
+        className={`${border === "soft" ? "border-[0.5px] border-[#d8d8d8]" : "border-line-strong border"} ${size === "onboarding" ? "h-[50px]" : "h-[48px]"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled w-full cursor-pointer rounded-[10px] bg-white px-3 text-[13px] font-semibold outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
         value={value}
         aria-label={ariaLabel}
         disabled={disabled}
@@ -77,7 +79,7 @@ export const CounterButton = ({
     size?: "default" | "compact";
 }) => (
     <button
-        className={`${size === "compact" ? "size-7 text-[20px]" : "size-8 text-[22px]"} border-line-strong focus-visible:outline-primary flex cursor-pointer items-center justify-center rounded-full border leading-none focus-visible:outline-2 focus-visible:outline-offset-2`}
+        className={`${size === "compact" ? "size-[30px] text-[20px]" : "size-8 text-[22px]"} border-line-strong focus-visible:outline-primary flex cursor-pointer items-center justify-center rounded-full border leading-none focus-visible:outline-2 focus-visible:outline-offset-2`}
         type="button"
         aria-label={label}
         onClick={onClick}

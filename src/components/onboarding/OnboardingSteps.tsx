@@ -83,6 +83,7 @@ export const OnboardingStepOne = ({
                     <Select
                         ariaLabel="출생 연도"
                         border="soft"
+                        size="onboarding"
                         value={field.value}
                         onChange={(value) => {
                             const nextYear = Number(value);
@@ -111,6 +112,7 @@ export const OnboardingStepOne = ({
                     <Select
                         ariaLabel="출생 월"
                         border="soft"
+                        size="onboarding"
                         value={field.value}
                         onChange={(value) => {
                             const nextMonth = Number(value);
@@ -140,6 +142,7 @@ export const OnboardingStepOne = ({
                         <Select
                             ariaLabel="출생 일"
                             border="soft"
+                            size="onboarding"
                             value={field.value}
                             onChange={(value) => field.onChange(Number(value))}
                         >
@@ -158,7 +161,7 @@ export const OnboardingStepOne = ({
                 )}
             />
         </div>
-        <div className="bg-green-light text-green-dark mt-3 rounded-[10px] px-4 py-3 text-[13px] font-semibold">
+        <div className="bg-green-light-hover text-green-normal-hover mt-3 flex h-[36px] items-center rounded-[10px] px-4 text-[13px] font-bold">
             만 {age}세로 계산돼요
         </div>
 
@@ -171,6 +174,7 @@ export const OnboardingStepOne = ({
                     <Select
                         ariaLabel="거주 시·도"
                         border="soft"
+                        size="onboarding"
                         value={field.value}
                         disabled={
                             sidoStatus !== "ready" || sidoList.length === 0
@@ -202,6 +206,7 @@ export const OnboardingStepOne = ({
                     <Select
                         ariaLabel="거주 시·군·구"
                         border="soft"
+                        size="onboarding"
                         value={field.value}
                         disabled={
                             sigunguStatus !== "ready" ||
@@ -260,7 +265,7 @@ export const OnboardingStepOne = ({
                         const selected = field.value === value;
                         return (
                             <button
-                                className={`relative h-[46px] cursor-pointer rounded-[10px] border text-[14px] font-semibold ${selected ? "border-primary bg-green-light text-green-dark" : "border-[#d8d8d8] bg-white"}`}
+                                className={`relative h-[45px] cursor-pointer rounded-[10px] border-[0.5px] text-[13px] font-bold ${selected ? "border-green-normal-hover bg-green-light-hover text-green-normal-hover" : "border-[#808080] bg-white"}`}
                                 type="button"
                                 key={value}
                                 aria-pressed={selected}
@@ -268,7 +273,7 @@ export const OnboardingStepOne = ({
                             >
                                 {label}
                                 {selected && (
-                                    <span className="text-primary absolute top-1.5 right-2">
+                                    <span className="text-green-normal-hover absolute top-1.5 right-2">
                                         ✓
                                     </span>
                                 )}
@@ -278,10 +283,10 @@ export const OnboardingStepOne = ({
                 </div>
             )}
         />
-        <div className="bg-warning-light text-warning mt-4 rounded-[10px] px-4 py-3 text-center text-[12px] leading-[1.45] font-semibold">
-            현재 고용상태는 지원금 추천 조건에만 활용되며
+        <div className="bg-warning-light text-warning mt-4 flex min-h-[59px] items-center rounded-[10px] px-4 text-[13px] leading-[1.45] font-bold">
+            연령, 거주지, 고용상태는 지원금 추천 조건 매칭에 꼭 필요한
             <br />
-            저장 후 언제든 수정할 수 있어요
+            필수 정보예요
         </div>
     </>
 );
@@ -301,7 +306,7 @@ export const OnboardingStepTwo = ({
                     추천해 드릴게요
                 </>
             }
-            description="선택 항목이에요. 건너 뛰어도 괜찮아요"
+            description="선택 항목이에요, 건너 뛰어도 괜찮아요"
         />
 
         <FieldLabel spacing="onboarding">월 소득구간</FieldLabel>
@@ -312,6 +317,7 @@ export const OnboardingStepTwo = ({
                 <Select
                     ariaLabel="월 소득구간"
                     border="soft"
+                    size="onboarding"
                     value={field.value ?? ""}
                     onChange={(value) =>
                         field.onChange(
@@ -336,7 +342,7 @@ export const OnboardingStepTwo = ({
             render={({ field }) => {
                 const size = field.value ?? 1;
                 return (
-                    <div className="flex h-[52px] items-center justify-between rounded-[10px] border border-[#d8d8d8] bg-white px-4">
+                    <div className="flex h-[50px] items-center justify-between rounded-[10px] border-[0.5px] border-[#808080] bg-white px-[28px]">
                         <CounterButton
                             size="compact"
                             label="가구원 수 줄이기"
@@ -462,7 +468,7 @@ export const OnboardingStepThree = ({
                     />
                 </svg>
                 <input
-                    className="focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border border-[#d8d8d8] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
+                    className="focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
                     aria-label="기수령 지원금 검색"
                     value={query}
                     placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -507,7 +513,7 @@ export const OnboardingStepThree = ({
                 />
             )}
 
-            <FieldLabel spacing="onboarding">요즘 많이 찾는 지원금</FieldLabel>
+            <FieldLabel spacing="onboarding">기존 수령중인 지원금</FieldLabel>
             <Controller
                 control={control}
                 name="receivedSubsidyIds"
@@ -523,7 +529,7 @@ export const OnboardingStepThree = ({
                             );
                             return (
                                 <button
-                                    className={`flex min-h-[66px] cursor-pointer items-center gap-4 rounded-[10px] border px-4 text-left ${selected ? "border-primary bg-green-light" : "border-[#d8d8d8] bg-white"}`}
+                                    className={`flex min-h-[74px] cursor-pointer items-center gap-[18px] rounded-[10px] border-[0.5px] px-[21px] text-left ${selected ? "border-green-normal-hover bg-green-light-hover" : "border-[#808080] bg-white"}`}
                                     type="button"
                                     key={subsidy.subsidyId}
                                     aria-pressed={selected}
@@ -543,16 +549,16 @@ export const OnboardingStepThree = ({
                                     }
                                 >
                                     <span
-                                        className={`flex size-7 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-[#c8c8c8]"}`}
+                                        className={`flex size-[30px] shrink-0 items-center justify-center rounded-full border ${selected ? "border-green-normal bg-green-normal text-white" : "border-[#c8c8c8]"}`}
                                     >
                                         {selected && "✓"}
                                     </span>
                                     <span>
-                                        <strong className="block text-[14px]">
+                                        <strong className="block text-[16px]">
                                             {subsidy.name}
                                         </strong>
                                         {subsidy.agency && (
-                                            <span className="mt-1 block text-[11px] text-[#8a8a8a]">
+                                            <span className="text-text-subtle mt-[6px] block text-[13px] font-bold">
                                                 {subsidy.agency}
                                             </span>
                                         )}
@@ -587,6 +593,8 @@ const StepHeading = ({
     <header>
         <p className="text-primary text-[13px] font-bold">{eyebrow}</p>
         <h1 className="mt-2 text-[24px] leading-[1.25] font-bold">{title}</h1>
-        <p className="text-text-muted mt-2 text-[12px]">{description}</p>
+        <p className="text-text-subtle mt-2 text-[13px] font-bold">
+            {description}
+        </p>
     </header>
 );
