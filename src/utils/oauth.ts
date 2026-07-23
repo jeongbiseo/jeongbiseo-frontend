@@ -35,9 +35,32 @@ const STORAGE_PREFIX = "oauth:";
 
 type PendingOAuth = { codeVerifier: string; state: string };
 
+const getAppOrigin = () => {
+    const configuredOrigin = import.meta.env.VITE_APP_URL?.trim().replace(
+        /\/+$/,
+        ""
+    );
+
+    if (!configuredOrigin) return window.location.origin;
+
+    try {
+        const url = new URL(configuredOrigin);
+
+        if (url.origin !== configuredOrigin) {
+            throw new Error("Origin 형식이 아닙니다.");
+        }
+
+        return url.origin;
+    } catch {
+        throw new Error(
+            "VITE_APP_URL은 경로와 마지막 /를 제외한 Origin 형식이어야 합니다."
+        );
+    }
+};
+
 // 콜백에서 사용할 redirectUri. 인가 요청과 토큰 교환에 반드시 동일한 값을 사용합니다.
 export const buildRedirectUri = (provider: SocialProvider) =>
-    `${window.location.origin}/auth/callback/${provider}`;
+    `${getAppOrigin()}/auth/callback/${provider}`;
 
 const base64UrlEncode = (bytes: Uint8Array) => {
     let binary = "";
@@ -68,10 +91,17 @@ export const startSocialLogin = async (provider: SocialProvider) => {
     const config = providerConfigs[provider];
 
     if (!config.clientId) {
+        const variableName =
+            provider === "kakao"
+                ? "VITE_KAKAO_CLIENT_ID"
+                : "VITE_GOOGLE_CLIENT_ID";
+
         throw new Error(
-            `${provider} client id가 설정되지 않았습니다. .env를 확인하세요.`
+            `${variableName}가 설정되지 않았습니다. .env를 확인하세요.`
         );
     }
+
+    const redirectUri = buildRedirectUri(provider);
 
     const codeVerifier = randomBase64Url(32);
     const state = randomBase64Url(16);
@@ -85,7 +115,7 @@ export const startSocialLogin = async (provider: SocialProvider) => {
 
     const params = new URLSearchParams({
         client_id: config.clientId,
-        redirect_uri: buildRedirectUri(provider),
+        redirect_uri: redirectUri,
         response_type: "code",
         state,
         code_challenge: codeChallenge,
