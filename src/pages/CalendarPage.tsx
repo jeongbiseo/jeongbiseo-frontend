@@ -120,16 +120,18 @@ const CalendarPage = () => {
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[35px] pt-[35px] pb-[104px]">
-                <h1 className="-ml-[11px] text-[20px] leading-normal font-bold">
-                    마감 캘린더
-                </h1>
-                <p className="mt-[5px] -ml-[10px] text-[12px] leading-[14px] font-bold text-[#4b4b4b]">
-                    즐겨찾기한 지원금 마감 일정이에요!
-                </p>
+                <header className="px-[10px]">
+                    <h1 className="text-[20px] leading-normal font-bold">
+                        마감 캘린더
+                    </h1>
+                    <p className="mt-[5px] text-[12px] leading-[14px] font-bold text-[#4b4b4b]">
+                        즐겨찾기한 지원금 마감 일정이에요!
+                    </p>
+                </header>
 
                 <div className="mt-[18px]">
-                    <div className="mx-auto w-[320px] rounded-[21px] bg-white pt-[17px] shadow-[0_4px_13px_rgba(0,0,0,0.08)]">
-                        <div className="flex items-center gap-2 px-[17px]">
+                    <div className="relative mx-auto w-[320px]">
+                        <div className="absolute top-[17px] left-[17px] z-10 flex items-center gap-2">
                             <MonthSelect
                                 label="연도 선택"
                                 value={year}
@@ -268,7 +270,7 @@ const MonthSelect = ({
     <label className="relative flex items-center">
         <span className="sr-only">{label}</span>
         <select
-            className="focus-visible:outline-primary cursor-pointer appearance-none bg-transparent pr-4 text-[14px] leading-[18px] font-bold focus-visible:outline-2"
+            className="focus-visible:outline-primary cursor-pointer appearance-none bg-transparent pr-4 text-[13px] leading-[17px] font-bold focus-visible:outline-2"
             value={value}
             onChange={(event) => onChange(Number(event.target.value))}
         >
