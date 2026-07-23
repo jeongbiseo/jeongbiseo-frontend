@@ -29,7 +29,7 @@ export const HomeSummaryCard = ({
     const { voucherLike, unconfirmed } = countBadges(breakdown);
 
     return (
-        <article className="bg-primary relative mx-auto mt-[18px] min-h-[262px] w-full max-w-[305px] overflow-hidden rounded-[30px] px-[19px] pt-7 text-white">
+        <article className="bg-primary relative mx-auto mt-[18px] min-h-[262px] w-full max-w-[305px] overflow-hidden rounded-[30px] px-[19px] py-7 text-white">
             <SummaryDecoration />
 
             <div className="relative z-10">
