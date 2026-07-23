@@ -300,7 +300,7 @@ const MyPage = () => {
                         >
                             {group.map((item, index) => (
                                 <button
-                                    className={`flex h-[60px] w-full cursor-pointer items-center justify-between px-[29px] text-left text-[20px] font-semibold ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
+                                    className={`flex h-[60px] w-full cursor-pointer items-center justify-between px-[29px] text-left text-[16px] font-bold ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
                                     type="button"
                                     key={item.label}
                                     onClick={() => handleMenuClick(item)}
