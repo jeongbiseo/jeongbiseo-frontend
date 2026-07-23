@@ -40,7 +40,7 @@ export const PolicyDetailContent = ({
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[39px] pt-20 pb-[104px]">
+            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[39px] pt-[39px] pb-[104px]">
                 <article className="border-primary bg-green-light relative min-h-[124px] rounded-[10px] border-[0.5px] px-[21px] pt-[18px] pb-[15px]">
                     <div className="pr-8">
                         <h1 className="text-green-darker truncate text-[24px] leading-normal font-bold">

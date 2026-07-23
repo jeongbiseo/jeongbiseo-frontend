@@ -525,7 +525,7 @@ const Recommendation = () => {
     return (
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
-                <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] pt-[72px] pb-[130px]">
+                <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] pt-5 pb-[130px]">
                     <RecommendationControls
                         cameFromMyPage={cameFromMyPage}
                         searchOpen={searchOpen}

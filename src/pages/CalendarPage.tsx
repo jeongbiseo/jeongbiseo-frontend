@@ -119,7 +119,7 @@ const CalendarPage = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[35px] pt-[75px] pb-[104px]">
+            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[35px] pt-[35px] pb-[104px]">
                 <h1 className="-ml-[11px] text-[20px] leading-normal font-bold">
                     마감 캘린더
                 </h1>

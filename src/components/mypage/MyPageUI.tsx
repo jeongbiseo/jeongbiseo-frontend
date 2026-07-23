@@ -11,7 +11,7 @@ export const MyPageLayout = ({
 }) => (
     <main className="bg-surface-dim flex min-h-svh justify-center">
         <section
-            className={`bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[23px] pt-[72px] pb-[120px] ${className}`}
+            className={`bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[23px] pt-[23px] pb-[120px] ${className}`}
         >
             {children}
         </section>

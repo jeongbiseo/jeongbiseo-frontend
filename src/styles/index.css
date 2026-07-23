@@ -15,11 +15,11 @@
         "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 
     /* Green 스케일 */
-    --color-green-light: #eaf9f5;
-    --color-green-light-hover: #e0f5f1;
+    --color-green-light: #e7f8f2;
+    --color-green-light-hover: #dbf5ec;
     --color-green-light-active: #bfebe1;
-    --color-green-normal: #2fbf9f;
-    --color-green-normal-hover: #2aac8f;
+    --color-green-normal: #10b981;
+    --color-green-normal-hover: #0ea774;
     --color-green-normal-active: #26997f;
     --color-green-dark: #238f77;
     --color-green-dark-hover: #1c735f;
@@ -39,8 +39,8 @@
     --color-success: #0d9467;
     --color-success-light: #e2f8f2;
     --color-selection-light: #dff7ef;
-    --color-warning: #a66a00; /* 경고 박스 텍스트 */
-    --color-warning-light: #fff1d8; /* 경고 박스 배경 */
+    --color-warning: #936415; /* 경고 박스 텍스트 */
+    --color-warning-light: #fef2de; /* 경고 박스 배경 */
     --color-kakao: #fee500;
 
     /* 텍스트 */
