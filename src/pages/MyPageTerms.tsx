@@ -196,7 +196,9 @@ const TermsDetailSheet = ({
         <div
             className="fixed inset-0 z-50 flex items-end justify-center bg-black/30"
             role="presentation"
-            onClick={onClose}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) onClose();
+            }}
         >
             <section
                 ref={dialogRef}
@@ -205,7 +207,6 @@ const TermsDetailSheet = ({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="terms-detail-title"
-                onClick={(event) => event.stopPropagation()}
             >
                 <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
                 <div className="mt-5 flex items-start justify-between gap-4">

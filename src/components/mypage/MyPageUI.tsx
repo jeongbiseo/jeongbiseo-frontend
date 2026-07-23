@@ -128,7 +128,9 @@ export const ConfirmDialog = ({
         <div
             className={`fixed inset-0 z-50 flex items-center justify-center px-9 ${external ? "bg-black/25" : "bg-black/20"}`}
             role="presentation"
-            onClick={onCancel}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) onCancel();
+            }}
         >
             <section
                 ref={dialogRef}
@@ -137,7 +139,6 @@ export const ConfirmDialog = ({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="confirm-dialog-title"
-                onClick={(event) => event.stopPropagation()}
             >
                 <h2 className="text-[16px] font-bold" id="confirm-dialog-title">
                     {title}

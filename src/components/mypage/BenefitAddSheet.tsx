@@ -106,7 +106,9 @@ export const BenefitAddSheet = ({
         <div
             className="fixed inset-0 z-50 flex items-end justify-center bg-black/25"
             role="presentation"
-            onClick={onClose}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) onClose();
+            }}
         >
             <section
                 ref={dialogRef}
@@ -115,7 +117,6 @@ export const BenefitAddSheet = ({
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="benefit-sheet-title"
-                onClick={(event) => event.stopPropagation()}
             >
                 <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
                 <h2

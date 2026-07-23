@@ -205,7 +205,11 @@ const Terms = () => {
                 <div
                     className="fixed inset-0 z-50 flex items-end justify-center bg-black/40"
                     role="presentation"
-                    onClick={() => setSelectedAgreement(null)}
+                    onClick={(event) => {
+                        if (event.target === event.currentTarget) {
+                            setSelectedAgreement(null);
+                        }
+                    }}
                 >
                     <section
                         ref={termsDialogRef}
@@ -214,7 +218,6 @@ const Terms = () => {
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="terms-detail-title"
-                        onClick={(event) => event.stopPropagation()}
                     >
                         <header className="flex items-start justify-between gap-4">
                             <div>
@@ -235,7 +238,6 @@ const Terms = () => {
                                 className="text-text-strong focus-visible:outline-primary flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#f2f2f2] focus-visible:outline-2 focus-visible:outline-offset-2"
                                 type="button"
                                 aria-label="약관 상세 닫기"
-                                autoFocus
                                 onClick={() => setSelectedAgreement(null)}
                             >
                                 <svg
