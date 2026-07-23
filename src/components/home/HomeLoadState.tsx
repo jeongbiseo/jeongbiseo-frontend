@@ -17,7 +17,7 @@ export const HomeSkeleton = () => (
 
 export const HomeErrorState = ({ onRetry }: { onRetry: () => void }) => (
     <div className="mt-10 text-center" role="alert">
-        <p className="text-text-muted text-[14px] font-semibold">
+        <p className="text-text-muted text-[13px] font-bold">
             정보를 불러오지 못했어요.
         </p>
         <Button className="mt-5" onClick={onRetry}>

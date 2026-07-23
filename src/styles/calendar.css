@@ -19,7 +19,7 @@
 .jeongbiseo-calendar .react-calendar__month-view__weekdays {
     height: 27px;
     color: var(--color-text-muted);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     line-height: 15px;
     text-align: center;
@@ -43,7 +43,7 @@
     border-radius: 50%;
     background: transparent;
     color: var(--color-text-strong);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     line-height: 38px;
 }

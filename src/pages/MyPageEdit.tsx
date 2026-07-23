@@ -179,7 +179,7 @@ const MyPageEdit = () => {
                     </p>
                     {profileStatus === "error" && (
                         <button
-                            className="bg-primary mt-5 rounded-[12px] px-5 py-3 text-[14px] font-bold text-white"
+                            className="bg-primary mt-5 rounded-[12px] px-5 py-3 text-[13px] font-bold text-white"
                             type="button"
                             onClick={() =>
                                 setProfileReloadKey((previous) => previous + 1)

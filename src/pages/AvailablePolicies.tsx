@@ -149,14 +149,14 @@ const AvailablePolicies = () => {
                 </h1>
 
                 {state.status === "loading" && (
-                    <p className="text-text-muted mt-10 text-center text-[14px] font-semibold">
+                    <p className="text-text-muted mt-10 text-center text-[13px] font-bold">
                         불러오는 중이에요...
                     </p>
                 )}
 
                 {state.status === "error" && (
                     <div className="mt-10 text-center">
-                        <p className="text-text-muted text-[14px] font-semibold">
+                        <p className="text-text-muted text-[13px] font-bold">
                             정보를 불러오지 못했어요.
                         </p>
                         <Button
@@ -297,7 +297,7 @@ const PolicyListSection = ({
     className?: string;
 }) => (
     <section className={className}>
-        <h2 className="text-text-muted ml-[9px] text-[18px] leading-normal font-bold">
+        <h2 className="text-text-muted ml-[9px] text-[16px] leading-normal font-bold">
             {title}
         </h2>
         {items.length > 0 ? (
@@ -307,7 +307,7 @@ const PolicyListSection = ({
                 ))}
             </div>
         ) : (
-            <p className="text-text-muted mt-5 text-center text-[14px]">
+            <p className="text-text-muted mt-5 text-center text-[13px] font-bold">
                 표시할 지원금이 없습니다.
             </p>
         )}

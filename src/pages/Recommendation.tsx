@@ -606,7 +606,7 @@ const Recommendation = () => {
                             ))}
                             {activeTab === "all" && !allLast && (
                                 <button
-                                    className="border-primary text-primary mt-2 h-[44px] cursor-pointer rounded-[12px] border bg-white text-[14px] font-bold disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="border-primary text-primary mt-2 h-[44px] cursor-pointer rounded-[12px] border bg-white text-[13px] font-bold disabled:cursor-not-allowed disabled:opacity-60"
                                     type="button"
                                     disabled={allLoadingMore}
                                     onClick={() => void loadMoreAllPolicies()}

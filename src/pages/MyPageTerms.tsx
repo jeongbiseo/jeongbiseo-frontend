@@ -108,14 +108,14 @@ const MyPageTerms = () => {
                 </h1>
 
                 {status === "loading" && (
-                    <p className="text-text-muted mt-10 text-center text-[14px] font-semibold">
+                    <p className="text-text-muted mt-10 text-center text-[13px] font-bold">
                         약관 정보를 불러오는 중이에요...
                     </p>
                 )}
 
                 {status === "error" && (
                     <div className="mt-10 text-center">
-                        <p className="text-text-muted text-[14px] font-semibold">
+                        <p className="text-text-muted text-[13px] font-bold">
                             약관 정보를 불러오지 못했어요.
                         </p>
                         <Button
@@ -225,7 +225,7 @@ const TermsDetailSheet = ({
                         >
                             {title}
                         </h2>
-                        <p className="text-text-subtle mt-1 text-[12px] font-semibold">
+                        <p className="text-text-subtle mt-1 text-[13px] font-bold">
                             버전 1.0.0 · 최종 수정 2026.06.01
                         </p>
                     </div>
@@ -246,7 +246,7 @@ const TermsDetailSheet = ({
                 <div className="mt-6 flex flex-col gap-6">
                     {detail.sections.map((section) => (
                         <section key={section.title}>
-                            <h3 className="text-[15px] font-bold">
+                            <h3 className="text-[16px] font-bold">
                                 {section.title}
                             </h3>
                             {section.paragraphs?.map((paragraph) => (

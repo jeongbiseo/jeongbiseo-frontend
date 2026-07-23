@@ -144,7 +144,7 @@ export const ConfirmDialog = ({
                     {title}
                 </h2>
                 <p
-                    className={`text-text-muted text-[13px] font-semibold ${external ? "mt-[11px] leading-normal" : "mt-[11px]"}`}
+                    className={`text-text-muted text-[13px] font-bold ${external ? "mt-[11px] leading-normal" : "mt-[11px]"}`}
                 >
                     {description}
                 </p>
