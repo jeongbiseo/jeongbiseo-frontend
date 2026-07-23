@@ -170,7 +170,7 @@ const MyPage = () => {
         },
         {
             value: formatCount(receivedCount),
-            label: "기존 수령 지원금",
+            label: "기존 수령중인 지원금",
             path: "/mypage/edit?section=received",
         },
     ];
@@ -213,7 +213,7 @@ const MyPage = () => {
                 <Header title="마이페이지" />
 
                 <button
-                    className="border-primary mt-7 flex h-[90px] w-full cursor-pointer items-center rounded-[20px] border bg-white px-[25px] text-left"
+                    className="border-primary mt-7 flex h-[90px] w-full cursor-pointer items-center rounded-[20px] border-[0.5px] bg-white px-[25px] text-left"
                     type="button"
                     disabled={profileStatus !== "ready"}
                     onClick={() => navigate("/mypage/edit")}
@@ -251,7 +251,7 @@ const MyPage = () => {
                 <div className="mt-6 grid grid-cols-2 gap-x-[14px] gap-y-[13px]">
                     {summaryItems.map((item) => (
                         <button
-                            className="border-primary h-[90px] cursor-pointer rounded-[20px] border bg-white px-[15px] text-left transition active:scale-[0.99]"
+                            className="border-primary h-[90px] cursor-pointer rounded-[20px] border-[0.5px] bg-white px-[15px] text-left transition active:scale-[0.99]"
                             type="button"
                             key={item.label}
                             onClick={() =>
@@ -295,7 +295,7 @@ const MyPage = () => {
                 <div className="mt-6 flex flex-col gap-6">
                     {menuGroups.map((group, groupIndex) => (
                         <div
-                            className="border-primary overflow-hidden rounded-[20px] border bg-white"
+                            className="border-primary overflow-hidden rounded-[20px] border-[0.5px] bg-white"
                             key={groupIndex}
                         >
                             {group.map((item, index) => (

@@ -113,14 +113,14 @@ export const BenefitAddSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="max-h-[82svh] w-full max-w-[390px] overflow-y-auto rounded-t-[28px] bg-white px-6 pt-4 pb-8"
+                className="max-h-[82svh] w-full max-w-[390px] overflow-y-auto rounded-t-[30px] bg-white px-6 pt-4 pb-8"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="benefit-sheet-title"
             >
                 <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
                 <h2
-                    className="mt-5 text-[18px] font-bold"
+                    className="mt-5 text-center text-[16px] font-bold"
                     id="benefit-sheet-title"
                 >
                     기존 수령중인 지원금 추가
@@ -130,7 +130,7 @@ export const BenefitAddSheet = ({
                     <SearchIcon />
                     <input
                         data-dialog-initial-focus
-                        className="border-line-strong placeholder:text-text-subtle focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border pr-4 pl-11 text-[13px] outline-none focus-visible:outline-2 focus-visible:outline-offset-1"
+                        className="placeholder:text-text-subtle focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] pr-4 pl-11 text-[13px] outline-none focus-visible:outline-2 focus-visible:outline-offset-1"
                         aria-label="지원금 검색"
                         value={query}
                         placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -198,7 +198,7 @@ export const BenefitAddSheet = ({
                             );
                             return (
                                 <button
-                                    className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-primary bg-selection-light" : "border-line-strong bg-white"}`}
+                                    className={`flex min-h-[73px] cursor-pointer items-center gap-[18px] rounded-[10px] border-[0.5px] px-[21px] text-left ${selected ? "border-green-normal-hover bg-green-light-hover" : "border-[#808080] bg-white"}`}
                                     type="button"
                                     key={benefit.id}
                                     aria-pressed={selected}
@@ -214,15 +214,15 @@ export const BenefitAddSheet = ({
                                     }
                                 >
                                     <span
-                                        className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-line-strong"}`}
+                                        className={`flex size-[30px] shrink-0 items-center justify-center rounded-full border ${selected ? "border-green-normal bg-green-normal text-white" : "border-line-strong"}`}
                                     >
                                         {selected && <CheckIcon />}
                                     </span>
                                     <span>
-                                        <strong className="block text-[14px]">
+                                        <strong className="block text-[16px]">
                                             {benefit.title}
                                         </strong>
-                                        <span className="text-text-subtle mt-1 block text-[12px] font-semibold">
+                                        <span className="text-text-subtle mt-[6px] block text-[13px] font-bold">
                                             {benefit.organization}
                                         </span>
                                     </span>
@@ -239,7 +239,7 @@ export const BenefitAddSheet = ({
                 </div>
 
                 <button
-                    className="bg-primary disabled:bg-disabled mt-6 h-[48px] w-full cursor-pointer rounded-[14px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
+                    className="bg-green-normal disabled:bg-disabled mt-6 h-[48px] w-full cursor-pointer rounded-[14px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
                     type="button"
                     disabled={selectedBenefits.length === 0}
                     onClick={handleSave}

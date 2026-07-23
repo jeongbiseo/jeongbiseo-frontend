@@ -135,7 +135,7 @@ export const ConfirmDialog = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`w-full rounded-[10px] bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-[21px] pt-[25px] pb-[13px] text-left" : "max-w-[318px] px-6 py-5 text-center"}`}
+                className={`w-full rounded-[10px] bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-[21px] pt-[25px] pb-[13px] text-left" : "min-h-[135px] max-w-[317px] px-10 pt-[22px] pb-[13px] text-center"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="confirm-dialog-title"
@@ -144,23 +144,23 @@ export const ConfirmDialog = ({
                     {title}
                 </h2>
                 <p
-                    className={`text-text-muted text-[13px] font-semibold ${external ? "mt-[11px] leading-normal" : "mt-3"}`}
+                    className={`text-text-muted text-[13px] font-semibold ${external ? "mt-[11px] leading-normal" : "mt-[11px]"}`}
                 >
                     {description}
                 </p>
                 <div
-                    className={`flex gap-3 ${external ? "mt-[9px] justify-end" : "mt-5 justify-center"}`}
+                    className={`flex gap-3 ${external ? "mt-[9px] justify-end" : "mt-[19px] justify-center"}`}
                 >
                     <button
                         data-dialog-initial-focus
-                        className={`border-text-muted cursor-pointer rounded-[5px] border text-[13px] font-bold ${external ? "h-[26px] px-[14px]" : "h-[34px] px-4"}`}
+                        className="border-text-muted h-[26px] cursor-pointer rounded-[5px] border-[0.5px] px-[14px] text-[13px] font-bold"
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className={`bg-primary cursor-pointer rounded-[5px] text-[13px] font-bold text-white ${external ? "border-success h-[26px] border px-[14px]" : "h-[34px] px-4"}`}
+                        className="bg-green-normal h-[26px] cursor-pointer rounded-[5px] px-[14px] text-[13px] font-bold text-white"
                         type="button"
                         onClick={onConfirm}
                     >
