@@ -14,15 +14,20 @@ export default defineConfig(({ mode }) => {
                 "@": resolve(__dirname, "src"),
             },
         },
-        server: env.VITE_API_URL
-            ? {
-                  proxy: {
-                      "/api": {
-                          target: env.VITE_API_URL,
-                          changeOrigin: true,
+        server: {
+            host: "localhost",
+            port: 5173,
+            strictPort: true,
+            ...(env.VITE_API_URL
+                ? {
+                      proxy: {
+                          "/api": {
+                              target: env.VITE_API_URL,
+                              changeOrigin: true,
+                          },
                       },
-                  },
-              }
-            : undefined,
+                  }
+                : {}),
+        },
     };
 });

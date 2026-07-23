@@ -1,8 +1,6 @@
-import {
-    BackButton,
-    CheckIcon,
-    MyPageLayout,
-} from "@/components/mypage/MyPageUI";
+import { BackButton, MyPageLayout } from "@/components/mypage/MyPageUI";
+import { BenefitAddSheet } from "@/components/mypage/BenefitAddSheet";
+import { MyPageProfileForm } from "@/components/mypage/MyPageProfileForm";
 import Toast from "@/components/common/Toast";
 import {
     employmentLabelOf,
@@ -11,8 +9,7 @@ import {
     incomeOptions,
 } from "@/constants/onboardingOptions";
 import { useRegionOptions } from "@/hooks/useRegionOptions";
-import { useSubsidyCategories } from "@/hooks/useSubsidyCategories";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
     getMyOnboardingApi,
@@ -20,24 +17,16 @@ import {
     setReceivedSubsidiesApi,
     updateMyOnboardingApi,
 } from "@/api/onboardingApi";
-import { searchSubsidiesApi } from "@/api/subsidyApi";
-import type { ReceivedBenefit, SubsidyCategory } from "@/types/onboarding";
-import { getDaysInMonth } from "@/utils/date";
+import type { ReceivedBenefit } from "@/types/onboarding";
 
 const currentYear = new Date().getFullYear();
-const years = Array.from(
-    { length: 83 },
-    (_, index) => currentYear - 14 - index
-);
-const months = Array.from({ length: 12 }, (_, index) => index + 1);
 
 const MyPageEdit = () => {
     const [searchParams] = useSearchParams();
     const receivedSectionRef = useRef<HTMLDivElement>(null);
-    const [birthYear, setBirthYear] = useState(years[0]);
+    const [birthYear, setBirthYear] = useState(currentYear - 14);
     const [birthMonth, setBirthMonth] = useState(1);
     const [birthDay, setBirthDay] = useState(1);
-    const days = getDaysInMonth(birthYear, birthMonth);
     const [city, setCity] = useState("");
     const [district, setDistrict] = useState("");
     const [employment, setEmployment] = useState("");
@@ -273,284 +262,53 @@ const MyPageEdit = () => {
         <>
             <MyPageLayout className="pt-[56px]">
                 <BackButton />
-                <header className="mt-0">
-                    <p className="text-[16px] font-semibold">내 정보 수정</p>
-                    <h1 className="mt-1 text-[20px] font-bold">
-                        추천 기준 정보
-                    </h1>
-                    <p className="text-text-subtle mt-2 text-[13px] font-semibold">
-                        아래 정보는 지원금 추천에 직접 사용됩니다.
-                    </p>
-                </header>
-
-                <FieldLabel>생년월일</FieldLabel>
-                <div className="grid grid-cols-3 gap-[13px]">
-                    <Select
-                        value={birthYear}
-                        onChange={(nextYear) => {
-                            setBirthYear(nextYear);
-                            setBirthDay((day) =>
-                                Math.min(
-                                    day,
-                                    getDaysInMonth(nextYear, birthMonth).length
-                                )
-                            );
-                        }}
-                    >
-                        {years.map((year) => (
-                            <option value={year} key={year}>
-                                {year}년
-                            </option>
-                        ))}
-                    </Select>
-                    <Select
-                        value={birthMonth}
-                        onChange={(nextMonth) => {
-                            setBirthMonth(nextMonth);
-                            setBirthDay((day) =>
-                                Math.min(
-                                    day,
-                                    getDaysInMonth(birthYear, nextMonth).length
-                                )
-                            );
-                        }}
-                    >
-                        {months.map((month) => (
-                            <option value={month} key={month}>
-                                {month}월
-                            </option>
-                        ))}
-                    </Select>
-                    <Select value={birthDay} onChange={setBirthDay}>
-                        {days.map((day) => (
-                            <option value={day} key={day}>
-                                {day}일
-                            </option>
-                        ))}
-                    </Select>
-                </div>
-
-                <FieldLabel>거주지</FieldLabel>
-                <div className="grid grid-cols-2 gap-2">
-                    <Select
-                        value={resolvedCity}
-                        disabled={
-                            sidoStatus !== "ready" || sidoList.length === 0
-                        }
-                        onChange={(value) => {
-                            const nextCity = String(value);
-                            setCity(nextCity);
-                            setDistrict("");
-                        }}
-                    >
-                        <option value="">
-                            {sidoStatus === "loading"
-                                ? "지역 불러오는 중"
-                                : "시·도 선택"}
-                        </option>
-                        {sidoList.map((region) => (
-                            <option key={region} value={region}>
-                                {region}
-                            </option>
-                        ))}
-                    </Select>
-                    <Select
-                        value={resolvedDistrict}
-                        disabled={
-                            sigunguStatus !== "ready" ||
-                            sigunguSido !== resolvedCity ||
-                            sigunguList.length === 0
-                        }
-                        onChange={setDistrict}
-                    >
-                        <option value="">
-                            {sigunguStatus === "loading"
-                                ? "시·군·구 불러오는 중"
-                                : "시·군·구 선택"}
-                        </option>
-                        {sigunguList.map(({ code, name }) => (
-                            <option key={code} value={name}>
-                                {name}
-                            </option>
-                        ))}
-                    </Select>
-                </div>
-                {sidoStatus === "error" && (
-                    <InlineLoadState
-                        message="지역 목록을 불러오지 못했어요"
-                        onRetry={retrySido}
-                    />
-                )}
-                {sidoStatus === "ready" && sidoList.length === 0 && (
-                    <InlineLoadState
-                        message="선택할 수 있는 지역이 없어요"
-                        onRetry={retrySido}
-                    />
-                )}
-                {sidoStatus === "ready" &&
-                    sidoList.length > 0 &&
-                    sigunguStatus === "error" && (
-                        <InlineLoadState
-                            message="시·군·구 목록을 불러오지 못했어요"
-                            onRetry={retrySigungu}
-                        />
-                    )}
-                {sigunguStatus === "ready" &&
-                    sigunguSido === resolvedCity &&
-                    sigunguList.length === 0 && (
-                        <InlineLoadState
-                            message="선택할 수 있는 시·군·구가 없어요"
-                            onRetry={retrySigungu}
-                        />
-                    )}
-
-                <FieldLabel>고용상태</FieldLabel>
-                <Select value={employment} onChange={setEmployment}>
-                    {employmentOptions.map(({ label, value }) => (
-                        <option key={value}>{label}</option>
-                    ))}
-                </Select>
-
-                <FieldLabel>월 소득구간</FieldLabel>
-                <Select value={income} onChange={setIncome}>
-                    <option value="">선택 안 함</option>
-                    {incomeOptions.map(({ label, value }) => (
-                        <option key={value}>{label}</option>
-                    ))}
-                </Select>
-                <p className="text-text-subtle mt-2 text-[12px] font-semibold">
-                    중위소득 기준 지원금 매칭에 활용돼요
-                </p>
-
-                <FieldLabel>가구원 수</FieldLabel>
-                <div className="border-line-strong flex h-[48px] items-center justify-between rounded-[10px] border bg-white px-7">
-                    <CounterButton
-                        label="가구원 수 줄이기"
-                        onClick={() =>
-                            setHouseholdSize((previous) =>
-                                Math.max(1, previous - 1)
-                            )
-                        }
-                    >
-                        −
-                    </CounterButton>
-                    <strong className="text-text-muted text-[16px]">
-                        {householdSize}명
-                    </strong>
-                    <CounterButton
-                        label="가구원 수 늘리기"
-                        onClick={() =>
-                            setHouseholdSize((previous) =>
-                                Math.min(10, previous + 1)
-                            )
-                        }
-                    >
-                        ＋
-                    </CounterButton>
-                </div>
-                <p className="text-text-subtle mt-2 text-[12px] font-semibold">
-                    가구원 수에 따라 주거 · 육아 지원금 범위가 달라져요
-                </p>
-
-                <div className="scroll-mt-6 pt-9" ref={receivedSectionRef}>
-                    <h2 className="text-[20px] font-bold">
-                        기존 수령중인 지원금
-                    </h2>
-                    <p className="text-text-subtle mt-2 text-[12px] font-semibold">
-                        이미 받고 있는 지원금을 선택하면 중복 추천을
-                        줄여드립니다
-                    </p>
-
-                    <div className="mt-4 flex flex-col gap-3">
-                        {receivedLoading && (
-                            <p className="text-text-subtle py-4 text-center text-[13px] font-semibold">
-                                기수령 지원금을 불러오는 중이에요
-                            </p>
-                        )}
-                        {receivedError && (
-                            <div className="py-4 text-center">
-                                <p className="text-text-subtle text-[13px] font-semibold">
-                                    기수령 지원금을 불러오지 못했어요
-                                </p>
-                                <button
-                                    className="text-primary mt-2 cursor-pointer text-[13px] font-bold"
-                                    type="button"
-                                    onClick={() =>
-                                        setReceivedReloadKey(
-                                            (previous) => previous + 1
-                                        )
-                                    }
-                                >
-                                    다시 시도
-                                </button>
-                            </div>
-                        )}
-                        {!receivedLoading &&
-                            !receivedError &&
-                            receivedBenefits.length === 0 && (
-                                <p className="text-text-subtle py-4 text-center text-[13px] font-semibold">
-                                    등록된 기수령 지원금이 없어요
-                                </p>
-                            )}
-                        {!receivedLoading &&
-                            !receivedError &&
-                            receivedBenefits.map((benefit) => (
-                                <div
-                                    className="bg-success-light flex min-h-[54px] items-center justify-between rounded-[10px] px-6"
-                                    key={benefit.id}
-                                >
-                                    <strong className="text-[14px]">
-                                        {benefit.title}
-                                    </strong>
-                                    <button
-                                        className="border-text-muted cursor-pointer rounded-full border px-3 py-1 text-[12px] font-bold"
-                                        type="button"
-                                        onClick={() =>
-                                            updateReceivedBenefits(
-                                                receivedBenefits.filter(
-                                                    ({ id }) =>
-                                                        id !== benefit.id
-                                                )
-                                            )
-                                        }
-                                    >
-                                        삭제
-                                    </button>
-                                </div>
-                            ))}
-                    </div>
-
-                    <button
-                        className="bg-primary mt-4 h-[42px] cursor-pointer rounded-[15px] px-5 text-[15px] font-bold text-white shadow-[3px_8px_10px_var(--color-green-shadow)]"
-                        type="button"
-                        disabled={receivedLoading || receivedError}
-                        onClick={() => setAddSheetOpen(true)}
-                    >
-                        기존 수령중인 지원금 추가
-                    </button>
-                </div>
-
-                <button
-                    className="bg-third mt-9 h-[39px] w-[341px] max-w-full cursor-pointer rounded-[15px] text-[16px] font-bold text-white"
-                    type="button"
-                    disabled={
-                        saving ||
-                        receivedLoading ||
-                        receivedError ||
-                        !regionReady
+                <MyPageProfileForm
+                    birthYear={birthYear}
+                    birthMonth={birthMonth}
+                    birthDay={birthDay}
+                    city={resolvedCity}
+                    district={resolvedDistrict}
+                    employment={employment}
+                    income={income}
+                    householdSize={householdSize}
+                    sidoList={sidoList}
+                    sigunguList={sigunguList}
+                    sigunguSido={sigunguSido}
+                    sidoStatus={sidoStatus}
+                    sigunguStatus={sigunguStatus}
+                    receivedBenefits={receivedBenefits}
+                    receivedLoading={receivedLoading}
+                    receivedError={receivedError}
+                    receivedSectionRef={receivedSectionRef}
+                    saving={saving}
+                    saved={saved}
+                    regionReady={regionReady}
+                    onBirthYearChange={setBirthYear}
+                    onBirthMonthChange={setBirthMonth}
+                    onBirthDayChange={setBirthDay}
+                    onCityChange={(nextCity) => {
+                        setCity(nextCity);
+                        setDistrict("");
+                    }}
+                    onDistrictChange={setDistrict}
+                    onEmploymentChange={setEmployment}
+                    onIncomeChange={setIncome}
+                    onHouseholdSizeChange={setHouseholdSize}
+                    onRetrySido={retrySido}
+                    onRetrySigungu={retrySigungu}
+                    onRetryReceived={() =>
+                        setReceivedReloadKey((previous) => previous + 1)
                     }
-                    onClick={handleSave}
-                >
-                    {saving ? "저장 중..." : "저장"}
-                </button>
-                {saved && (
-                    <p
-                        className="text-success mt-3 text-center text-[13px] font-bold"
-                        role="status"
-                    >
-                        수정한 정보를 저장했어요
-                    </p>
-                )}
+                    onRemoveReceived={(id) =>
+                        updateReceivedBenefits(
+                            receivedBenefits.filter(
+                                (benefit) => benefit.id !== id
+                            )
+                        )
+                    }
+                    onOpenBenefitSheet={() => setAddSheetOpen(true)}
+                    onSave={handleSave}
+                />
             </MyPageLayout>
 
             <BenefitAddSheet
@@ -569,333 +327,5 @@ const MyPageEdit = () => {
         </>
     );
 };
-
-const BenefitAddSheet = ({
-    open,
-    receivedBenefits,
-    onClose,
-    onSave,
-}: {
-    open: boolean;
-    receivedBenefits: ReceivedBenefit[];
-    onClose: () => void;
-    onSave: (benefits: ReceivedBenefit[]) => void;
-}) => {
-    const [query, setQuery] = useState("");
-    const [selectedCategory, setSelectedCategory] =
-        useState<SubsidyCategory | null>(null);
-    const [selectedBenefits, setSelectedBenefits] = useState<ReceivedBenefit[]>(
-        []
-    );
-    const [searchResults, setSearchResults] = useState<ReceivedBenefit[]>([]);
-    const [searching, setSearching] = useState(false);
-    const [searchError, setSearchError] = useState(false);
-    const {
-        categories,
-        status: categoryStatus,
-        retry: retryCategories,
-    } = useSubsidyCategories(open);
-    const availableCategory = categories.some(
-        ({ code }) => code === selectedCategory
-    )
-        ? selectedCategory
-        : null;
-
-    useEffect(() => {
-        if (!open) return;
-
-        let active = true;
-        const timer = window.setTimeout(() => {
-            const searchBenefits = async () => {
-                setSearching(true);
-                setSearchError(false);
-
-                try {
-                    const response = await searchSubsidiesApi({
-                        keyword: query.trim() || undefined,
-                        category: availableCategory ?? undefined,
-                        includeClosed: true,
-                        page: 0,
-                        size: 50,
-                    });
-
-                    if (!response.isSuccess) {
-                        throw new Error(response.message);
-                    }
-
-                    if (!active) return;
-
-                    setSearchResults(
-                        response.result.content.map((benefit) => ({
-                            id: benefit.subsidyId,
-                            title: benefit.name,
-                            organization: benefit.agency ?? "기관 정보 없음",
-                            categories: benefit.category
-                                ? [benefit.category]
-                                : [],
-                        }))
-                    );
-                } catch (error) {
-                    console.error(error);
-                    if (active) setSearchError(true);
-                } finally {
-                    if (active) setSearching(false);
-                }
-            };
-
-            void searchBenefits();
-        }, 300);
-
-        return () => {
-            active = false;
-            window.clearTimeout(timer);
-        };
-    }, [availableCategory, open, query]);
-
-    const visibleBenefits = useMemo(() => {
-        const receivedIds = new Set(receivedBenefits.map(({ id }) => id));
-
-        return searchResults.filter((benefit) => !receivedIds.has(benefit.id));
-    }, [receivedBenefits, searchResults]);
-
-    if (!open) return null;
-
-    const handleSave = () => {
-        onSave([...receivedBenefits, ...selectedBenefits]);
-        setSelectedBenefits([]);
-    };
-
-    return (
-        <div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/25"
-            role="presentation"
-            onClick={onClose}
-        >
-            <section
-                className="max-h-[82svh] w-full max-w-[390px] overflow-y-auto rounded-t-[28px] bg-white px-6 pt-4 pb-8"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="benefit-sheet-title"
-                onClick={(event) => event.stopPropagation()}
-            >
-                <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
-                <h2
-                    className="mt-5 text-[18px] font-bold"
-                    id="benefit-sheet-title"
-                >
-                    기존 수령중인 지원금 추가
-                </h2>
-
-                <div className="relative mt-5">
-                    <SearchIcon />
-                    <input
-                        className="border-line-strong placeholder:text-text-subtle focus:border-primary h-[50px] w-full rounded-[10px] border pr-4 pl-11 text-[13px] outline-none"
-                        value={query}
-                        placeholder="지원금명 또는 기관명으로 검색해보세요"
-                        onChange={(event) => setQuery(event.target.value)}
-                    />
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                    {[
-                        { label: "전체", value: null },
-                        ...categories.map(({ code, label }) => ({
-                            label,
-                            value: code,
-                        })),
-                    ].map(({ label, value }) => (
-                        <button
-                            className={`shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 text-[12px] font-bold ${availableCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
-                            type="button"
-                            key={value ?? "all"}
-                            aria-pressed={availableCategory === value}
-                            onClick={() => setSelectedCategory(value)}
-                        >
-                            {label}
-                        </button>
-                    ))}
-                </div>
-                {categoryStatus === "loading" && categories.length === 0 && (
-                    <p className="text-text-subtle mt-2 text-[12px] font-semibold">
-                        카테고리를 불러오는 중이에요
-                    </p>
-                )}
-                {categoryStatus === "error" && (
-                    <InlineLoadState
-                        message="카테고리를 불러오지 못했어요"
-                        onRetry={retryCategories}
-                    />
-                )}
-                {categoryStatus === "ready" && categories.length === 0 && (
-                    <InlineLoadState
-                        message="표시할 카테고리가 없어요"
-                        onRetry={retryCategories}
-                    />
-                )}
-
-                <div className="mt-8 flex flex-col gap-3">
-                    {searching && (
-                        <p className="text-text-subtle py-8 text-center text-[13px]">
-                            지원금을 검색하는 중이에요
-                        </p>
-                    )}
-                    {searchError && (
-                        <p className="text-danger py-8 text-center text-[13px] font-semibold">
-                            지원금을 불러오지 못했어요
-                        </p>
-                    )}
-                    {!searching &&
-                        !searchError &&
-                        visibleBenefits.map((benefit) => {
-                            const selected = selectedBenefits.some(
-                                ({ id }) => id === benefit.id
-                            );
-                            return (
-                                <button
-                                    className={`flex min-h-[74px] cursor-pointer items-center gap-4 rounded-[10px] border px-5 text-left ${selected ? "border-primary bg-selection-light" : "border-line-strong bg-white"}`}
-                                    type="button"
-                                    key={benefit.id}
-                                    onClick={() =>
-                                        setSelectedBenefits((previous) =>
-                                            selected
-                                                ? previous.filter(
-                                                      ({ id }) =>
-                                                          id !== benefit.id
-                                                  )
-                                                : [...previous, benefit]
-                                        )
-                                    }
-                                >
-                                    <span
-                                        className={`flex size-8 shrink-0 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary text-white" : "border-line-strong"}`}
-                                    >
-                                        {selected && <CheckIcon />}
-                                    </span>
-                                    <span>
-                                        <strong className="block text-[14px]">
-                                            {benefit.title}
-                                        </strong>
-                                        <span className="text-text-subtle mt-1 block text-[12px] font-semibold">
-                                            {benefit.organization}
-                                        </span>
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    {!searching &&
-                        !searchError &&
-                        visibleBenefits.length === 0 && (
-                            <p className="text-text-subtle py-8 text-center text-[13px]">
-                                추가할 수 있는 지원금이 없어요
-                            </p>
-                        )}
-                </div>
-
-                <button
-                    className="bg-primary disabled:bg-disabled mt-6 h-[48px] w-full cursor-pointer rounded-[14px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
-                    type="button"
-                    disabled={selectedBenefits.length === 0}
-                    onClick={handleSave}
-                >
-                    {selectedBenefits.length > 0
-                        ? `${selectedBenefits.length}개 추가하기`
-                        : "추가할 지원금을 선택해주세요"}
-                </button>
-            </section>
-        </div>
-    );
-};
-
-const FieldLabel = ({ children }: { children: React.ReactNode }) => (
-    <h2 className="mt-6 mb-2 text-[13px] font-bold">{children}</h2>
-);
-
-const InlineLoadState = ({
-    message,
-    onRetry,
-}: {
-    message: string;
-    onRetry: () => void;
-}) => (
-    <div className="mt-2 flex items-center justify-between gap-3">
-        <p className="text-danger text-[12px] font-semibold">{message}</p>
-        <button
-            className="text-primary shrink-0 cursor-pointer text-[12px] font-bold"
-            type="button"
-            onClick={onRetry}
-        >
-            다시 시도
-        </button>
-    </div>
-);
-
-const Select = <T extends string | number>({
-    value,
-    onChange,
-    children,
-    disabled = false,
-}: {
-    value: T;
-    onChange: (value: T) => void;
-    children: React.ReactNode;
-    disabled?: boolean;
-}) => (
-    <select
-        className="border-line-strong focus:border-primary disabled:bg-disabled h-[48px] w-full cursor-pointer rounded-[10px] border bg-white px-3 text-[13px] font-semibold outline-none disabled:cursor-not-allowed"
-        value={value}
-        disabled={disabled}
-        onChange={(event) =>
-            onChange(
-                (typeof value === "number"
-                    ? Number(event.target.value)
-                    : event.target.value) as T
-            )
-        }
-    >
-        {children}
-    </select>
-);
-
-const CounterButton = ({
-    children,
-    label,
-    onClick,
-}: {
-    children: React.ReactNode;
-    label: string;
-    onClick: () => void;
-}) => (
-    <button
-        className="border-line-strong flex size-8 cursor-pointer items-center justify-center rounded-full border text-[22px] leading-none"
-        type="button"
-        aria-label={label}
-        onClick={onClick}
-    >
-        {children}
-    </button>
-);
-
-const SearchIcon = () => (
-    <svg
-        className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2"
-        viewBox="0 0 20 20"
-        fill="none"
-        aria-hidden="true"
-    >
-        <circle
-            cx="8.5"
-            cy="8.5"
-            r="5.5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-        />
-        <path
-            d="m13 13 4 4"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-        />
-    </svg>
-);
 
 export default MyPageEdit;

@@ -7,49 +7,41 @@ import { getReceivedSubsidiesApi } from "@/api/onboardingApi";
 import { getRecommendationsApi } from "@/api/recommendationApi";
 import { searchSubsidiesApi } from "@/api/subsidyApi";
 import Toast from "@/components/common/Toast";
-import { BackButton } from "@/components/mypage/MyPageUI";
-import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import {
-    RecommendationAssessment,
-    RecommendationUncertainty,
-} from "@/components/recommendation/RecommendationAssessment";
+    RecommendationControls,
+    RecommendationSortSheet,
+} from "@/components/recommendation/RecommendationControls";
+import { RecommendationPolicyCard } from "@/components/recommendation/RecommendationPolicyCard";
+import {
+    EmptyRecommendation,
+    FavoriteEmptyState,
+    LoadErrorState,
+    RecommendationSkeleton,
+    SearchEmptyState,
+    SimpleEmptyState,
+} from "@/components/recommendation/RecommendationStates";
 import { RecommendationFreshness } from "@/components/recommendation/RecommendationFreshness";
 import {
     isUrgentRecommendationPolicy,
     type RecommendationPolicy,
 } from "@/constants/recommendationData";
+import {
+    getRecommendationSortLabel,
+    type RecommendationTab,
+    type SortOption,
+} from "@/constants/recommendationControls";
 import type { RecommendationItem } from "@/types/recommendation";
 import type { SubsidySearchItem } from "@/types/onboarding";
 import { formatAmountRange, formatDDay } from "@/utils/format";
-import { useEffect, useMemo, useRef, useState } from "react";
 import {
-    Link,
-    useLocation,
-    useNavigate,
-    useSearchParams,
-} from "react-router-dom";
-
-type RecommendationTab = "recommended" | "favorites" | "all";
-type SortOption = "recommended" | "deadline" | "title";
-
-const tabs: Array<{ key: RecommendationTab; label: string }> = [
-    { key: "recommended", label: "AI추천" },
-    { key: "favorites", label: "즐겨찾기" },
-    { key: "all", label: "전체" },
-];
-
-const searchKeywords = ["청년", "월세", "창업"];
-
-const sortOptions: Array<{ key: SortOption; label: string }> = [
-    { key: "recommended", label: "추천순" },
-    { key: "deadline", label: "마감일순" },
-    { key: "title", label: "가나다순" },
-];
-
-const getSortLabel = (sort: SortOption, tab: RecommendationTab) => {
-    if (sort === "recommended" && tab !== "recommended") return "기본순";
-    return sortOptions.find(({ key }) => key === sort)?.label ?? "추천순";
-};
+    mergeUniquePolicies,
+    reconcilePolicyFavorites,
+    reconcileReceivedPolicies,
+    updateFavoriteCollection,
+    updatePolicyFavorite,
+} from "@/utils/recommendationPolicyState";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 const getInitialTab = (value: string | null): RecommendationTab =>
     value === "favorites" || value === "all" ? value : "recommended";
@@ -184,7 +176,7 @@ const Recommendation = () => {
     const cameFromMyPage =
         (location.state as { from?: string } | null)?.from === "mypage";
 
-    const sortLabel = getSortLabel(sortOption, activeTab);
+    const sortLabel = getRecommendationSortLabel(sortOption, activeTab);
 
     const policies = useMemo(() => {
         if (activeTab === "recommended") return recommendedPolicies;
@@ -265,23 +257,13 @@ const Recommendation = () => {
         const nextFavorite = !target.isFavorite;
         const updateFavorite = (isFavorite: boolean) => {
             const updatePolicies = (previous: RecommendationPolicy[]) =>
-                previous.map((policy) =>
-                    policy.id === id ? { ...policy, isFavorite } : policy
-                );
+                updatePolicyFavorite(previous, id, isFavorite);
 
             setRecommendedPolicies(updatePolicies);
             setAllPolicies(updatePolicies);
-            setFavoritePolicies((previous) => {
-                if (!isFavorite) {
-                    return previous.filter((policy) => policy.id !== id);
-                }
-
-                if (previous.some((policy) => policy.id === id)) {
-                    return updatePolicies(previous);
-                }
-
-                return [{ ...target, isFavorite: true }, ...previous];
-            });
+            setFavoritePolicies((previous) =>
+                updateFavoriteCollection(previous, target, isFavorite)
+            );
 
             if (isFavorite) favoriteIdsRef.current.add(id);
             else favoriteIdsRef.current.delete(id);
@@ -332,10 +314,7 @@ const Recommendation = () => {
                 const idSet = new Set(ids);
                 receivedIdsRef.current = idSet;
                 const markReceived = (previous: RecommendationPolicy[]) =>
-                    previous.map((policy) => ({
-                        ...policy,
-                        isReceived: idSet.has(policy.id),
-                    }));
+                    reconcileReceivedPolicies(previous, idSet);
 
                 setReceivedIds(ids);
                 setRecommendedPolicies(markReceived);
@@ -479,15 +458,9 @@ const Recommendation = () => {
             const nextPolicies = response.result.content.map((item) =>
                 toAllPolicy(item, favoriteIds, receivedIds)
             );
-            setAllPolicies((previous) => {
-                const uniquePolicies = new Map(
-                    previous.map((policy) => [policy.id, policy])
-                );
-                nextPolicies.forEach((policy) =>
-                    uniquePolicies.set(policy.id, policy)
-                );
-                return [...uniquePolicies.values()];
-            });
+            setAllPolicies((previous) =>
+                mergeUniquePolicies(previous, nextPolicies)
+            );
             setAllPage(response.result.page);
             setAllLast(response.result.last);
         } catch (error) {
@@ -528,16 +501,10 @@ const Recommendation = () => {
                     }))
                 );
                 setRecommendedPolicies((previous) =>
-                    previous.map((policy) => ({
-                        ...policy,
-                        isFavorite: favoriteIdSet.has(policy.id),
-                    }))
+                    reconcilePolicyFavorites(previous, favoriteIdSet)
                 );
                 setAllPolicies((previous) =>
-                    previous.map((policy) => ({
-                        ...policy,
-                        isFavorite: favoriteIdSet.has(policy.id),
-                    }))
+                    reconcilePolicyFavorites(previous, favoriteIdSet)
                 );
                 setFavoritesInitialized(true);
             } catch (error) {
@@ -555,130 +522,31 @@ const Recommendation = () => {
         };
     }, [favoritesReloadKey]);
 
-    useEffect(() => {
-        if (!sortSheetOpen) return;
-
-        const handleEscape = (event: KeyboardEvent) => {
-            if (event.key === "Escape") setSortSheetOpen(false);
-        };
-
-        document.addEventListener("keydown", handleEscape);
-        return () => document.removeEventListener("keydown", handleEscape);
-    }, [sortSheetOpen]);
-
     return (
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
                 <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] pt-[72px] pb-[130px]">
-                    <header className="px-5">
-                        {cameFromMyPage && (
-                            <BackButton label="마이페이지로 돌아가기" />
-                        )}
-                        <div className="flex items-center justify-between px-0">
-                            <h1 className="text-[24px] leading-none font-bold">
-                                {searchOpen ? "검색" : "지원금 전체보기"}
-                            </h1>
-                            <button
-                                className="focus-visible:outline-primary flex size-[34px] cursor-pointer items-center justify-center rounded-full focus-visible:outline-2"
-                                type="button"
-                                aria-label={
-                                    searchOpen ? "검색창 닫기" : "지원금 검색"
-                                }
-                                onClick={() => {
-                                    setSearchOpen((previous) => !previous);
-                                    if (searchOpen) {
-                                        setQuery("");
-                                    } else {
-                                        setActiveTab("all");
-                                    }
-                                }}
-                            >
-                                {searchOpen ? <CloseIcon /> : <SearchIcon />}
-                            </button>
-                        </div>
-
-                        {searchOpen && (
-                            <div className="relative mt-4">
-                                <SearchIcon className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2" />
-                                <input
-                                    className="focus:border-primary h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#8e98a8]"
-                                    value={query}
-                                    autoFocus
-                                    placeholder="지원금명 또는 기관명으로 검색해보세요"
-                                    onChange={(event) =>
-                                        setQuery(event.target.value)
-                                    }
-                                />
-                            </div>
-                        )}
-
-                        {searchOpen ? (
-                            <div className="mt-[14px] flex items-center gap-[9px] px-1.5">
-                                {searchKeywords.map((keyword) => (
-                                    <button
-                                        className="bg-third h-[37px] cursor-pointer rounded-full px-[13px] text-[16px] font-bold text-white"
-                                        type="button"
-                                        key={keyword}
-                                        onClick={() => setQuery(keyword)}
-                                    >
-                                        {keyword}
-                                    </button>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="mt-5 grid grid-cols-3 gap-4">
-                                {tabs.map(({ key, label }) => {
-                                    const selected = activeTab === key;
-                                    return (
-                                        <button
-                                            className={`h-[39px] cursor-pointer rounded-[10px] text-[16px] font-bold transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
-                                            type="button"
-                                            key={key}
-                                            aria-pressed={selected}
-                                            onClick={() => setActiveTab(key)}
-                                        >
-                                            {label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {!searchOpen && (
-                            <div className="mt-[21px] flex items-center justify-between">
-                                <button
-                                    className="flex cursor-pointer items-center gap-1 text-[16px] font-bold"
-                                    type="button"
-                                    aria-haspopup="dialog"
-                                    onClick={() => setSortSheetOpen(true)}
-                                >
-                                    {sortLabel}
-                                    <ChevronDownIcon />
-                                </button>
-
-                                <label className="flex cursor-pointer items-center gap-2 text-[16px] font-semibold">
-                                    중복허용
-                                    <input
-                                        className="peer sr-only"
-                                        type="checkbox"
-                                        checked={allowDuplicates}
-                                        disabled={receivedStatus !== "ready"}
-                                        onChange={(event) =>
-                                            setAllowDuplicates(
-                                                event.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span className="bg-disabled peer-checked:bg-primary relative h-5 w-[34px] rounded-full transition-colors after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
-                                </label>
-                            </div>
-                        )}
-                    </header>
-
-                    {!searchOpen && (
-                        <div className="bg-line mt-[19px] h-px w-full" />
-                    )}
-
+                    <RecommendationControls
+                        cameFromMyPage={cameFromMyPage}
+                        searchOpen={searchOpen}
+                        query={query}
+                        activeTab={activeTab}
+                        sortLabel={sortLabel}
+                        allowDuplicates={allowDuplicates}
+                        duplicatesDisabled={receivedStatus !== "ready"}
+                        onToggleSearch={() => {
+                            setSearchOpen((previous) => !previous);
+                            if (searchOpen) {
+                                setQuery("");
+                            } else {
+                                setActiveTab("all");
+                            }
+                        }}
+                        onQueryChange={setQuery}
+                        onTabChange={setActiveTab}
+                        onOpenSort={() => setSortSheetOpen(true)}
+                        onAllowDuplicatesChange={setAllowDuplicates}
+                    />
                     {!loading &&
                         !loadError &&
                         activeTab === "recommended" &&
@@ -719,7 +587,7 @@ const Recommendation = () => {
                     ) : visiblePolicies.length > 0 ? (
                         <div className="mx-auto mt-7 flex w-full max-w-[312px] flex-col gap-4">
                             {visiblePolicies.map((policy) => (
-                                <PolicyCard
+                                <RecommendationPolicyCard
                                     key={policy.id}
                                     policy={policy}
                                     favoriteUpdating={favoriteUpdatingIds.has(
@@ -758,42 +626,16 @@ const Recommendation = () => {
                 </section>
             </main>
 
-            {sortSheetOpen && (
-                <div
-                    className="fixed inset-0 z-50 flex items-end justify-center bg-black/35"
-                    role="presentation"
-                    onClick={() => setSortSheetOpen(false)}
-                >
-                    <section
-                        className="w-full max-w-[390px] rounded-t-[28px] bg-white px-[21px] pt-[21px] pb-8"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="정렬 방식 선택"
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        <div className="bg-disabled mx-auto mb-4 h-1 w-[39px] rounded-full" />
-                        <ul>
-                            {sortOptions.map(({ key, label }) => (
-                                <li className="border-line border-b" key={key}>
-                                    <button
-                                        className="flex h-[46px] w-full cursor-pointer items-center justify-between text-[16px] font-bold"
-                                        type="button"
-                                        onClick={() => {
-                                            setSortOption(key);
-                                            setSortSheetOpen(false);
-                                        }}
-                                    >
-                                        {key === "recommended"
-                                            ? getSortLabel(key, activeTab)
-                                            : label}
-                                        {sortOption === key && <CheckIcon />}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                </div>
-            )}
+            <RecommendationSortSheet
+                open={sortSheetOpen}
+                activeTab={activeTab}
+                sortOption={sortOption}
+                onClose={() => setSortSheetOpen(false)}
+                onSelect={(option) => {
+                    setSortOption(option);
+                    setSortSheetOpen(false);
+                }}
+            />
             <Toast
                 message={toastMessage}
                 onDismiss={() => setToastMessage(null)}
@@ -801,269 +643,5 @@ const Recommendation = () => {
         </>
     );
 };
-
-const PolicyCard = ({
-    policy,
-    favoriteUpdating,
-    onFavoriteToggle,
-}: {
-    policy: RecommendationPolicy;
-    favoriteUpdating: boolean;
-    onFavoriteToggle: (id: number) => void;
-}) => {
-    const urgent =
-        policy.deadlineDays !== null &&
-        policy.deadlineDays >= 0 &&
-        policy.deadlineDays <= 7;
-    const scheduled = policy.deadlineDays !== null;
-    const hasAssessment =
-        policy.confirmedMatchCount !== null &&
-        policy.unverifiedConditionCount !== null;
-
-    return (
-        <article className="border-primary relative min-h-[107px] rounded-[20px] border bg-white px-[21px] py-[15px]">
-            <Link
-                className="block"
-                to={`/policies/${policy.id}`}
-                state={{ bottomNavPath: "/recommend" }}
-            >
-                <p className="pr-10 text-[13px] leading-none font-bold text-[#8e98a8]">
-                    {policy.organization}
-                </p>
-                <h2 className="mt-[6px] pr-10 text-[16px] leading-tight font-bold">
-                    {policy.title}
-                </h2>
-                {hasAssessment && (
-                    <RecommendationAssessment
-                        className="mt-3"
-                        confirmedMatchCount={policy.confirmedMatchCount!}
-                        unverifiedConditionCount={
-                            policy.unverifiedConditionCount!
-                        }
-                    />
-                )}
-                {policy.eligibilitySummary && (
-                    <p className="text-text-muted mt-2 line-clamp-2 text-[11px] leading-[1.45] font-medium whitespace-pre-line">
-                        {policy.eligibilitySummary}
-                    </p>
-                )}
-                <div className="mt-3 flex items-end justify-between gap-3">
-                    <p className="text-green-dark text-[16px] leading-none font-bold">
-                        {policy.amountLabel ?? "산정 불가"}
-                    </p>
-                    <span
-                        className={`shrink-0 rounded-[13px] px-[9px] py-[6px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : scheduled ? "bg-green-light text-green-dark" : "bg-disabled text-text-muted"}`}
-                    >
-                        {policy.deadlineLabel}
-                    </span>
-                </div>
-                {policy.uncomputable && (
-                    <RecommendationUncertainty
-                        reasons={policy.uncomputableReasons}
-                    />
-                )}
-            </Link>
-
-            <button
-                className="focus-visible:outline-primary absolute top-[12px] right-[21px] flex size-8 cursor-pointer items-center justify-center focus-visible:rounded focus-visible:outline-2 disabled:cursor-wait disabled:opacity-60"
-                type="button"
-                disabled={favoriteUpdating}
-                aria-busy={favoriteUpdating}
-                aria-label={
-                    policy.isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"
-                }
-                aria-pressed={policy.isFavorite}
-                onClick={() => onFavoriteToggle(policy.id)}
-            >
-                <StarIcon filled={policy.isFavorite} />
-            </button>
-        </article>
-    );
-};
-
-const RecommendationSkeleton = () => (
-    <div className="mx-auto mt-7 flex w-full max-w-[312px] animate-pulse flex-col gap-4">
-        {[0, 1, 2].map((item) => (
-            <div className="bg-disabled h-[164px] rounded-[20px]" key={item} />
-        ))}
-    </div>
-);
-
-const LoadErrorState = ({ onRetry }: { onRetry: () => void }) => (
-    <div className="mx-auto mt-14 w-full max-w-[330px] px-[14px] text-center">
-        <h2 className="text-[20px] font-bold">추천 정보를 불러오지 못했어요</h2>
-        <p className="text-text-muted mt-2 text-[13px] font-bold">
-            잠시 후 다시 시도해주세요
-        </p>
-        <button
-            className="bg-primary mt-5 cursor-pointer rounded-[12px] px-5 py-3 text-[14px] font-bold text-white"
-            type="button"
-            onClick={onRetry}
-        >
-            다시 시도
-        </button>
-    </div>
-);
-
-const EmptyRecommendation = ({
-    onEditProfile,
-}: {
-    onEditProfile: () => void;
-}) => (
-    <div className="mx-auto mt-6 w-full max-w-[330px] px-[14px]">
-        <h2 className="text-[20px] font-bold">추천 지원금 0건</h2>
-        <p className="text-text-muted mt-2 text-[13px] font-bold">
-            현재 입력하신 조건에 맞는 지원금을 찾지 못했어요
-        </p>
-
-        <div className="border-primary mt-7 rounded-[20px] border px-[21px] py-6">
-            <h3 className="text-[20px] font-bold">이런 이유일 수 있어요</h3>
-            <ol className="text-text-muted mt-4 list-decimal space-y-[15px] pl-5 text-[13px] leading-[1.45] font-bold">
-                <li>
-                    거주지·고용상태·연령 조건이 지원 자격과 맞지 않을 수 있어요.
-                </li>
-                <li>
-                    소득구간 또는 가구원 수가 기준을 초과하거나 미달할 수
-                    있어요.
-                </li>
-                <li>
-                    이미 수령 중인 지원금으로 표시된 항목이 제외되었을 수
-                    있어요.
-                </li>
-            </ol>
-        </div>
-
-        <button
-            className="bg-primary mt-6 h-[55px] w-full cursor-pointer rounded-[15px] text-[20px] font-bold text-white shadow-[3px_11px_8px_var(--color-green-light-active)] active:scale-[0.99]"
-            type="button"
-            onClick={onEditProfile}
-        >
-            정보 수정하고 다시 추천받기
-        </button>
-    </div>
-);
-
-const SimpleEmptyState = ({
-    title,
-    description,
-}: {
-    title: string;
-    description: string;
-}) => (
-    <div className="mx-auto mt-14 w-full max-w-[330px] px-[14px] text-center">
-        <h2 className="text-[20px] font-bold">{title}</h2>
-        <p className="text-text-muted mt-2 text-[13px] font-bold">
-            {description}
-        </p>
-    </div>
-);
-
-const SearchEmptyState = () => (
-    <div
-        className="mx-auto mt-[177px] flex w-full max-w-[341px] flex-col items-center gap-[34px] text-center"
-        role="status"
-    >
-        <div className="bg-disabled flex size-[118px] items-center justify-center rounded-full text-white">
-            <SearchIcon className="size-[46px]" />
-        </div>
-
-        <div className="flex w-full max-w-[313px] flex-col items-center gap-[15px]">
-            <h2 className="text-[20px] leading-none font-bold">
-                검색 내역이 없어요
-            </h2>
-            <p className="text-text-muted text-[16px] leading-normal font-semibold">
-                단어의 철자나 띄어쓰기가 맞는지
-                <br />
-                다시 확인해 주세요
-            </p>
-        </div>
-    </div>
-);
-
-const FavoriteEmptyState = () => (
-    <div
-        className="mx-auto mt-[169px] flex w-full max-w-[313px] flex-col items-center text-center"
-        role="status"
-    >
-        <FavoriteStarIcon />
-        <div className="mt-[45px] flex w-full flex-col gap-[15px]">
-            <h2 className="text-[24px] leading-none font-bold">
-                아직 즐겨찾기한 지원금이 없어요
-            </h2>
-            <p className="text-text-muted text-[20px] leading-normal font-semibold">
-                마음에 드는 지원금을 담아보세요
-            </p>
-        </div>
-    </div>
-);
-
-const SearchIcon = ({ className = "size-[25px]" }: { className?: string }) => (
-    <svg
-        className={className}
-        viewBox="0 0 25 25"
-        fill="none"
-        aria-hidden="true"
-    >
-        <circle
-            cx="10.5"
-            cy="10.5"
-            r="8"
-            stroke="currentColor"
-            strokeWidth="2"
-        />
-        <path
-            d="m16.5 16.5 6 6"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-        />
-    </svg>
-);
-
-const CloseIcon = () => (
-    <svg className="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path
-            d="m3 3 14 14M17 3 3 17"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-        />
-    </svg>
-);
-
-const StarIcon = ({ filled }: { filled: boolean }) => (
-    <svg className="size-6" viewBox="0 0 24 24" aria-hidden="true">
-        <path
-            d="m12 1.8 3.1 6.3 7 .9-5.1 4.9 1.3 6.9-6.3-3.3-6.3 3.3 1.3-6.9L1.9 9l7-.9L12 1.8Z"
-            fill={filled ? "var(--color-secondary)" : "var(--color-disabled)"}
-        />
-    </svg>
-);
-
-const FavoriteStarIcon = () => (
-    <svg
-        className="h-[63px] w-[66px]"
-        viewBox="0 0 66 63"
-        fill="none"
-        aria-hidden="true"
-    >
-        <path
-            d="M33.0016 53.9069L16.4462 62.5937C15.8609 62.9008 15.2013 63.0383 14.5419 62.9908C13.8824 62.9433 13.2495 62.7125 12.7145 62.3247C12.1796 61.9368 11.7641 61.4074 11.5149 60.7961C11.2657 60.1848 11.1928 59.5162 11.3045 58.8657L14.4653 40.4664L1.0707 27.4326C0.5969 26.9718 0.2617 26.3878 0.1032 25.7467C-0.0553 25.1056 -0.0308 24.433 0.1738 23.8051C0.3785 23.1771 0.7552 22.6189 1.2613 22.1936C1.7673 21.7683 2.3826 21.4929 3.0374 21.3986L21.5453 18.714L29.823 1.9735C30.1155 1.3812 30.5682 0.8824 31.1299 0.5336C31.6917 0.1849 32.34 0 33.0016 0C33.6631 0 34.3115 0.1849 34.8732 0.5336C35.435 0.8824 35.8877 1.3812 36.1801 1.9735L44.4579 18.714L62.9658 21.4021C63.6198 21.4969 64.2343 21.7724 64.7397 22.1975C65.2451 22.6226 65.6214 23.1803 65.826 23.8076C66.0306 24.4349 66.0553 25.1068 65.8974 25.7474C65.7395 26.3879 65.4053 26.9717 64.9324 27.4326L51.5343 40.4664L54.6952 58.8657C54.8063 59.5157 54.7333 60.1837 54.4842 60.7945C54.2352 61.4052 53.82 61.9343 53.2857 62.322C52.7513 62.7097 52.119 62.9406 51.4602 62.9886C50.8013 63.0366 50.1421 62.8998 49.557 62.5937L33.0016 53.9069Z"
-            fill="var(--color-disabled)"
-        />
-    </svg>
-);
-
-const CheckIcon = () => (
-    <svg className="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path
-            d="m3 10 4 4 10-10"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-    </svg>
-);
 
 export default Recommendation;
