@@ -171,6 +171,7 @@ const Recommendation = () => {
     const [sortSheetOpen, setSortSheetOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
+    const tabBeforeSearchRef = useRef<RecommendationTab | null>(null);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const urgentOnly = searchParams.get("filter") === "urgent";
     const cameFromMyPage =
@@ -535,12 +536,19 @@ const Recommendation = () => {
                         allowDuplicates={allowDuplicates}
                         duplicatesDisabled={receivedStatus !== "ready"}
                         onToggleSearch={() => {
-                            setSearchOpen((previous) => !previous);
                             if (searchOpen) {
+                                setSearchOpen(false);
                                 setQuery("");
-                            } else {
-                                setActiveTab("all");
+                                if (tabBeforeSearchRef.current) {
+                                    setActiveTab(tabBeforeSearchRef.current);
+                                }
+                                tabBeforeSearchRef.current = null;
+                                return;
                             }
+
+                            tabBeforeSearchRef.current = activeTab;
+                            setActiveTab("all");
+                            setSearchOpen(true);
                         }}
                         onQueryChange={setQuery}
                         onTabChange={setActiveTab}
