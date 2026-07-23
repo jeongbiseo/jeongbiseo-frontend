@@ -7,13 +7,10 @@ import { getReceivedSubsidiesApi } from "@/api/onboardingApi";
 import { getRecommendationsApi } from "@/api/recommendationApi";
 import { searchSubsidiesApi } from "@/api/subsidyApi";
 import Toast from "@/components/common/Toast";
-import { BackButton } from "@/components/mypage/MyPageUI";
-import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import {
-    CheckIcon,
-    CloseIcon,
-    SearchIcon,
-} from "@/components/recommendation/RecommendationIcons";
+    RecommendationControls,
+    RecommendationSortSheet,
+} from "@/components/recommendation/RecommendationControls";
 import { RecommendationPolicyCard } from "@/components/recommendation/RecommendationPolicyCard";
 import {
     EmptyRecommendation,
@@ -28,34 +25,16 @@ import {
     isUrgentRecommendationPolicy,
     type RecommendationPolicy,
 } from "@/constants/recommendationData";
+import {
+    getRecommendationSortLabel,
+    type RecommendationTab,
+    type SortOption,
+} from "@/constants/recommendationControls";
 import type { RecommendationItem } from "@/types/recommendation";
 import type { SubsidySearchItem } from "@/types/onboarding";
 import { formatAmountRange, formatDDay } from "@/utils/format";
-import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-
-type RecommendationTab = "recommended" | "favorites" | "all";
-type SortOption = "recommended" | "deadline" | "title";
-
-const tabs: Array<{ key: RecommendationTab; label: string }> = [
-    { key: "recommended", label: "AI추천" },
-    { key: "favorites", label: "즐겨찾기" },
-    { key: "all", label: "전체" },
-];
-
-const searchKeywords = ["청년", "월세", "창업"];
-
-const sortOptions: Array<{ key: SortOption; label: string }> = [
-    { key: "recommended", label: "추천순" },
-    { key: "deadline", label: "마감일순" },
-    { key: "title", label: "가나다순" },
-];
-
-const getSortLabel = (sort: SortOption, tab: RecommendationTab) => {
-    if (sort === "recommended" && tab !== "recommended") return "기본순";
-    return sortOptions.find(({ key }) => key === sort)?.label ?? "추천순";
-};
 
 const getInitialTab = (value: string | null): RecommendationTab =>
     value === "favorites" || value === "all" ? value : "recommended";
@@ -183,10 +162,6 @@ const Recommendation = () => {
     );
     const [allowDuplicates, setAllowDuplicates] = useState(true);
     const [sortSheetOpen, setSortSheetOpen] = useState(false);
-    const sortDialogRef = useDialogAccessibility<HTMLElement>(
-        sortSheetOpen,
-        () => setSortSheetOpen(false)
-    );
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -194,7 +169,7 @@ const Recommendation = () => {
     const cameFromMyPage =
         (location.state as { from?: string } | null)?.from === "mypage";
 
-    const sortLabel = getSortLabel(sortOption, activeTab);
+    const sortLabel = getRecommendationSortLabel(sortOption, activeTab);
 
     const policies = useMemo(() => {
         if (activeTab === "recommended") return recommendedPolicies;
@@ -569,116 +544,27 @@ const Recommendation = () => {
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
                 <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] pt-[72px] pb-[130px]">
-                    <header className="px-5">
-                        {cameFromMyPage && (
-                            <BackButton label="마이페이지로 돌아가기" />
-                        )}
-                        <div className="flex items-center justify-between px-0">
-                            <h1 className="text-[24px] leading-none font-bold">
-                                {searchOpen ? "검색" : "지원금 전체보기"}
-                            </h1>
-                            <button
-                                className="focus-visible:outline-primary flex size-[34px] cursor-pointer items-center justify-center rounded-full focus-visible:outline-2"
-                                type="button"
-                                aria-label={
-                                    searchOpen ? "검색창 닫기" : "지원금 검색"
-                                }
-                                onClick={() => {
-                                    setSearchOpen((previous) => !previous);
-                                    if (searchOpen) {
-                                        setQuery("");
-                                    } else {
-                                        setActiveTab("all");
-                                    }
-                                }}
-                            >
-                                {searchOpen ? <CloseIcon /> : <SearchIcon />}
-                            </button>
-                        </div>
-
-                        {searchOpen && (
-                            <div className="relative mt-4">
-                                <SearchIcon className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2" />
-                                <input
-                                    className="focus:border-primary focus-visible:outline-primary h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 text-[13px] outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
-                                    aria-label="지원금 검색"
-                                    value={query}
-                                    autoFocus
-                                    placeholder="지원금명 또는 기관명으로 검색해보세요"
-                                    onChange={(event) =>
-                                        setQuery(event.target.value)
-                                    }
-                                />
-                            </div>
-                        )}
-
-                        {searchOpen ? (
-                            <div className="mt-[14px] flex items-center gap-[9px] px-1.5">
-                                {searchKeywords.map((keyword) => (
-                                    <button
-                                        className="bg-third h-[37px] cursor-pointer rounded-full px-[13px] text-[16px] font-bold text-white"
-                                        type="button"
-                                        key={keyword}
-                                        onClick={() => setQuery(keyword)}
-                                    >
-                                        {keyword}
-                                    </button>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="mt-5 grid grid-cols-3 gap-4">
-                                {tabs.map(({ key, label }) => {
-                                    const selected = activeTab === key;
-                                    return (
-                                        <button
-                                            className={`h-[39px] cursor-pointer rounded-[10px] text-[16px] font-bold transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
-                                            type="button"
-                                            key={key}
-                                            aria-pressed={selected}
-                                            onClick={() => setActiveTab(key)}
-                                        >
-                                            {label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {!searchOpen && (
-                            <div className="mt-[21px] flex items-center justify-between">
-                                <button
-                                    className="flex cursor-pointer items-center gap-1 text-[16px] font-bold"
-                                    type="button"
-                                    aria-haspopup="dialog"
-                                    onClick={() => setSortSheetOpen(true)}
-                                >
-                                    {sortLabel}
-                                    <ChevronDownIcon />
-                                </button>
-
-                                <label className="flex cursor-pointer items-center gap-2 text-[16px] font-semibold">
-                                    중복허용
-                                    <input
-                                        className="peer sr-only"
-                                        type="checkbox"
-                                        checked={allowDuplicates}
-                                        disabled={receivedStatus !== "ready"}
-                                        onChange={(event) =>
-                                            setAllowDuplicates(
-                                                event.target.checked
-                                            )
-                                        }
-                                    />
-                                    <span className="bg-disabled peer-checked:bg-primary peer-focus-visible:outline-primary relative h-5 w-[34px] rounded-full transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-[14px]" />
-                                </label>
-                            </div>
-                        )}
-                    </header>
-
-                    {!searchOpen && (
-                        <div className="bg-line mt-[19px] h-px w-full" />
-                    )}
-
+                    <RecommendationControls
+                        cameFromMyPage={cameFromMyPage}
+                        searchOpen={searchOpen}
+                        query={query}
+                        activeTab={activeTab}
+                        sortLabel={sortLabel}
+                        allowDuplicates={allowDuplicates}
+                        duplicatesDisabled={receivedStatus !== "ready"}
+                        onToggleSearch={() => {
+                            setSearchOpen((previous) => !previous);
+                            if (searchOpen) {
+                                setQuery("");
+                            } else {
+                                setActiveTab("all");
+                            }
+                        }}
+                        onQueryChange={setQuery}
+                        onTabChange={setActiveTab}
+                        onOpenSort={() => setSortSheetOpen(true)}
+                        onAllowDuplicatesChange={setAllowDuplicates}
+                    />
                     {!loading &&
                         !loadError &&
                         activeTab === "recommended" &&
@@ -758,44 +644,16 @@ const Recommendation = () => {
                 </section>
             </main>
 
-            {sortSheetOpen && (
-                <div
-                    className="fixed inset-0 z-50 flex items-end justify-center bg-black/35"
-                    role="presentation"
-                    onClick={() => setSortSheetOpen(false)}
-                >
-                    <section
-                        ref={sortDialogRef}
-                        tabIndex={-1}
-                        className="w-full max-w-[390px] rounded-t-[28px] bg-white px-[21px] pt-[21px] pb-8"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="정렬 방식 선택"
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        <div className="bg-disabled mx-auto mb-4 h-1 w-[39px] rounded-full" />
-                        <ul>
-                            {sortOptions.map(({ key, label }) => (
-                                <li className="border-line border-b" key={key}>
-                                    <button
-                                        className="flex h-[46px] w-full cursor-pointer items-center justify-between text-[16px] font-bold"
-                                        type="button"
-                                        onClick={() => {
-                                            setSortOption(key);
-                                            setSortSheetOpen(false);
-                                        }}
-                                    >
-                                        {key === "recommended"
-                                            ? getSortLabel(key, activeTab)
-                                            : label}
-                                        {sortOption === key && <CheckIcon />}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-                </div>
-            )}
+            <RecommendationSortSheet
+                open={sortSheetOpen}
+                activeTab={activeTab}
+                sortOption={sortOption}
+                onClose={() => setSortSheetOpen(false)}
+                onSelect={(option) => {
+                    setSortOption(option);
+                    setSortSheetOpen(false);
+                }}
+            />
             <Toast
                 message={toastMessage}
                 onDismiss={() => setToastMessage(null)}
