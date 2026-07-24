@@ -11,7 +11,7 @@ import { getCalendarApi } from "@/api/calendarApi";
 import DeadlineSheet from "@/components/calendar/DeadlineSheet";
 import Button from "@/components/common/Button";
 import type { CalendarDayElement } from "@/types/calendar";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Calendar from "react-calendar";
 import { Link } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
@@ -19,8 +19,8 @@ import "@/styles/calendar.css";
 
 const today = new Date();
 const YEAR_OPTIONS = Array.from(
-    { length: 4 },
-    (_, index) => today.getFullYear() - 1 + index
+    { length: 3 },
+    (_, index) => today.getFullYear() + index
 );
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, index) => index + 1);
 
@@ -149,7 +149,8 @@ const CalendarPage = () => {
                         </div>
 
                         <Calendar
-                            className="jeongbiseo-calendar"
+                            key={`${year}-${month}`}
+                            className="jeongbiseo-calendar calendar-month-fade-in"
                             calendarType="gregory"
                             locale="ko-KR"
                             activeStartDate={activeStartDate}
@@ -266,28 +267,96 @@ const MonthSelect = ({
     options: number[];
     format: (value: number) => string;
     onChange: (value: number) => void;
-}) => (
-    <label className="relative flex items-center">
-        <span className="sr-only">{label}</span>
-        <select
-            className="focus-visible:outline-primary cursor-pointer appearance-none bg-transparent pr-4 text-[13px] leading-[17px] font-bold focus-visible:outline-2"
-            value={value}
-            onChange={(event) => onChange(Number(event.target.value))}
-        >
-            {options.map((option) => (
-                <option key={option} value={option}>
-                    {format(option)}
-                </option>
-            ))}
-        </select>
-        <span
-            className="pointer-events-none absolute right-0 text-[10px]"
-            aria-hidden="true"
-        >
-            ▼
-        </span>
-    </label>
-);
+}) => {
+    const [open, setOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const selectedOptionRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (!open) return;
+
+        const menu = menuRef.current;
+        const selectedOption = selectedOptionRef.current;
+        if (menu && selectedOption) {
+            menu.scrollTop =
+                selectedOption.offsetTop -
+                (menu.clientHeight - selectedOption.clientHeight) / 2;
+        }
+
+        const handlePointerDown = (event: PointerEvent) => {
+            if (!containerRef.current?.contains(event.target as Node)) {
+                setOpen(false);
+            }
+        };
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setOpen(false);
+        };
+
+        document.addEventListener("pointerdown", handlePointerDown);
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("pointerdown", handlePointerDown);
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [open]);
+
+    return (
+        <div className="relative flex items-center" ref={containerRef}>
+            <button
+                className="focus-visible:outline-primary cursor-pointer bg-transparent pr-4 text-[13px] leading-[17px] font-semibold focus-visible:outline-2"
+                type="button"
+                aria-label={label}
+                aria-haspopup="listbox"
+                aria-expanded={open}
+                onClick={() => setOpen((current) => !current)}
+            >
+                {format(value)}
+            </button>
+            <span
+                className={`pointer-events-none absolute right-0 text-[10px] transition-transform ${open ? "rotate-180" : ""}`}
+                aria-hidden="true"
+            >
+                ▼
+            </span>
+
+            {open && (
+                <div
+                    className="calendar-select-menu absolute top-[25px] left-0 z-30 min-w-[68px] overflow-y-auto rounded-[10px] border border-[#e5e5e5] bg-white p-1 shadow-[0_6px_18px_rgb(0_0_0/14%)]"
+                    role="listbox"
+                    aria-label={label}
+                    ref={menuRef}
+                >
+                    {options.map((option) => {
+                        const selected = option === value;
+
+                        return (
+                            <button
+                                className={`block h-[32px] w-full cursor-pointer rounded-[7px] px-2 text-left text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                                    selected
+                                        ? "bg-green-light text-success"
+                                        : "hover:bg-surface-soft"
+                                }`}
+                                type="button"
+                                role="option"
+                                aria-selected={selected}
+                                key={option}
+                                ref={selected ? selectedOptionRef : undefined}
+                                onClick={() => {
+                                    onChange(option);
+                                    setOpen(false);
+                                }}
+                            >
+                                {format(option)}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const MarkerLegend = () => (
     <aside className="border-primary mt-[22px] flex h-[35px] items-center rounded-[10px] border-[0.5px] bg-white px-[17px] text-[13px]">

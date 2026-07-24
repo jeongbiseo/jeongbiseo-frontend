@@ -74,7 +74,7 @@ const MyPageTerms = () => {
 
         const date = new Date(consent.agreedAt);
         if (Number.isNaN(date.getTime())) return "동의 완료";
-        return `동의 ${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+        return `최근 동의 ${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
     };
 
     const handleMarketingChange = async (agreed: boolean) => {
@@ -172,10 +172,12 @@ const MyPageTerms = () => {
                 )}
             </MyPageLayout>
 
-            <TermsDetailSheet
-                termKey={selectedTerm}
-                onClose={() => setSelectedTerm(null)}
-            />
+            {selectedTerm && (
+                <TermsDetailSheet
+                    termKey={selectedTerm}
+                    onClose={() => setSelectedTerm(null)}
+                />
+            )}
             <Toast
                 message={toastMessage}
                 onDismiss={() => setToastMessage(null)}
@@ -188,13 +190,23 @@ const TermsDetailSheet = ({
     termKey,
     onClose,
 }: {
-    termKey: AgreementKey | null;
+    termKey: AgreementKey;
     onClose: () => void;
 }) => {
-    const open = termKey !== null;
-    const dialogRef = useDialogAccessibility<HTMLElement>(open, onClose);
+    const [closing, setClosing] = useState(false);
 
-    if (!termKey) return null;
+    const handleClose = () => {
+        if (closing) return;
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            onClose();
+            return;
+        }
+
+        setClosing(true);
+    };
+
+    const dialogRef = useDialogAccessibility<HTMLElement>(true, handleClose);
 
     const detail = agreementDetails[termKey];
     const title =
@@ -202,70 +214,84 @@ const TermsDetailSheet = ({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/30"
+            className={`${closing ? "deadline-sheet-backdrop-exit" : "deadline-sheet-backdrop-enter"} fixed inset-0 z-50 flex items-end justify-center bg-black/30`}
             role="presentation"
             onClick={(event) => {
-                if (event.target === event.currentTarget) onClose();
+                if (event.target === event.currentTarget) handleClose();
             }}
         >
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="max-h-[86svh] w-full max-w-[390px] overflow-y-auto rounded-t-[28px] bg-white px-6 pt-4 pb-10"
+                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} flex max-h-[86svh] w-full max-w-[390px] flex-col overflow-hidden rounded-t-[28px] bg-white`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="terms-detail-title"
+                onAnimationEnd={(event) => {
+                    if (closing && event.target === event.currentTarget) {
+                        onClose();
+                    }
+                }}
             >
-                <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
-                <div className="mt-5 flex items-start justify-between gap-4">
-                    <div>
-                        <h2
-                            className="text-[20px] font-bold"
-                            id="terms-detail-title"
-                        >
-                            {title}
-                        </h2>
-                        <p className="text-text-subtle mt-1 text-[13px] font-bold">
-                            버전 1.0.0 · 최종 수정 2026.06.01
-                        </p>
-                    </div>
+                <div className="shrink-0 px-6 pt-4">
                     <button
-                        data-dialog-initial-focus
-                        className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
+                        className="bg-disabled mx-auto block h-1 w-[44px] cursor-pointer rounded-full"
                         type="button"
                         aria-label="약관 상세 닫기"
-                        onClick={onClose}
-                    >
-                        ×
-                    </button>
+                        data-dialog-initial-focus
+                        onClick={handleClose}
+                    />
+                    <div className="mt-5 flex items-start justify-between gap-4">
+                        <div>
+                            <h2
+                                className="text-[20px] font-bold"
+                                id="terms-detail-title"
+                            >
+                                {title}
+                            </h2>
+                            <p className="text-text-subtle mt-1 text-[13px] font-bold">
+                                버전 1.0.0 · 최종 수정 2026.06.01
+                            </p>
+                        </div>
+                        <button
+                            className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
+                            type="button"
+                            aria-label="약관 상세 닫기"
+                            onClick={handleClose}
+                        >
+                            ×
+                        </button>
+                    </div>
                 </div>
 
-                <p className="text-text-body mt-6 text-[13px] leading-[1.7]">
-                    {detail.summary}
-                </p>
-                <div className="mt-6 flex flex-col gap-6">
-                    {detail.sections.map((section) => (
-                        <section key={section.title}>
-                            <h3 className="text-[16px] font-bold">
-                                {section.title}
-                            </h3>
-                            {section.paragraphs?.map((paragraph) => (
-                                <p
-                                    className="text-text-secondary mt-2 text-[13px] leading-[1.7]"
-                                    key={paragraph}
-                                >
-                                    {paragraph}
-                                </p>
-                            ))}
-                            {section.bullets && (
-                                <ul className="text-text-secondary mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6]">
-                                    {section.bullets.map((bullet) => (
-                                        <li key={bullet}>{bullet}</li>
-                                    ))}
-                                </ul>
-                            )}
-                        </section>
-                    ))}
+                <div className="terms-detail-scrollbar min-h-0 overflow-y-auto px-6 pb-10">
+                    <p className="text-text-body mt-6 text-[13px] leading-[1.7]">
+                        {detail.summary}
+                    </p>
+                    <div className="mt-6 flex flex-col gap-6">
+                        {detail.sections.map((section) => (
+                            <section key={section.title}>
+                                <h3 className="text-[16px] font-bold">
+                                    {section.title}
+                                </h3>
+                                {section.paragraphs?.map((paragraph) => (
+                                    <p
+                                        className="text-text-secondary mt-2 text-[13px] leading-[1.7]"
+                                        key={paragraph}
+                                    >
+                                        {paragraph}
+                                    </p>
+                                ))}
+                                {section.bullets && (
+                                    <ul className="text-text-secondary mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6]">
+                                        {section.bullets.map((bullet) => (
+                                            <li key={bullet}>{bullet}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </section>
+                        ))}
+                    </div>
                 </div>
             </section>
         </div>

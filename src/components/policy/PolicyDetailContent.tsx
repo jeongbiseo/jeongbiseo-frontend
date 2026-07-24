@@ -46,7 +46,7 @@ export const PolicyDetailContent = ({
     const paymentTypeLabel = paymentTypeLabels[subsidy.paymentType];
 
     return (
-        <main className="bg-surface-dim flex min-h-svh justify-center">
+        <main className="content-fade-in bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[39px] pt-[39px] pb-[104px]">
                 <article className="border-primary bg-green-light relative min-h-[124px] rounded-[10px] border-[0.5px] px-[21px] pt-[18px] pb-[15px]">
                     <div className="pr-8">
@@ -258,7 +258,15 @@ const PolicyAccordion = ({
             </span>
             <ChevronDownIcon expanded={expanded} className="h-3 w-[19px]" />
         </button>
-        {expanded && <div className="px-[21px] pb-[19px]">{children}</div>}
+        <div
+            className="policy-accordion-content"
+            data-expanded={expanded}
+            aria-hidden={!expanded}
+        >
+            <div className="overflow-hidden">
+                <div className="px-[21px] pb-[19px]">{children}</div>
+            </div>
+        </div>
     </article>
 );
 
