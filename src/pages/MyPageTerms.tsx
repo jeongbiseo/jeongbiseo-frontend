@@ -254,12 +254,24 @@ const TermsDetailSheet = ({
                             </p>
                         </div>
                         <button
-                            className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
+                            className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full"
                             type="button"
                             aria-label="약관 상세 닫기"
                             onClick={handleClose}
                         >
-                            ×
+                            <svg
+                                className="size-icon-sm"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="m3 3 10 10M13 3 3 13"
+                                    stroke="currentColor"
+                                    strokeWidth="1.8"
+                                    strokeLinecap="round"
+                                />
+                            </svg>
                         </button>
                     </div>
                 </div>

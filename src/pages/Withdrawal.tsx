@@ -99,7 +99,7 @@ const Withdrawal = () => {
                             <span
                                 className={`peer-focus-visible:outline-primary flex size-5 items-center justify-center rounded-sm peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 ${selectedReasons.includes(reason) ? "text-primary" : "text-disabled"}`}
                             >
-                                <CheckIcon className="size-5" />
+                                <CheckIcon className="size-icon-sm" />
                             </span>
                             {reason}
                         </label>
@@ -116,7 +116,7 @@ const Withdrawal = () => {
                         }
                     />
                     <span className="bg-disabled peer-checked:bg-primary peer-focus-visible:outline-primary flex size-[22px] shrink-0 items-center justify-center rounded-[5px] text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
-                        {noticeAgreed && <CheckIcon className="size-4" />}
+                        {noticeAgreed && <CheckIcon className="size-icon-sm" />}
                     </span>
                     [필수] 안내사항을 모두 확인했으며,
                     <br />

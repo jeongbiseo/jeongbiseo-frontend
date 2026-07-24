@@ -12,8 +12,7 @@ export interface SummaryPolicyItem {
 const valueToneClassNames = {
     success: "text-success",
     muted: "text-text-muted",
-    voucher:
-        "text-caption-strong bg-warning-light text-[#936415] rounded-full px-2 py-[5px]",
+    voucher: "bg-warning-light text-[#936415] rounded-full px-2 py-[5px]",
 };
 
 const SummaryPolicyCard = ({
@@ -24,13 +23,13 @@ const SummaryPolicyCard = ({
     compact?: boolean;
 }) => (
     <Link
-        className={`border-primary focus-visible:outline-primary flex w-full items-center justify-between gap-3 rounded-[10px] border-[0.5px] bg-white focus-visible:outline-2 ${compact ? "text-label-strong min-h-[65px] px-[17px] py-4" : "text-body-strong min-h-[69px] px-[18px] py-4"}`}
+        className={`border-primary focus-visible:outline-primary flex w-full items-center justify-between gap-3 rounded-[10px] border-[0.5px] bg-white focus-visible:outline-2 ${compact ? "text-body-sm min-h-[65px] px-[17px] py-4" : "text-body min-h-[69px] px-[18px] py-4"}`}
         to={`/policies/${item.policyId}`}
         state={{ bottomNavPath: "/" }}
     >
         <span className="min-w-0 truncate">{item.title}</span>
         <span
-            className={`shrink-0 text-right ${valueToneClassNames[item.valueTone ?? "success"]}`}
+            className={`text-body-sm-strong shrink-0 text-right ${valueToneClassNames[item.valueTone ?? "success"]}`}
         >
             {item.value}
         </span>

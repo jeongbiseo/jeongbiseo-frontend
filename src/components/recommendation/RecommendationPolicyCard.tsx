@@ -85,7 +85,7 @@ export const RecommendationPolicyCard = ({
 };
 
 const StarIcon = ({ filled }: { filled: boolean }) => (
-    <svg className="size-6" viewBox="0 0 24 24" aria-hidden="true">
+    <svg className="size-icon-md" viewBox="0 0 24 24" aria-hidden="true">
         <path
             d="m12 1.8 3.1 6.3 7 .9-5.1 4.9 1.3 6.9-6.3-3.3-6.3 3.3 1.3-6.9L1.9 9l7-.9L12 1.8Z"
             fill={filled ? "var(--color-secondary)" : "var(--color-disabled)"}

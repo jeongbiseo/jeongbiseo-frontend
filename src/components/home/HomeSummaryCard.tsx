@@ -73,7 +73,12 @@ export const HomeSummaryCard = ({
                     to="/available-policies"
                 >
                     지원금 살펴보기
-                    <span aria-hidden="true">→</span>
+                    <span
+                        className="text-[16px] leading-none"
+                        aria-hidden="true"
+                    >
+                        →
+                    </span>
                 </Link>
             </div>
         </article>

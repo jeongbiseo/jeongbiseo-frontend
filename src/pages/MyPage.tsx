@@ -223,7 +223,7 @@ const MyPage = () => {
                         <strong className="text-title block">
                             {user?.name ?? "사용자"} 님
                         </strong>
-                        <span className="text-text-subtle text-label-strong mt-1.5 block truncate">
+                        <span className="text-text-subtle text-label-medium mt-1.5 block truncate">
                             {profileStatus === "ready" && profile
                                 ? `소셜 계정 · ${profile.sido.replace("특별시", "")} ${profile.sigungu} · ${employmentLabel}`
                                 : profileStatus === "error"
@@ -264,11 +264,11 @@ const MyPage = () => {
                             }
                         >
                             <strong
-                                className={`text-heading-page block ${item.emphasized ? "text-success" : "text-black"}`}
+                                className={`text-heading-section block ${item.emphasized ? "text-success" : "text-black"}`}
                             >
                                 {item.value}
                             </strong>
-                            <span className="text-text-muted text-label-strong mt-2 block">
+                            <span className="text-text-muted text-label-medium mt-2 block">
                                 {item.label}
                             </span>
                         </button>
@@ -300,7 +300,7 @@ const MyPage = () => {
                         >
                             {group.map((item, index) => (
                                 <button
-                                    className={`text-body-strong flex h-[60px] w-full cursor-pointer items-center justify-between px-[29px] text-left ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
+                                    className={`text-body-sm-strong flex h-[60px] w-full cursor-pointer items-center justify-between px-[29px] text-left ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
                                     type="button"
                                     key={item.label}
                                     onClick={() => handleMenuClick(item)}

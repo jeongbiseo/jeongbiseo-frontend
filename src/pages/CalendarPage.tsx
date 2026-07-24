@@ -10,6 +10,7 @@
 import { getCalendarApi } from "@/api/calendarApi";
 import DeadlineSheet from "@/components/calendar/DeadlineSheet";
 import Button from "@/components/common/Button";
+import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import type { CalendarDayElement } from "@/types/calendar";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Calendar from "react-calendar";
@@ -311,10 +312,10 @@ const MonthSelect = ({
                 {format(value)}
             </button>
             <span
-                className={`pointer-events-none absolute right-0 text-[10px] transition-transform ${open ? "rotate-180" : ""}`}
+                className="pointer-events-none absolute right-0"
                 aria-hidden="true"
             >
-                ▼
+                <ChevronDownIcon expanded={open} />
             </span>
 
             {open && (

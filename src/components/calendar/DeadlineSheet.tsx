@@ -121,7 +121,7 @@ const DeadlineSheet = ({
                                                         {Number(day)} 마감
                                                     </span>
                                                 </span>
-                                                <ChevronDownIcon className="h-2 w-3 -rotate-90" />
+                                                <ChevronDownIcon className="size-icon-sm -rotate-90" />
                                             </>
                                         ) : (
                                             <>

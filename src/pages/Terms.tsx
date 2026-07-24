@@ -31,13 +31,13 @@ const initialAgreements: Agreements = {
 
 const CheckIcon = ({ checked }: { checked: boolean }) => (
     <svg
-        className="h-[11px] w-[15px] shrink-0"
-        viewBox="0 0 15 11"
+        className="size-icon-sm shrink-0"
+        viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"
     >
         <path
-            d="M1 5.2 5.1 9 14 1"
+            d="m2 8 4 4 8-8"
             stroke={checked ? "var(--color-primary)" : "var(--color-disabled)"}
             strokeWidth="1.7"
             strokeLinecap="round"
@@ -135,13 +135,13 @@ const Terms = () => {
                                 className={`flex size-[26px] items-center justify-center rounded-full ${allAgreed ? "bg-green-normal" : "bg-disabled"}`}
                             >
                                 <svg
-                                    className="h-[10px] w-[14px]"
-                                    viewBox="0 0 14 10"
+                                    className="size-icon-sm"
+                                    viewBox="0 0 16 16"
                                     fill="none"
                                     aria-hidden="true"
                                 >
                                     <path
-                                        d="M1 4.7 4.8 8.5 13 1"
+                                        d="m2 8 4 4 8-8"
                                         stroke="white"
                                         strokeWidth="1.7"
                                         strokeLinecap="round"

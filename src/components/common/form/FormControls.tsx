@@ -79,7 +79,7 @@ export const CounterButton = ({
     size?: "default" | "compact";
 }) => (
     <button
-        className={`${size === "compact" ? "size-[30px] text-[20px]" : "size-8 text-[22px]"} border-line-strong focus-visible:outline-primary flex cursor-pointer items-center justify-center rounded-full border leading-none focus-visible:outline-2 focus-visible:outline-offset-2`}
+        className={`${size === "compact" ? "size-[30px]" : "size-8"} border-line-strong focus-visible:outline-primary flex cursor-pointer items-center justify-center rounded-full border text-[20px] leading-none focus-visible:outline-2 focus-visible:outline-offset-2`}
         type="button"
         aria-label={label}
         onClick={onClick}

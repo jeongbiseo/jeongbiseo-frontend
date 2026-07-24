@@ -255,7 +255,7 @@ export const BenefitAddSheet = ({
 
 const SearchIcon = () => (
     <svg
-        className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2"
+        className="size-icon-sm absolute top-1/2 left-4 -translate-y-1/2"
         viewBox="0 0 20 20"
         fill="none"
         aria-hidden="true"

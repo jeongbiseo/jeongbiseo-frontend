@@ -149,14 +149,14 @@ const AvailablePolicies = () => {
                 </h1>
 
                 {state.status === "loading" && (
-                    <p className="text-text-muted text-label-strong mt-10 text-center">
+                    <p className="text-text-muted text-body-sm mt-10 text-center">
                         불러오는 중이에요...
                     </p>
                 )}
 
                 {state.status === "error" && (
                     <div className="mt-10 text-center">
-                        <p className="text-text-muted text-label-strong">
+                        <p className="text-text-muted text-body-sm">
                             정보를 불러오지 못했어요.
                         </p>
                         <Button
@@ -204,7 +204,7 @@ const AvailablePoliciesContent = ({
     return (
         <>
             <div className="mt-[9px] rounded-[15px] px-[10px] py-[8px]">
-                <p className="text-text-muted text-label-strong">
+                <p className="text-text-muted text-label-medium">
                     전체{" "}
                     <strong className="text-text-strong text-title">
                         {sections.totalCount}건
@@ -215,7 +215,7 @@ const AvailablePoliciesContent = ({
                     </strong>{" "}
                     · 합계 최대 {sections.confirmedMaximum}
                 </p>
-                <p className="text-text-muted/50 text-caption mt-[7px]">
+                <p className="text-text-muted/50 text-label mt-[7px]">
                     {notice}
                 </p>
                 <div className="mt-[11px] flex items-center gap-[14px]">
@@ -305,7 +305,7 @@ const PolicyListSection = ({
                 ))}
             </div>
         ) : (
-            <p className="text-text-muted text-label-strong mt-5 text-center">
+            <p className="text-text-muted text-body-sm mt-5 text-center">
                 표시할 지원금이 없습니다.
             </p>
         )}

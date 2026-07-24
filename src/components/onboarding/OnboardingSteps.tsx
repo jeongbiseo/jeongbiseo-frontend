@@ -273,7 +273,7 @@ export const OnboardingStepOne = ({
                             >
                                 {label}
                                 {selected && (
-                                    <span className="text-green-normal-hover absolute top-1.5 right-2">
+                                    <span className="text-green-normal-hover absolute top-1.5 right-2 text-[16px] leading-none">
                                         ✓
                                     </span>
                                 )}
@@ -549,7 +549,7 @@ export const OnboardingStepThree = ({
                                     }
                                 >
                                     <span
-                                        className={`flex size-[30px] shrink-0 items-center justify-center rounded-full border ${selected ? "border-green-normal bg-green-normal text-white" : "border-[#c8c8c8]"}`}
+                                        className={`flex size-[30px] shrink-0 items-center justify-center rounded-full border text-[16px] leading-none ${selected ? "border-green-normal bg-green-normal text-white" : "border-[#c8c8c8]"}`}
                                     >
                                         {selected && "✓"}
                                     </span>

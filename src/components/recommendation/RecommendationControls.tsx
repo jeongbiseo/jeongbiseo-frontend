@@ -71,7 +71,7 @@ export const RecommendationControls = ({
 
                 {searchOpen && (
                     <div className="recommendation-search-enter relative mt-4">
-                        <SearchIcon className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2" />
+                        <SearchIcon className="size-icon-sm absolute top-1/2 left-4 -translate-y-1/2" />
                         <input
                             ref={searchInputRef}
                             className="focus:border-primary focus-visible:outline-primary text-label-strong h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"

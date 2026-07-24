@@ -36,13 +36,13 @@ const Header = ({ title, showBack = false, onBack, right }: HeaderProps) => {
                         onClick={handleBack}
                     >
                         <svg
-                            className="h-4 w-[18px]"
-                            viewBox="0 0 18 16"
+                            className="size-icon-md"
+                            viewBox="0 0 20 20"
                             fill="none"
                             aria-hidden="true"
                         >
                             <path
-                                d="M17 8H1M1 8l7-7M1 8l7 7"
+                                d="M18 10H2m0 0 7-7m-7 7 7 7"
                                 stroke="currentColor"
                                 strokeWidth="1.8"
                                 strokeLinecap="round"

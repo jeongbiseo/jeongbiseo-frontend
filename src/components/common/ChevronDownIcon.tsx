@@ -1,18 +1,18 @@
 const ChevronDownIcon = ({
     expanded = false,
-    className = "h-[9px] w-[14px]",
+    className = "size-icon-sm",
 }: {
     expanded?: boolean;
     className?: string;
 }) => (
     <svg
         className={`${className} transition-transform ${expanded ? "rotate-180" : ""}`}
-        viewBox="0 0 14 9"
+        viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"
     >
         <path
-            d="m1 1 6 6 6-6"
+            d="m3 5.5 5 5 5-5"
             stroke="currentColor"
             strokeWidth="1.5"
             strokeLinecap="round"

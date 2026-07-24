@@ -46,7 +46,7 @@ const Login = () => {
                         onClick={() => handleSocialLogin("kakao")}
                     >
                         <img
-                            className="h-[25px] w-[27px]"
+                            className="size-icon-lg object-contain"
                             src={kakaoSymbol}
                             alt=""
                         />
@@ -59,7 +59,7 @@ const Login = () => {
                         onClick={() => handleSocialLogin("google")}
                     >
                         <img
-                            className="h-[25px] w-[25px]"
+                            className="size-icon-lg object-contain"
                             src={googleSymbol}
                             alt=""
                         />

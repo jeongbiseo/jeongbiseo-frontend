@@ -35,13 +35,13 @@ export const BackButton = ({
             onClick={() => navigate(-1)}
         >
             <svg
-                className="h-[11px] w-[19px]"
-                viewBox="0 0 19 11"
+                className="size-icon-md"
+                viewBox="0 0 20 20"
                 fill="none"
                 aria-hidden="true"
             >
                 <path
-                    d="M18 5.5H1M1 5.5 6 1M1 5.5 6 10"
+                    d="M18 10H2m0 0 7-7m-7 7 7 7"
                     stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
@@ -54,13 +54,13 @@ export const BackButton = ({
 
 export const ChevronRightIcon = () => (
     <svg
-        className="h-[13px] w-2"
-        viewBox="0 0 8 13"
+        className="size-icon-sm"
+        viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"
     >
         <path
-            d="m1.5 1.5 5 5-5 5"
+            d="m5.5 3 5 5-5 5"
             stroke="currentColor"
             strokeWidth="1.8"
             strokeLinecap="round"
@@ -71,7 +71,7 @@ export const ChevronRightIcon = () => (
 
 export const StarIcon = ({
     filled = true,
-    className = "size-6",
+    className = "size-icon-md",
 }: {
     filled?: boolean;
     className?: string;
@@ -84,7 +84,11 @@ export const StarIcon = ({
     </svg>
 );
 
-export const CheckIcon = ({ className = "size-5" }: { className?: string }) => (
+export const CheckIcon = ({
+    className = "size-icon-sm",
+}: {
+    className?: string;
+}) => (
     <svg
         className={className}
         viewBox="0 0 20 20"
