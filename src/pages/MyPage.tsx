@@ -209,21 +209,21 @@ const MyPage = () => {
 
     return (
         <>
-            <MyPageLayout className="px-[25px] pt-[25px]">
+            <MyPageLayout>
                 <Header title="마이페이지" />
 
                 <button
-                    className="border-primary mt-7 flex h-[90px] w-full cursor-pointer items-center rounded-[20px] border-[0.5px] bg-white px-[25px] text-left"
+                    className="border-primary rounded-card px-container mt-6 flex h-[90px] w-full cursor-pointer items-center border-[0.5px] bg-white text-left"
                     type="button"
                     disabled={profileStatus !== "ready"}
                     onClick={() => navigate("/mypage/edit")}
                 >
                     <span className="bg-secondary size-[46px] shrink-0 rounded-full" />
-                    <span className="ml-[18px] min-w-0 flex-1">
-                        <strong className="block text-[16px]">
+                    <span className="ml-layout-related min-w-0 flex-1">
+                        <strong className="text-title block">
                             {user?.name ?? "사용자"} 님
                         </strong>
-                        <span className="text-text-subtle mt-1.5 block truncate text-[13px] font-bold">
+                        <span className="text-text-subtle text-label-medium mt-1.5 block truncate">
                             {profileStatus === "ready" && profile
                                 ? `소셜 계정 · ${profile.sido.replace("특별시", "")} ${profile.sigungu} · ${employmentLabel}`
                                 : profileStatus === "error"
@@ -238,7 +238,7 @@ const MyPage = () => {
 
                 {profileStatus === "error" && (
                     <button
-                        className="text-primary mt-2 w-full text-center text-[13px] font-bold"
+                        className="text-primary text-label-strong mt-2 w-full text-center"
                         type="button"
                         onClick={() =>
                             setProfileReloadKey((previous) => previous + 1)
@@ -248,10 +248,10 @@ const MyPage = () => {
                     </button>
                 )}
 
-                <div className="mt-6 grid grid-cols-2 gap-x-[14px] gap-y-[13px]">
+                <div className="gap-layout-related mt-6 grid grid-cols-2">
                     {summaryItems.map((item) => (
                         <button
-                            className="border-primary h-[90px] cursor-pointer rounded-[20px] border-[0.5px] bg-white px-[15px] text-left transition active:scale-[0.99]"
+                            className="border-primary rounded-card px-container h-[90px] cursor-pointer border-[0.5px] bg-white text-left transition active:scale-[0.99]"
                             type="button"
                             key={item.label}
                             onClick={() =>
@@ -264,11 +264,11 @@ const MyPage = () => {
                             }
                         >
                             <strong
-                                className={`block text-[28px] leading-none ${item.emphasized ? "text-success" : "text-black"}`}
+                                className={`text-heading-section block ${item.emphasized ? "text-success" : "text-black"}`}
                             >
                                 {item.value}
                             </strong>
-                            <span className="text-text-muted mt-2 block text-[13px] font-bold">
+                            <span className="text-text-muted text-label-medium mt-layout-tight block">
                                 {item.label}
                             </span>
                         </button>
@@ -277,11 +277,11 @@ const MyPage = () => {
 
                 {summaryStatus === "error" && (
                     <div className="mt-3 text-center">
-                        <p className="text-text-muted text-[12px] font-semibold">
+                        <p className="text-text-muted text-caption-strong">
                             일부 건수를 불러오지 못했어요
                         </p>
                         <button
-                            className="text-primary mt-1 text-[13px] font-bold"
+                            className="text-primary text-label-strong mt-1"
                             type="button"
                             onClick={() =>
                                 setSummaryReloadKey((previous) => previous + 1)
@@ -292,15 +292,15 @@ const MyPage = () => {
                     </div>
                 )}
 
-                <div className="mt-6 flex flex-col gap-6">
+                <div className="gap-layout-group mt-6 flex flex-col">
                     {menuGroups.map((group, groupIndex) => (
                         <div
-                            className="border-primary overflow-hidden rounded-[20px] border-[0.5px] bg-white"
+                            className="border-primary rounded-card overflow-hidden border-[0.5px] bg-white"
                             key={groupIndex}
                         >
                             {group.map((item, index) => (
                                 <button
-                                    className={`flex h-[60px] w-full cursor-pointer items-center justify-between px-[29px] text-left text-[20px] font-semibold ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
+                                    className={`text-body-sm-strong px-container flex h-[60px] w-full cursor-pointer items-center justify-between text-left ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
                                     type="button"
                                     key={item.label}
                                     onClick={() => handleMenuClick(item)}

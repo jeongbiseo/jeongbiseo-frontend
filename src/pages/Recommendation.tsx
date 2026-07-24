@@ -527,7 +527,7 @@ const Recommendation = () => {
     return (
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
-                <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] pt-5 pb-[130px]">
+                <section className="bg-ground text-text-strong pt-page-top min-h-svh w-full max-w-[390px] pb-[130px]">
                     <RecommendationControls
                         cameFromMyPage={cameFromMyPage}
                         searchOpen={searchOpen}
@@ -560,7 +560,7 @@ const Recommendation = () => {
                         !loadError &&
                         activeTab === "recommended" &&
                         recommendationDataUpdatedAt && (
-                            <div className="mx-auto mt-5 w-full max-w-[298px]">
+                            <div className="mx-auto mt-4 w-[calc(100%-48px)] max-w-[342px]">
                                 <RecommendationFreshness
                                     dataUpdatedAt={recommendationDataUpdatedAt}
                                 />
@@ -587,7 +587,7 @@ const Recommendation = () => {
                         />
                     ) : visiblePolicies.length > 0 ? (
                         <div
-                            className="recommendation-tab-fade-in mx-auto mt-7 flex w-full max-w-[298px] flex-col gap-4"
+                            className="recommendation-tab-fade-in gap-layout-component mx-auto mt-6 flex w-[calc(100%-48px)] max-w-[342px] flex-col"
                             key={activeTab}
                         >
                             {visiblePolicies.map((policy) => (
@@ -604,7 +604,7 @@ const Recommendation = () => {
                             ))}
                             {activeTab === "all" && !allLast && (
                                 <button
-                                    className="border-primary text-primary mt-2 h-[44px] cursor-pointer rounded-[12px] border bg-white text-[13px] font-bold disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="border-primary text-primary text-label-strong rounded-control mt-2 h-[44px] cursor-pointer border bg-white disabled:cursor-not-allowed disabled:opacity-60"
                                     type="button"
                                     disabled={allLoading || allLoadingMore}
                                     onClick={() => void loadMoreAllPolicies()}

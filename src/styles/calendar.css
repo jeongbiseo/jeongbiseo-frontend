@@ -20,9 +20,9 @@
 .jeongbiseo-calendar .react-calendar__month-view__weekdays {
     height: 27px;
     color: var(--color-text-muted);
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 15px;
+    font-size: var(--text-label-strong);
+    font-weight: var(--text-label-strong--font-weight);
+    line-height: var(--text-label-strong--line-height);
     text-align: center;
 }
 
@@ -36,7 +36,10 @@
 
 .jeongbiseo-calendar .react-calendar__tile {
     position: relative;
+    display: flex;
     flex: 0 0 calc(14.2857% - 2px) !important;
+    align-items: center;
+    justify-content: center;
     height: 38px;
     max-width: calc(14.2857% - 2px) !important;
     margin: 0 1px;
@@ -44,9 +47,9 @@
     border-radius: 50%;
     background: transparent;
     color: var(--color-text-strong);
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 38px;
+    font-size: var(--text-label-strong);
+    font-weight: var(--text-label-strong--font-weight);
+    line-height: var(--text-label-strong--line-height);
     transition:
         color 180ms ease-out,
         background-color 180ms ease-out,

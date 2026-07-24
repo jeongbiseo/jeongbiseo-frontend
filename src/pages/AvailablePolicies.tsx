@@ -142,21 +142,21 @@ const AvailablePolicies = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[29px] pt-[29px] pb-[96px]">
+            <section className="bg-ground text-text-strong px-page-inline pt-page-top min-h-svh w-full max-w-[390px] pb-[96px]">
                 <BackButton className="-ml-1" />
-                <h1 className="mt-[2px] ml-[10px] text-[24px] leading-normal font-bold">
+                <h1 className="text-heading-page mt-0">
                     지금 신청 가능한 지원금
                 </h1>
 
                 {state.status === "loading" && (
-                    <p className="text-text-muted mt-10 text-center text-[13px] font-bold">
+                    <p className="text-text-muted text-body-sm mt-10 text-center">
                         불러오는 중이에요...
                     </p>
                 )}
 
                 {state.status === "error" && (
                     <div className="mt-10 text-center">
-                        <p className="text-text-muted text-[13px] font-bold">
+                        <p className="text-text-muted text-body-sm">
                             정보를 불러오지 못했어요.
                         </p>
                         <Button
@@ -203,22 +203,22 @@ const AvailablePoliciesContent = ({
 
     return (
         <>
-            <div className="mt-[9px] rounded-[15px] px-[10px] py-[8px]">
-                <p className="text-text-muted text-[13px] leading-normal font-bold">
+            <div className="rounded-card mt-layout-inline py-2">
+                <p className="text-text-muted text-label-medium">
                     전체{" "}
-                    <strong className="text-text-strong text-[16px]">
+                    <strong className="text-text-strong text-title">
                         {sections.totalCount}건
                     </strong>{" "}
                     중 금액 확정{" "}
-                    <strong className="text-text-strong text-[16px]">
+                    <strong className="text-text-strong text-title">
                         {sections.confirmedCount}건
                     </strong>{" "}
                     · 합계 최대 {sections.confirmedMaximum}
                 </p>
-                <p className="text-text-muted/50 mt-[7px] text-[11px] leading-normal font-medium">
+                <p className="text-text-muted/50 text-label mt-layout-tight">
                     {notice}
                 </p>
-                <div className="mt-[11px] flex items-center gap-[14px]">
+                <div className="mt-layout-inline gap-layout-inline flex items-center">
                     <CountBadge tone="cash">
                         {`현금 ${sections.cash.length}`}
                     </CountBadge>
@@ -232,18 +232,18 @@ const AvailablePoliciesContent = ({
             </div>
 
             <PolicyListSection
-                className="mt-[25px]"
+                className="mt-layout-group"
                 title={`현금성 지원금 (${sections.cash.length}건)`}
                 items={sections.cash}
             />
             <PolicyListSection
-                className="mt-[24px]"
+                className="mt-layout-group"
                 title={`바우처 · 현물 지원금 (${sections.voucher.length}건)`}
                 items={voucherItems}
             />
             {sections.voucher.length > 3 && (
                 <button
-                    className="border-primary mx-auto mt-[14px] flex h-[23px] w-full max-w-[306px] cursor-pointer items-center justify-center rounded-[5px] border-[0.5px] bg-white"
+                    className="border-primary rounded-control mx-auto mt-3 flex min-h-11 w-full cursor-pointer items-center justify-center border-[0.5px] bg-white"
                     type="button"
                     aria-expanded={voucherExpanded}
                     aria-label={
@@ -257,7 +257,7 @@ const AvailablePoliciesContent = ({
                 </button>
             )}
             <PolicyListSection
-                className="mt-[27px]"
+                className="mt-layout-group"
                 title={`금액 미확정 지원금 (${sections.unconfirmed.length}건)`}
                 items={sections.unconfirmed}
             />
@@ -280,7 +280,7 @@ const CountBadge = ({
 
     return (
         <span
-            className={`rounded-full px-2 py-[5px] text-[12px] leading-normal font-bold whitespace-nowrap ${toneClassNames[tone]}`}
+            className={`text-caption-strong rounded-badge px-2 py-1 whitespace-nowrap ${toneClassNames[tone]}`}
         >
             {children}
         </span>
@@ -297,17 +297,15 @@ const PolicyListSection = ({
     className?: string;
 }) => (
     <section className={className}>
-        <h2 className="text-text-muted ml-[9px] text-[16px] leading-normal font-bold">
-            {title}
-        </h2>
+        <h2 className="text-text-muted text-title">{title}</h2>
         {items.length > 0 ? (
-            <div className="mx-auto mt-[14px] flex w-full max-w-[306px] flex-col gap-[14px]">
+            <div className="gap-layout-related mx-auto mt-3 flex w-full flex-col">
                 {items.map((item) => (
                     <SummaryPolicyCard compact item={item} key={item.rowId} />
                 ))}
             </div>
         ) : (
-            <p className="text-text-muted mt-5 text-center text-[13px] font-bold">
+            <p className="text-text-muted text-body-sm mt-5 text-center">
                 표시할 지원금이 없습니다.
             </p>
         )}

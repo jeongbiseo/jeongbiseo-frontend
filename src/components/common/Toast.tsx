@@ -53,7 +53,7 @@ const ToastContent = ({
 
     return (
         <div
-            className={`${closing ? "toast-exit" : "toast-enter"} fixed bottom-24 left-1/2 z-[60] w-[calc(100%-48px)] max-w-[342px] -translate-x-1/2 rounded-[12px] bg-black/80 px-5 py-3 text-center text-[13px] font-semibold text-white shadow-lg`}
+            className={`${closing ? "toast-exit" : "toast-enter"} text-label-medium rounded-card fixed bottom-24 left-1/2 z-[60] w-[calc(100%-48px)] max-w-[342px] -translate-x-1/2 bg-black/80 px-5 py-3 text-center text-white shadow-lg`}
             role="status"
             aria-live="polite"
             onAnimationEnd={(event) => {

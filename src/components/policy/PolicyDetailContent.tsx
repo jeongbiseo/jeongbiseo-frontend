@@ -47,20 +47,20 @@ export const PolicyDetailContent = ({
 
     return (
         <main className="content-fade-in bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[39px] pt-[39px] pb-[104px]">
-                <article className="border-primary bg-green-light relative min-h-[124px] rounded-[10px] border-[0.5px] px-[21px] pt-[18px] pb-[15px]">
+            <section className="bg-ground text-text-strong px-page-inline pt-page-top min-h-svh w-full max-w-[390px] pb-[104px]">
+                <article className="border-primary bg-green-light rounded-card p-container relative min-h-[124px] border-[0.5px]">
                     <div className="pr-8">
-                        <h1 className="text-green-darker text-[24px] leading-normal font-bold">
+                        <h1 className="text-green-darker text-heading-section">
                             {subsidy.name}
                         </h1>
-                        <p className="text-text-subtle mt-0.5 text-[13px] leading-normal font-bold">
+                        <p className="text-text-subtle text-label-medium mt-0.5">
                             {subsidy.agency ?? "담당기관 정보 없음"}
                             {categoryLabel ? ` / ${categoryLabel}` : ""}
                         </p>
                     </div>
 
                     <button
-                        className="focus-visible:outline-primary absolute top-[14px] right-[13px] flex size-10 cursor-pointer items-center justify-center rounded focus-visible:outline-2 disabled:cursor-wait disabled:opacity-60"
+                        className="focus-visible:outline-primary absolute top-3 right-3 flex size-10 cursor-pointer items-center justify-center rounded focus-visible:outline-2 disabled:cursor-wait disabled:opacity-60"
                         type="button"
                         disabled={favoriteUpdating}
                         aria-busy={favoriteUpdating}
@@ -74,16 +74,16 @@ export const PolicyDetailContent = ({
                     >
                         <StarIcon
                             filled={subsidy.isFavorite}
-                            className="size-6"
+                            className="size-icon-md"
                         />
                     </button>
 
-                    <div className="mt-[15px] flex flex-wrap gap-[11px]">
+                    <div className="mt-layout-related gap-layout-inline flex flex-wrap">
                         {[deadlineLabel, categoryLabel, paymentTypeLabel]
                             .filter((tag): tag is string => Boolean(tag))
                             .map((tag) => (
                                 <span
-                                    className="bg-third rounded-full px-[10px] py-[6px] text-[13px] leading-none font-bold text-white"
+                                    className="bg-third text-label-strong rounded-badge px-2 py-1 text-white"
                                     key={tag}
                                 >
                                     {tag}
@@ -92,13 +92,13 @@ export const PolicyDetailContent = ({
                     </div>
                 </article>
 
-                <div className="mt-5 flex flex-col gap-5">
+                <div className="gap-layout-component mt-4 flex flex-col">
                     <PolicyAccordion
                         title="자격조건"
                         expanded={openSections.has("eligibility")}
                         onToggle={() => onToggleSection("eligibility")}
                     >
-                        <p className="text-text-muted text-[13px] leading-[1.6] font-medium whitespace-pre-line">
+                        <p className="text-text-muted text-body-sm whitespace-pre-line">
                             {subsidy.eligibilityText ??
                                 "자격조건 정보가 없습니다."}
                         </p>
@@ -157,7 +157,7 @@ export const PolicyDetailContent = ({
                 </div>
 
                 <Button
-                    className={`${openSections.size > 0 ? "mt-5" : "mt-10"} !h-auto min-h-[55px] py-3`}
+                    className={`${openSections.size > 0 ? "mt-6" : "mt-8"} !h-auto min-h-[55px] py-3`}
                     disabled={!subsidy.externalUrl}
                     onClick={onOpenApplication}
                 >
@@ -174,11 +174,11 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
     if (!subsidy.aiExplanation) {
         return (
             <div
-                className="bg-surface-soft mt-4 rounded-[10px] p-3"
+                className="bg-surface-soft rounded-card p-container-compact mt-3"
                 role="status"
             >
-                <h3 className="text-[12px] font-bold">AI 해석 준비 중</h3>
-                <p className="text-text-muted mt-1.5 text-[11px] leading-[1.5] font-medium">
+                <h3 className="text-label-strong">AI 해석 준비 중</h3>
+                <p className="text-text-muted text-label mt-1.5">
                     검증된 AI 해석이 준비되기 전까지 기존 금액 정보를
                     제공해드려요.
                 </p>
@@ -188,8 +188,8 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
 
     const explanation = subsidy.aiExplanation;
     return (
-        <div className="bg-surface-soft mt-4 rounded-[10px] p-3">
-            <h3 className="text-[12px] font-bold">AI 금액 해석 근거</h3>
+        <div className="bg-surface-soft rounded-card p-container-compact mt-3">
+            <h3 className="text-label-strong">AI 금액 해석 근거</h3>
             <DetailRows
                 rows={[
                     ...(explanation.amountValue !== null
@@ -227,7 +227,7 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
                 ]}
             />
             {explanation.evidence && (
-                <p className="text-text-muted mt-3 text-[11px] leading-[1.5] font-medium whitespace-pre-line">
+                <p className="text-text-muted text-label mt-3 whitespace-pre-line">
                     근거: {explanation.evidence}
                 </p>
             )}
@@ -246,17 +246,15 @@ const PolicyAccordion = ({
     onToggle: () => void;
     children: ReactNode;
 }) => (
-    <article className="border-primary overflow-hidden rounded-[10px] border-[0.5px] bg-white">
+    <article className="border-primary rounded-card overflow-hidden border-[0.5px] bg-white">
         <button
-            className="flex h-[61px] w-full cursor-pointer items-center justify-between px-[21px] text-left"
+            className="px-container flex h-[61px] w-full cursor-pointer items-center justify-between text-left"
             type="button"
             aria-expanded={expanded}
             onClick={onToggle}
         >
-            <span className="text-[20px] leading-normal font-bold">
-                {title}
-            </span>
-            <ChevronDownIcon expanded={expanded} className="h-3 w-[19px]" />
+            <span className="text-title">{title}</span>
+            <ChevronDownIcon expanded={expanded} className="size-icon-md" />
         </button>
         <div
             className="policy-accordion-content"
@@ -264,7 +262,7 @@ const PolicyAccordion = ({
             aria-hidden={!expanded}
         >
             <div className="overflow-hidden">
-                <div className="px-[21px] pb-[19px]">{children}</div>
+                <div className="px-container pb-container">{children}</div>
             </div>
         </div>
     </article>
@@ -275,10 +273,10 @@ const DetailRows = ({
 }: {
     rows: Array<{ label: string; value: string }>;
 }) => (
-    <dl className="text-text-muted flex flex-col gap-2 text-[13px] leading-normal font-bold">
+    <dl className="text-text-muted text-body-sm flex flex-col gap-2">
         {rows.map(({ label, value }) => (
             <div className="flex items-start justify-between gap-4" key={label}>
-                <dt className="shrink-0">{label}</dt>
+                <dt className="text-body-sm-strong shrink-0">{label}</dt>
                 <dd className="text-right">{value}</dd>
             </div>
         ))}

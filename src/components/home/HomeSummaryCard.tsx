@@ -29,38 +29,36 @@ export const HomeSummaryCard = ({
     const { voucherLike, unconfirmed } = countBadges(breakdown);
 
     return (
-        <article className="bg-primary relative mx-auto mt-[18px] min-h-[262px] w-full max-w-[305px] overflow-hidden rounded-[30px] px-[19px] py-7 text-white">
+        <article className="bg-primary rounded-panel px-container py-container-comfortable relative mx-auto mt-4 min-h-[262px] w-full overflow-hidden text-white">
             <SummaryDecoration />
 
             <div className="relative z-10">
-                <p className="text-[16px] leading-normal font-bold">
-                    지금 신청 가능한 지원금
-                </p>
-                <p className="mt-[13px] text-[36px] leading-normal font-bold tracking-[-0.02em]">
+                <p className="text-title">지금 신청 가능한 지원금</p>
+                <p className="text-display-number mt-layout-tight">
                     {total.totalCount}건
                 </p>
 
-                <div className="mt-[13px] flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] font-bold">
+                <div className="text-label-strong mt-layout-inline gap-x-layout-related gap-y-layout-inline flex flex-wrap items-center">
                     <span>
                         {hasConfirmedAmount
                             ? `금액 확정 ${total.itemCount}건`
                             : "금액 확정은 아직 없어요, 바우처·현물 지원 위주예요"}
                     </span>
                     {hasConfirmedAmount && total.cashTotalMax !== null && (
-                        <span className="rounded-full bg-[#32e5a9] px-2 py-[5px] whitespace-nowrap">
+                        <span className="rounded-badge bg-[#32e5a9] px-2 py-1 whitespace-nowrap">
                             합계 최대 {formatWon(total.cashTotalMax)}
                         </span>
                     )}
                 </div>
 
-                <div className="mt-[13px] flex flex-wrap items-center gap-x-[14px] gap-y-2">
+                <div className="mt-layout-related gap-x-layout-inline gap-y-layout-inline flex flex-wrap items-center">
                     {[
                         `현금 ${total.itemCount}`,
                         `바우처·현물 ${voucherLike}`,
                         `금액 미확정 ${unconfirmed}`,
                     ].map((label) => (
                         <span
-                            className="rounded-full bg-[#32e5a9] px-2 py-[5px] text-[12px] leading-none font-bold whitespace-nowrap"
+                            className="text-caption-strong rounded-badge bg-[#32e5a9] px-2 py-1 whitespace-nowrap"
                             key={label}
                         >
                             {label}
@@ -68,16 +66,19 @@ export const HomeSummaryCard = ({
                     ))}
                 </div>
 
-                <p className="mt-[11px] text-[11px] leading-none font-medium">
-                    {total.notice}
-                </p>
+                <p className="text-label mt-layout-inline">{total.notice}</p>
 
                 <Link
-                    className="mt-[13px] flex w-fit items-center gap-[5px] text-[13px] leading-none font-bold"
+                    className="text-label-strong mt-layout-related gap-layout-tight flex w-fit items-center"
                     to="/available-policies"
                 >
                     지원금 살펴보기
-                    <span aria-hidden="true">→</span>
+                    <span
+                        className="text-[16px] leading-none"
+                        aria-hidden="true"
+                    >
+                        →
+                    </span>
                 </Link>
             </div>
         </article>

@@ -167,19 +167,19 @@ const MyPageEdit = () => {
             <MyPageLayout>
                 <BackButton />
                 <div className="flex min-h-[65svh] flex-col items-center justify-center px-6 text-center">
-                    <h1 className="text-[20px] font-bold">
+                    <h1 className="text-heading-section">
                         {profileStatus === "loading"
                             ? "내 정보를 불러오고 있어요"
                             : "내 정보를 불러오지 못했어요"}
                     </h1>
-                    <p className="text-text-muted mt-2 text-[13px] font-semibold">
+                    <p className="text-text-muted text-label-medium mt-2">
                         {profileStatus === "loading"
                             ? "잠시만 기다려주세요."
                             : "네트워크 상태를 확인한 뒤 다시 시도해주세요."}
                     </p>
                     {profileStatus === "error" && (
                         <button
-                            className="bg-primary mt-5 rounded-[12px] px-5 py-3 text-[13px] font-bold text-white"
+                            className="bg-primary text-label-strong rounded-control mt-4 px-5 py-3 text-white"
                             type="button"
                             onClick={() =>
                                 setProfileReloadKey((previous) => previous + 1)

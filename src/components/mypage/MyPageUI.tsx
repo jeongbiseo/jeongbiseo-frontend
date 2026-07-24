@@ -11,7 +11,7 @@ export const MyPageLayout = ({
 }) => (
     <main className="bg-surface-dim flex min-h-svh justify-center">
         <section
-            className={`bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[23px] pt-[23px] pb-[120px] ${className}`}
+            className={`bg-ground text-text-strong px-page-inline pt-page-top min-h-svh w-full max-w-[390px] pb-[120px] ${className}`}
         >
             {children}
         </section>
@@ -35,13 +35,13 @@ export const BackButton = ({
             onClick={() => navigate(-1)}
         >
             <svg
-                className="h-[11px] w-[19px]"
-                viewBox="0 0 19 11"
+                className="size-icon-md"
+                viewBox="0 0 20 20"
                 fill="none"
                 aria-hidden="true"
             >
                 <path
-                    d="M18 5.5H1M1 5.5 6 1M1 5.5 6 10"
+                    d="M18 10H2m0 0 7-7m-7 7 7 7"
                     stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
@@ -54,13 +54,13 @@ export const BackButton = ({
 
 export const ChevronRightIcon = () => (
     <svg
-        className="h-[13px] w-2"
-        viewBox="0 0 8 13"
+        className="size-icon-sm"
+        viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"
     >
         <path
-            d="m1.5 1.5 5 5-5 5"
+            d="m5.5 3 5 5-5 5"
             stroke="currentColor"
             strokeWidth="1.8"
             strokeLinecap="round"
@@ -71,7 +71,7 @@ export const ChevronRightIcon = () => (
 
 export const StarIcon = ({
     filled = true,
-    className = "size-6",
+    className = "size-icon-md",
 }: {
     filled?: boolean;
     className?: string;
@@ -84,7 +84,11 @@ export const StarIcon = ({
     </svg>
 );
 
-export const CheckIcon = ({ className = "size-5" }: { className?: string }) => (
+export const CheckIcon = ({
+    className = "size-icon-sm",
+}: {
+    className?: string;
+}) => (
     <svg
         className={className}
         viewBox="0 0 20 20"
@@ -126,7 +130,7 @@ export const ConfirmDialog = ({
 
     return (
         <div
-            className={`confirm-dialog-backdrop-enter fixed inset-0 z-50 flex items-center justify-center px-9 ${external ? "bg-black/25" : "bg-black/20"}`}
+            className={`confirm-dialog-backdrop-enter px-page-inline fixed inset-0 z-50 flex items-center justify-center ${external ? "bg-black/25" : "bg-black/20"}`}
             role="presentation"
             onClick={(event) => {
                 if (event.target === event.currentTarget) onCancel();
@@ -135,32 +139,30 @@ export const ConfirmDialog = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`confirm-dialog-enter w-full rounded-[10px] bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-[21px] pt-[25px] pb-[13px] text-left" : "min-h-[135px] max-w-[317px] px-10 pt-[22px] pb-[13px] text-center"}`}
+                className={`confirm-dialog-enter rounded-panel p-container min-h-[135px] w-full max-w-[317px] bg-white shadow-lg ${external ? "text-left" : "text-center"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="confirm-dialog-title"
             >
-                <h2 className="text-[16px] font-bold" id="confirm-dialog-title">
+                <h2 className="text-title" id="confirm-dialog-title">
                     {title}
                 </h2>
-                <p
-                    className={`text-text-muted text-[13px] font-bold ${external ? "mt-[11px] leading-normal" : "mt-[11px]"}`}
-                >
+                <p className="text-text-muted text-label-strong mt-layout-inline">
                     {description}
                 </p>
                 <div
-                    className={`flex gap-3 ${external ? "mt-[9px] justify-end" : "mt-[19px] justify-center"}`}
+                    className={`gap-layout-related flex ${external ? "mt-layout-related justify-end" : "mt-layout-component justify-center"}`}
                 >
                     <button
                         data-dialog-initial-focus
-                        className="border-text-muted h-[26px] cursor-pointer rounded-[5px] border-[0.5px] px-[14px] text-[13px] font-bold"
+                        className="border-text-muted text-label-strong rounded-control px-container min-h-11 cursor-pointer border-[0.5px]"
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className="bg-green-normal h-[26px] cursor-pointer rounded-[5px] px-[14px] text-[13px] font-bold text-white"
+                        className="bg-green-normal text-label-strong rounded-control px-container min-h-11 cursor-pointer text-white"
                         type="button"
                         onClick={onConfirm}
                     >

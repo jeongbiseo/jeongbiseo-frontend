@@ -53,10 +53,10 @@ export const RecommendationControls = ({
 
     return (
         <>
-            <header className={searchOpen ? "px-[25px]" : "px-[26px]"}>
+            <header className="px-page-inline">
                 {cameFromMyPage && <BackButton label="마이페이지로 돌아가기" />}
                 <div className="flex items-center justify-between px-0">
-                    <h1 className="text-[24px] leading-none font-bold">
+                    <h1 className="text-heading-page">
                         {searchOpen ? "검색" : "지원금 전체보기"}
                     </h1>
                     <button
@@ -71,10 +71,10 @@ export const RecommendationControls = ({
 
                 {searchOpen && (
                     <div className="recommendation-search-enter relative mt-4">
-                        <SearchIcon className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2" />
+                        <SearchIcon className="size-icon-sm absolute top-1/2 left-4 -translate-y-1/2" />
                         <input
                             ref={searchInputRef}
-                            className="focus:border-primary focus-visible:outline-primary h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 text-[13px] font-bold outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
+                            className="focus:border-primary focus-visible:outline-primary text-label-strong rounded-control h-[49px] w-full border border-[#b7b7b7] bg-white pr-4 pl-11 outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
                             aria-label="지원금 검색"
                             value={query}
                             placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -86,10 +86,10 @@ export const RecommendationControls = ({
                 )}
 
                 {searchOpen ? (
-                    <div className="recommendation-search-enter mt-[14px] flex items-center gap-[9px] px-px">
+                    <div className="recommendation-search-enter mt-layout-related gap-layout-inline flex items-center px-px">
                         {recommendationSearchKeywords.map((keyword) => (
                             <button
-                                className="bg-third h-[37px] cursor-pointer rounded-full px-[13px] text-[16px] font-bold text-white"
+                                className="bg-third text-body-sm-strong rounded-control px-container-compact min-h-11 cursor-pointer text-white"
                                 type="button"
                                 key={keyword}
                                 onClick={() => onQueryChange(keyword)}
@@ -99,12 +99,12 @@ export const RecommendationControls = ({
                         ))}
                     </div>
                 ) : (
-                    <div className="mt-5 grid grid-cols-3 gap-4">
+                    <div className="gap-layout-inline mt-4 grid grid-cols-3">
                         {recommendationTabs.map(({ key, label }) => {
                             const selected = activeTab === key;
                             return (
                                 <button
-                                    className={`h-[39px] cursor-pointer rounded-[10px] text-[16px] font-bold transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
+                                    className={`text-body-sm-strong rounded-control min-h-11 cursor-pointer transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
                                     type="button"
                                     key={key}
                                     aria-pressed={selected}
@@ -118,9 +118,9 @@ export const RecommendationControls = ({
                 )}
 
                 {!searchOpen && (
-                    <div className="mt-[21px] flex items-center justify-between">
+                    <div className="mt-4 flex items-center justify-between">
                         <button
-                            className="flex cursor-pointer items-center gap-1 text-[16px] font-bold"
+                            className="text-body-sm-strong flex cursor-pointer items-center gap-1"
                             type="button"
                             aria-haspopup="dialog"
                             onClick={onOpenSort}
@@ -129,7 +129,7 @@ export const RecommendationControls = ({
                             <ChevronDownIcon />
                         </button>
 
-                        <label className="flex cursor-pointer items-center gap-2 text-[16px] font-bold">
+                        <label className="text-body-sm-strong flex cursor-pointer items-center gap-2">
                             중복허용
                             <input
                                 className="peer sr-only"
@@ -148,7 +148,7 @@ export const RecommendationControls = ({
                 )}
             </header>
 
-            {!searchOpen && <div className="bg-line mt-[19px] h-px w-full" />}
+            {!searchOpen && <div className="bg-line mt-4 h-px w-full" />}
         </>
     );
 };
@@ -181,17 +181,17 @@ export const RecommendationSortSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="recommendation-sort-sheet-enter w-full max-w-[390px] rounded-t-[30px] bg-white px-[21px] pt-[22px] pb-8"
+                className="recommendation-sort-sheet-enter rounded-t-sheet px-page-inline w-full max-w-[390px] bg-white pt-4 pb-6"
                 role="dialog"
                 aria-modal="true"
                 aria-label="정렬 방식 선택"
             >
-                <div className="bg-disabled mx-auto mb-[25px] h-1 w-[39px] rounded-full" />
+                <div className="bg-disabled mb-layout-component mx-auto h-1 w-[39px] rounded-full" />
                 <ul>
                     {recommendationSortOptions.map(({ key, label }) => (
                         <li className="border-line border-b" key={key}>
                             <button
-                                className="flex h-[46px] w-full cursor-pointer items-center justify-between text-[16px] font-bold"
+                                className="text-body-sm-strong flex h-[46px] w-full cursor-pointer items-center justify-between"
                                 type="button"
                                 aria-pressed={sortOption === key}
                                 onClick={() => onSelect(key)}

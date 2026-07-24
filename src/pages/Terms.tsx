@@ -31,13 +31,13 @@ const initialAgreements: Agreements = {
 
 const CheckIcon = ({ checked }: { checked: boolean }) => (
     <svg
-        className="h-[11px] w-[15px] shrink-0"
-        viewBox="0 0 15 11"
+        className="size-icon-sm shrink-0"
+        viewBox="0 0 16 16"
         fill="none"
         aria-hidden="true"
     >
         <path
-            d="M1 5.2 5.1 9 14 1"
+            d="m2 8 4 4 8-8"
             stroke={checked ? "var(--color-primary)" : "var(--color-disabled)"}
             strokeWidth="1.7"
             strokeLinecap="round"
@@ -114,18 +114,18 @@ const Terms = () => {
     return (
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
-                <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-8 pb-8">
+                <section className="bg-ground px-page-inline pt-page-top flex min-h-svh w-full max-w-[390px] flex-col pb-6">
                     <Header showBack />
 
-                    <h1 className="mt-3 -ml-[6px] text-[24px] leading-[1.2] font-bold text-black">
+                    <h1 className="text-heading-page mt-layout-inline text-black">
                         서비스 이용을 위해
                         <br />
                         약관에 동의해주세요
                     </h1>
 
-                    <div className="mt-[34px] w-full max-w-[325px] self-center">
+                    <div className="mt-layout-group w-full max-w-[325px] self-center">
                         <button
-                            className="focus-visible:outline-primary flex cursor-pointer items-center gap-[11px] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+                            className="focus-visible:outline-primary gap-layout-inline flex min-h-11 cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                             type="button"
                             role="checkbox"
                             aria-checked={allAgreed}
@@ -135,13 +135,13 @@ const Terms = () => {
                                 className={`flex size-[26px] items-center justify-center rounded-full ${allAgreed ? "bg-green-normal" : "bg-disabled"}`}
                             >
                                 <svg
-                                    className="h-[10px] w-[14px]"
-                                    viewBox="0 0 14 10"
+                                    className="size-icon-sm"
+                                    viewBox="0 0 16 16"
                                     fill="none"
                                     aria-hidden="true"
                                 >
                                     <path
-                                        d="M1 4.7 4.8 8.5 13 1"
+                                        d="m2 8 4 4 8-8"
                                         stroke="white"
                                         strokeWidth="1.7"
                                         strokeLinecap="round"
@@ -149,35 +149,35 @@ const Terms = () => {
                                     />
                                 </svg>
                             </span>
-                            <span className="text-[20px] leading-[1.2] font-bold text-black">
+                            <span className="text-heading-section text-black">
                                 약관 전체동의
                             </span>
                         </button>
 
                         <div className="bg-disabled mt-4 h-px w-full" />
 
-                        <ul className="mt-4 flex flex-col gap-[23px]">
+                        <ul className="gap-layout-component mt-4 flex flex-col">
                             {agreementItems.map(({ key, label, required }) => (
                                 <li
                                     className="flex w-full items-center justify-between"
                                     key={key}
                                 >
                                     <button
-                                        className="focus-visible:outline-primary flex min-w-0 cursor-pointer items-center gap-[18px] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        className="focus-visible:outline-primary gap-layout-related flex min-h-11 min-w-0 cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                                         type="button"
                                         role="checkbox"
                                         aria-checked={agreements[key]}
                                         onClick={() => handleAgreement(key)}
                                     >
                                         <CheckIcon checked={agreements[key]} />
-                                        <span className="text-text-muted text-[clamp(14px,4.1vw,16px)] leading-[1.2] font-bold whitespace-nowrap">
+                                        <span className="text-text-muted text-body-sm-strong whitespace-nowrap">
                                             [{required ? "필수" : "선택"}]{" "}
                                             {label}
                                         </span>
                                     </button>
 
                                     <button
-                                        className="text-text-muted/70 focus-visible:outline-primary ml-2 shrink-0 cursor-pointer text-[13px] leading-none font-bold underline underline-offset-2 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        className="text-text-muted/70 focus-visible:outline-primary text-label-strong ml-2 min-h-11 shrink-0 cursor-pointer underline underline-offset-2 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                                         type="button"
                                         aria-haspopup="dialog"
                                         onClick={() =>
@@ -214,20 +214,20 @@ const Terms = () => {
                     <section
                         ref={termsDialogRef}
                         tabIndex={-1}
-                        className="flex max-h-[75svh] min-h-[360px] w-full max-w-[390px] flex-col rounded-t-[24px] bg-white px-6 pt-6 pb-8 shadow-2xl"
+                        className="rounded-t-sheet px-page-inline flex max-h-[75svh] min-h-[360px] w-full max-w-[390px] flex-col bg-white pt-4 pb-6 shadow-2xl"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="terms-detail-title"
                     >
                         <header className="flex items-start justify-between gap-4">
                             <div>
-                                <p className="text-primary text-[13px] font-bold">
+                                <p className="text-primary text-label-strong">
                                     {selectedAgreementItem.required
                                         ? "필수 약관"
                                         : "선택 약관"}
                                 </p>
                                 <h2
-                                    className="mt-1 text-[20px] leading-[1.35] font-bold text-black"
+                                    className="text-heading-section mt-1 text-black"
                                     id="terms-detail-title"
                                 >
                                     {selectedAgreementItem.label}
@@ -256,8 +256,8 @@ const Terms = () => {
                             </button>
                         </header>
 
-                        <div className="bg-ground mt-6 flex-1 overflow-y-auto rounded-[15px] p-5 text-[13px] leading-[1.7] text-[#606060]">
-                            <p className="font-semibold text-[#303030]">
+                        <div className="bg-ground text-label rounded-card p-container mt-4 flex-1 overflow-y-auto text-[#606060]">
+                            <p className="text-label-medium text-[#303030]">
                                 {selectedAgreementDetail.summary}
                             </p>
 
@@ -265,7 +265,7 @@ const Terms = () => {
                                 {selectedAgreementDetail.sections.map(
                                     ({ title, paragraphs, bullets }) => (
                                         <section key={title}>
-                                            <h3 className="text-text-strong text-[16px] font-bold">
+                                            <h3 className="text-text-strong text-title">
                                                 {title}
                                             </h3>
 
@@ -294,7 +294,7 @@ const Terms = () => {
                         </div>
 
                         <button
-                            className="bg-green-normal focus-visible:outline-third mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-[20px] font-bold text-white focus-visible:outline-3 focus-visible:outline-offset-2"
+                            className="bg-green-normal focus-visible:outline-third text-body-strong rounded-control mt-4 h-[52px] w-full cursor-pointer text-white focus-visible:outline-3 focus-visible:outline-offset-2"
                             type="button"
                             onClick={() => setSelectedAgreement(null)}
                         >

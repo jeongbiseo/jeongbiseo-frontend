@@ -24,7 +24,7 @@ const navItems: NavItem[] = [
 ];
 
 const BottomNav = ({ activePath }: { activePath?: string }) => (
-    <nav className="fixed bottom-0 left-1/2 z-40 h-[57px] w-full max-w-[390px] -translate-x-1/2 border-t border-[#eee] bg-white">
+    <nav className="fixed bottom-0 left-1/2 z-40 h-16 w-full max-w-[390px] -translate-x-1/2 border-t border-[#eee] bg-white">
         <ul className="flex h-full items-center justify-around">
             {navItems.map(({ to, label, Icon, end }) => (
                 <li key={to}>
@@ -32,11 +32,11 @@ const BottomNav = ({ activePath }: { activePath?: string }) => (
                         to={to}
                         end={end}
                         className={({ isActive }) =>
-                            `bottom-nav-link focus-visible:outline-primary flex flex-col items-center gap-[7px] rounded-lg transition-colors duration-200 select-none focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 ${isActive || activePath === to ? "text-black" : "text-third/50"}`
+                            `bottom-nav-link focus-visible:outline-primary gap-layout-tight flex min-w-6 flex-col items-center rounded-lg transition-colors duration-200 select-none focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 ${isActive || activePath === to ? "text-black" : "text-third/50"}`
                         }
                     >
-                        <Icon className="size-[27px]" />
-                        <span className="text-center text-[11px] leading-none font-bold text-black/40">
+                        <Icon className="size-icon-md" />
+                        <span className="text-caption-strong text-center text-black/40">
                             {label}
                         </span>
                     </NavLink>

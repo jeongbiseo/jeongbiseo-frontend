@@ -101,21 +101,21 @@ const MyPageTerms = () => {
 
     return (
         <>
-            <MyPageLayout className="px-[31px] pt-[31px]">
+            <MyPageLayout>
                 <BackButton className="ml-0" />
-                <h1 className="mt-0 text-[24px] font-bold">
+                <h1 className="text-heading-page mt-0">
                     이용약관 · 개인정보처리방침
                 </h1>
 
                 {status === "loading" && (
-                    <p className="text-text-muted mt-10 text-center text-[13px] font-bold">
+                    <p className="text-text-muted text-label-strong mt-10 text-center">
                         약관 정보를 불러오는 중이에요...
                     </p>
                 )}
 
                 {status === "error" && (
                     <div className="mt-10 text-center">
-                        <p className="text-text-muted text-[13px] font-bold">
+                        <p className="text-text-muted text-label-strong">
                             약관 정보를 불러오지 못했어요.
                         </p>
                         <Button
@@ -131,19 +131,19 @@ const MyPageTerms = () => {
                 )}
 
                 {status === "ready" && (
-                    <div className="border-primary mx-[7px] mt-8 overflow-hidden rounded-[20px] border-[0.5px] bg-white">
+                    <div className="border-primary rounded-card mt-6 overflow-hidden border-[0.5px] bg-white">
                         {terms.map((term, index) => (
                             <button
-                                className={`flex h-[79px] w-full cursor-pointer items-center justify-between px-4 text-left ${index > 0 ? "border-line border-t" : ""}`}
+                                className={`px-container flex h-[72px] w-full cursor-pointer items-center justify-between text-left ${index > 0 ? "border-line border-t" : ""}`}
                                 type="button"
                                 key={term.key}
                                 onClick={() => setSelectedTerm(term.key)}
                             >
                                 <span>
-                                    <strong className="block text-[16px]">
+                                    <strong className="text-title block">
                                         {term.label}
                                     </strong>
-                                    <span className="text-text-muted mt-2 block text-[13px] font-bold">
+                                    <span className="text-text-muted text-label-strong mt-layout-tight block">
                                         {getConsentLabel(term.type)}
                                     </span>
                                 </span>
@@ -156,7 +156,7 @@ const MyPageTerms = () => {
                 )}
 
                 {status === "ready" && (
-                    <label className="border-green-normal mx-[7px] mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border-[0.5px] bg-white px-5 text-[16px] font-bold">
+                    <label className="border-green-normal text-body-sm-strong rounded-control px-container mt-6 flex h-[57px] cursor-pointer items-center justify-between border-[0.5px] bg-white">
                         마케팅 정보 수신 동의
                         <input
                             className="peer sr-only"
@@ -223,67 +223,57 @@ const TermsDetailSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} flex max-h-[86svh] w-full max-w-[390px] flex-col overflow-hidden rounded-t-[28px] bg-white`}
+                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} rounded-t-sheet flex max-h-[86svh] w-full max-w-[390px] flex-col overflow-hidden bg-white focus:outline-none`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="terms-detail-title"
+                data-dialog-initial-focus
                 onAnimationEnd={(event) => {
                     if (closing && event.target === event.currentTarget) {
                         onClose();
                     }
                 }}
             >
-                <div className="shrink-0 px-6 pt-4">
+                <div className="px-page-inline shrink-0 pt-4">
                     <button
                         className="bg-disabled mx-auto block h-1 w-[44px] cursor-pointer rounded-full"
                         type="button"
                         aria-label="약관 상세 닫기"
-                        data-dialog-initial-focus
                         onClick={handleClose}
                     />
-                    <div className="mt-5 flex items-start justify-between gap-4">
+                    <div className="mt-layout-component">
                         <div>
                             <h2
-                                className="text-[20px] font-bold"
+                                className="text-heading-section"
                                 id="terms-detail-title"
                             >
                                 {title}
                             </h2>
-                            <p className="text-text-subtle mt-1 text-[13px] font-bold">
+                            <p className="text-text-subtle text-label-strong mt-1">
                                 버전 1.0.0 · 최종 수정 2026.06.01
                             </p>
                         </div>
-                        <button
-                            className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
-                            type="button"
-                            aria-label="약관 상세 닫기"
-                            onClick={handleClose}
-                        >
-                            ×
-                        </button>
                     </div>
                 </div>
 
-                <div className="terms-detail-scrollbar min-h-0 overflow-y-auto px-6 pb-10">
-                    <p className="text-text-body mt-6 text-[13px] leading-[1.7]">
+                <div className="terms-detail-scrollbar px-page-inline min-h-0 overflow-y-auto pb-8">
+                    <p className="text-text-body text-label mt-layout-component">
                         {detail.summary}
                     </p>
-                    <div className="mt-6 flex flex-col gap-6">
+                    <div className="mt-layout-group gap-layout-group flex flex-col">
                         {detail.sections.map((section) => (
                             <section key={section.title}>
-                                <h3 className="text-[16px] font-bold">
-                                    {section.title}
-                                </h3>
+                                <h3 className="text-title">{section.title}</h3>
                                 {section.paragraphs?.map((paragraph) => (
                                     <p
-                                        className="text-text-secondary mt-2 text-[13px] leading-[1.7]"
+                                        className="text-text-secondary text-label mt-2"
                                         key={paragraph}
                                     >
                                         {paragraph}
                                     </p>
                                 ))}
                                 {section.bullets && (
-                                    <ul className="text-text-secondary mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6]">
+                                    <ul className="text-text-secondary text-label mt-2 list-disc space-y-1.5 pl-5">
                                         {section.bullets.map((bullet) => (
                                             <li key={bullet}>{bullet}</li>
                                         ))}

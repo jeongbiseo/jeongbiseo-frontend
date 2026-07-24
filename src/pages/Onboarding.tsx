@@ -204,7 +204,7 @@ const Onboarding = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong flex min-h-svh w-full max-w-[390px] flex-col px-[26px] pt-6 pb-8">
+            <section className="bg-ground text-text-strong px-page-inline pt-page-top flex min-h-svh w-full max-w-[390px] flex-col pb-6">
                 <Header showBack onBack={handleBack} />
 
                 <div className="bg-line mt-3 h-[6px] overflow-hidden rounded-full">
@@ -213,11 +213,11 @@ const Onboarding = () => {
                         style={{ width: `${(step / 3) * 100}%` }}
                     />
                 </div>
-                <p className="text-text-subtle mt-2 text-[13px] font-bold">
+                <p className="text-text-subtle text-label-strong mt-2">
                     {step}/3 단계
                 </p>
 
-                <div className="mt-5 flex-1">
+                <div className="mt-4 flex-1">
                     {step === 1 && (
                         <OnboardingStepOne
                             control={control}
@@ -240,13 +240,13 @@ const Onboarding = () => {
                 </div>
 
                 {errors.root && (
-                    <p className="text-danger mt-4 text-center text-[13px] font-semibold">
+                    <p className="text-danger text-label-medium mt-4 text-center">
                         {errors.root.message}
                     </p>
                 )}
 
                 <Button
-                    className="mt-7"
+                    className="mt-6"
                     disabled={isSubmitting || (step === 1 && !regionReady)}
                     onClick={step === 3 ? handleSubmit(onSubmit) : goNext}
                 >
@@ -254,7 +254,7 @@ const Onboarding = () => {
                 </Button>
                 {step > 1 && (
                     <button
-                        className="mx-auto mt-4 cursor-pointer text-[12px] text-[#9a9a9a] underline underline-offset-2 disabled:opacity-50"
+                        className="text-caption mx-auto mt-4 cursor-pointer text-[#9a9a9a] underline underline-offset-2 disabled:opacity-50"
                         type="button"
                         disabled={isSubmitting}
                         onClick={handleSkip}

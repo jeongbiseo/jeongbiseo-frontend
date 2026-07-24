@@ -26,7 +26,7 @@ const Header = ({ title, showBack = false, onBack, right }: HeaderProps) => {
     };
 
     return (
-        <header className="flex h-[34px] w-full items-center justify-between">
+        <header className="flex min-h-9 w-full items-center justify-between">
             <div className="flex min-w-0 flex-1 items-center gap-2">
                 {showBack && (
                     <button
@@ -36,13 +36,13 @@ const Header = ({ title, showBack = false, onBack, right }: HeaderProps) => {
                         onClick={handleBack}
                     >
                         <svg
-                            className="h-4 w-[18px]"
-                            viewBox="0 0 18 16"
+                            className="size-icon-md"
+                            viewBox="0 0 20 20"
                             fill="none"
                             aria-hidden="true"
                         >
                             <path
-                                d="M17 8H1M1 8l7-7M1 8l7 7"
+                                d="M18 10H2m0 0 7-7m-7 7 7 7"
                                 stroke="currentColor"
                                 strokeWidth="1.8"
                                 strokeLinecap="round"
@@ -52,9 +52,7 @@ const Header = ({ title, showBack = false, onBack, right }: HeaderProps) => {
                     </button>
                 )}
                 {title && (
-                    <h1 className="truncate text-[24px] leading-none font-bold">
-                        {title}
-                    </h1>
+                    <h1 className="text-heading-page truncate">{title}</h1>
                 )}
             </div>
 

@@ -1,5 +1,5 @@
 export const SearchIcon = ({
-    className = "size-[25px]",
+    className = "size-icon-md",
 }: {
     className?: string;
 }) => (
@@ -26,7 +26,12 @@ export const SearchIcon = ({
 );
 
 export const CloseIcon = () => (
-    <svg className="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <svg
+        className="size-icon-md"
+        viewBox="0 0 20 20"
+        fill="none"
+        aria-hidden="true"
+    >
         <path
             d="m3 3 14 14M17 3 3 17"
             stroke="currentColor"
@@ -37,7 +42,12 @@ export const CloseIcon = () => (
 );
 
 export const CheckIcon = () => (
-    <svg className="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <svg
+        className="size-icon-sm"
+        viewBox="0 0 20 20"
+        fill="none"
+        aria-hidden="true"
+    >
         <path
             d="m3 10 4 4 10-10"
             stroke="currentColor"

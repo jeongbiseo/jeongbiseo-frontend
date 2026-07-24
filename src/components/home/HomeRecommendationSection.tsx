@@ -19,19 +19,14 @@ export const HomeSection = ({
     className?: string;
     children: ReactNode;
 }) => (
-    <section
-        className={`ml-[7px] w-[calc(100%-14px)] max-w-[328px] ${className ?? ""}`}
-    >
+    <section className={`mx-auto w-full ${className ?? ""}`}>
         <div className="flex items-center justify-between">
-            <h2 className="text-[24px] leading-normal font-bold">{title}</h2>
-            <Link
-                className="text-text-muted text-[16px] leading-none font-bold"
-                to={to}
-            >
+            <h2 className="text-heading-section">{title}</h2>
+            <Link className="text-body-sm-strong text-text-muted" to={to}>
                 {linkLabel}
             </Link>
         </div>
-        <div className="mt-[18px]">{children}</div>
+        <div className="mt-layout-component">{children}</div>
     </section>
 );
 
@@ -58,31 +53,31 @@ const RecommendationCard = ({
 
     return (
         <Link
-            className="border-primary relative block min-h-[150px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]"
+            className="border-primary rounded-card p-container relative block min-h-[150px] border-[0.5px] bg-white"
             to={`/policies/${recommendation.subsidyId}`}
             state={{ bottomNavPath: "/" }}
         >
             <div className="pr-[76px]">
-                <p className="text-text-subtle text-[13px] leading-none font-bold">
+                <p className="text-label-medium text-text-subtle">
                     {recommendation.agency}
                 </p>
-                <h3 className="mt-[6px] truncate text-[16px] leading-none font-bold">
+                <h3 className="text-title mt-layout-tight truncate">
                     {recommendation.name}
                 </h3>
                 <RecommendationAssessment
-                    className="mt-3"
+                    className="mt-layout-inline"
                     confirmedMatchCount={recommendation.confirmedMatchCount}
                     unverifiedConditionCount={
                         recommendation.unverifiedConditionCount
                     }
                 />
                 {recommendation.uncomputable && (
-                    <p className="text-warning mt-2 truncate text-[11px] leading-none font-semibold">
+                    <p className="text-label text-warning mt-2 truncate">
                         {recommendation.uncomputableReasons[0] ??
                             "세부 조건을 추가로 확인해주세요"}
                     </p>
                 )}
-                <p className="text-success mt-3 truncate text-[16px] leading-none font-bold">
+                <p className="text-body-strong text-success mt-3 truncate">
                     {formatAmountRange(
                         recommendation.estimatedAmountMin,
                         recommendation.estimatedAmountMax
@@ -91,12 +86,12 @@ const RecommendationCard = ({
             </div>
 
             <span
-                className={`absolute top-[15px] right-[21px] rounded-[13px] px-[7px] py-[6px] text-[13px] leading-none font-bold ${badgeClassName}`}
+                className={`text-label-strong rounded-badge absolute top-4 right-4 px-2 py-1 ${badgeClassName}`}
             >
                 {badgeLabel}
             </span>
             {recommendation.deadline && (
-                <span className="text-text-muted absolute right-[21px] bottom-[16px] text-[13px] leading-none font-medium">
+                <span className="text-label text-text-muted absolute right-4 bottom-4">
                     {formatDeadline(recommendation.deadline)}
                 </span>
             )}
@@ -111,7 +106,7 @@ export const HomeRecommendationContent = ({
     recommendations: RecommendationItem[];
     dataUpdatedAt: string;
 }) => (
-    <div className="ml-[15px] flex w-[calc(100%-23px)] max-w-[305px] flex-col gap-[18px]">
+    <div className="gap-layout-component mx-auto flex w-full flex-col">
         <RecommendationFreshness dataUpdatedAt={dataUpdatedAt} />
         {recommendations.map((recommendation) => (
             <RecommendationCard
@@ -120,7 +115,7 @@ export const HomeRecommendationContent = ({
             />
         ))}
         {recommendations.length === 0 && (
-            <p className="text-text-muted py-6 text-center text-[13px] font-semibold">
+            <p className="text-body-sm text-text-muted py-6 text-center">
                 아직 조건에 맞는 지원금이 없어요
             </p>
         )}

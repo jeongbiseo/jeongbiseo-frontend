@@ -32,10 +32,13 @@ export const useDialogAccessibility = <T extends HTMLElement>(
                 dialog.querySelectorAll<HTMLElement>(focusableSelector)
             ).filter((element) => element.offsetParent !== null);
 
-        const firstTarget =
-            dialog.querySelector<HTMLElement>("[data-dialog-initial-focus]") ??
-            focusableElements()[0] ??
-            dialog;
+        const firstTarget = dialog.matches("[data-dialog-initial-focus]")
+            ? dialog
+            : (dialog.querySelector<HTMLElement>(
+                  "[data-dialog-initial-focus]"
+              ) ??
+              focusableElements()[0] ??
+              dialog);
         firstTarget.focus();
 
         const handleKeyDown = (event: KeyboardEvent) => {
