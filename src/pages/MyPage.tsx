@@ -144,7 +144,7 @@ const MyPage = () => {
     const formatCount = (count: number | null) =>
         count === null
             ? summaryStatus === "loading"
-                ? "…"
+                ? "–"
                 : "--"
             : `${count}건`;
 
