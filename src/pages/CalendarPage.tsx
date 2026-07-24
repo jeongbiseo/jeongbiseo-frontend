@@ -121,10 +121,8 @@ const CalendarPage = () => {
         <main className="bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[35px] pt-[35px] pb-[104px]">
                 <header className="px-[10px]">
-                    <h1 className="text-[20px] leading-normal font-bold">
-                        마감 캘린더
-                    </h1>
-                    <p className="mt-[5px] text-[12px] leading-[14px] font-bold text-[#4b4b4b]">
+                    <h1 className="text-heading-section">마감 캘린더</h1>
+                    <p className="text-caption-strong mt-[5px] text-[#4b4b4b]">
                         즐겨찾기한 지원금 마감 일정이에요!
                     </p>
                 </header>
@@ -200,19 +198,17 @@ const CalendarPage = () => {
                 <MarkerLegend />
 
                 <section className="mt-[18px]">
-                    <h2 className="text-[16px] leading-normal font-bold">
-                        마감일순
-                    </h2>
+                    <h2 className="text-title">마감일순</h2>
 
                     {state.status === "loading" && (
-                        <p className="text-text-muted mt-8 text-center text-[13px] font-bold">
+                        <p className="text-text-muted text-label-strong mt-8 text-center">
                             불러오는 중이에요...
                         </p>
                     )}
 
                     {state.status === "error" && (
                         <div className="mt-8 text-center">
-                            <p className="text-text-muted text-[13px] font-bold">
+                            <p className="text-text-muted text-label-strong">
                                 마감 정보를 불러오지 못했어요.
                             </p>
                             <Button
@@ -305,7 +301,7 @@ const MonthSelect = ({
     return (
         <div className="relative flex items-center" ref={containerRef}>
             <button
-                className="focus-visible:outline-primary cursor-pointer bg-transparent pr-4 text-[13px] leading-[17px] font-semibold focus-visible:outline-2"
+                className="focus-visible:outline-primary text-label-medium cursor-pointer bg-transparent pr-4 focus-visible:outline-2"
                 type="button"
                 aria-label={label}
                 aria-haspopup="listbox"
@@ -333,7 +329,7 @@ const MonthSelect = ({
 
                         return (
                             <button
-                                className={`block h-[32px] w-full cursor-pointer rounded-[7px] px-2 text-left text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                                className={`text-label-medium block h-[32px] w-full cursor-pointer rounded-[7px] px-2 text-left whitespace-nowrap transition-colors ${
                                     selected
                                         ? "bg-green-light text-success"
                                         : "hover:bg-surface-soft"
@@ -359,7 +355,7 @@ const MonthSelect = ({
 };
 
 const MarkerLegend = () => (
-    <aside className="border-primary mt-[22px] flex h-[35px] items-center rounded-[10px] border-[0.5px] bg-white px-[17px] text-[13px]">
+    <aside className="border-primary text-label mt-[22px] flex min-h-[35px] items-center rounded-[10px] border-[0.5px] bg-white px-[17px] py-1">
         <span>마감 마커:</span>
         <span className="ml-[9px] flex items-center gap-1">
             <span className="bg-primary size-[10px] rounded-full" />
@@ -386,16 +382,14 @@ const DeadlineCard = ({ item }: { item: CalendarDayElement }) => {
             state={{ bottomNavPath: "/calendar" }}
         >
             <div className="pr-[76px]">
-                <h3 className="mt-[2px] truncate text-[16px] leading-normal font-bold">
-                    {item.name}
-                </h3>
-                <p className="text-text-muted mt-[13px] text-[13px] leading-normal font-medium">
+                <h3 className="text-title mt-[2px] truncate">{item.name}</h3>
+                <p className="text-text-muted text-label-medium mt-[13px]">
                     {`${Number(month)}.${Number(day)} 마감`}
                 </p>
             </div>
 
             <span
-                className={`absolute top-[15px] right-[27px] rounded-[13px] px-[7px] py-[6px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
+                className={`text-label-strong absolute top-[15px] right-[27px] rounded-[13px] px-[7px] py-[6px] ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
             >
                 {item.dDay === 0 ? "D-Day" : `D-${item.dDay}`}
             </span>
@@ -405,8 +399,8 @@ const DeadlineCard = ({ item }: { item: CalendarDayElement }) => {
 
 const CalendarEmptyState = () => (
     <div className="border-line mt-[21px] flex min-h-[152px] flex-col items-center justify-center rounded-[20px] border bg-white px-6 text-center">
-        <p className="text-[16px] font-bold">예정된 마감 지원금이 없어요</p>
-        <p className="text-text-muted mt-2 text-[13px] leading-normal font-medium">
+        <p className="text-title">예정된 마감 지원금이 없어요</p>
+        <p className="text-text-muted text-label-medium mt-2">
             다른 날짜나 달을 선택해 확인해보세요
         </p>
     </div>

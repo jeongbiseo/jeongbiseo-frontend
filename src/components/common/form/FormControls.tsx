@@ -8,7 +8,7 @@ export const FieldLabel = ({
     spacing?: "default" | "onboarding";
 }) => (
     <h2
-        className={`${spacing === "onboarding" ? "mt-7 mb-2.5" : "mt-6 mb-2"} text-[13px] font-bold`}
+        className={`${spacing === "onboarding" ? "mt-7 mb-2.5" : "mt-6 mb-2"} text-label-strong`}
     >
         {children}
     </h2>
@@ -22,9 +22,9 @@ export const InlineLoadState = ({
     onRetry: () => void;
 }) => (
     <div className="mt-2 flex items-center justify-between gap-3" role="alert">
-        <p className="text-danger text-[12px] font-semibold">{message}</p>
+        <p className="text-danger text-caption-strong">{message}</p>
         <button
-            className="text-primary shrink-0 cursor-pointer text-[12px] font-bold"
+            className="text-primary text-caption-strong shrink-0 cursor-pointer"
             type="button"
             onClick={onRetry}
         >
@@ -51,7 +51,7 @@ export const FormSelect = <T extends string | number>({
     size?: "default" | "onboarding" | "compact";
 }) => (
     <select
-        className={`${border === "soft" ? "border-[0.5px] border-[#d8d8d8]" : border === "strong" ? "border-[0.5px] border-[#808080]" : "border-line-strong border"} ${size === "onboarding" ? "h-[50px]" : size === "compact" ? "h-[47px]" : "h-[48px]"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled w-full cursor-pointer rounded-[10px] bg-white px-3 text-[13px] font-bold outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
+        className={`${border === "soft" ? "border-[0.5px] border-[#d8d8d8]" : border === "strong" ? "border-[0.5px] border-[#808080]" : "border-line-strong border"} ${size === "onboarding" ? "h-[50px]" : size === "compact" ? "h-[47px]" : "h-[48px]"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled text-label-strong w-full cursor-pointer rounded-[10px] bg-white px-3 outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
         value={value}
         aria-label={ariaLabel}
         disabled={disabled}

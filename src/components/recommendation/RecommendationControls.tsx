@@ -56,7 +56,7 @@ export const RecommendationControls = ({
             <header className={searchOpen ? "px-[25px]" : "px-[26px]"}>
                 {cameFromMyPage && <BackButton label="마이페이지로 돌아가기" />}
                 <div className="flex items-center justify-between px-0">
-                    <h1 className="text-[24px] leading-none font-bold">
+                    <h1 className="text-heading-page">
                         {searchOpen ? "검색" : "지원금 전체보기"}
                     </h1>
                     <button
@@ -74,7 +74,7 @@ export const RecommendationControls = ({
                         <SearchIcon className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2" />
                         <input
                             ref={searchInputRef}
-                            className="focus:border-primary focus-visible:outline-primary h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 text-[13px] font-bold outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
+                            className="focus:border-primary focus-visible:outline-primary text-label-strong h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
                             aria-label="지원금 검색"
                             value={query}
                             placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -89,7 +89,7 @@ export const RecommendationControls = ({
                     <div className="recommendation-search-enter mt-[14px] flex items-center gap-[9px] px-px">
                         {recommendationSearchKeywords.map((keyword) => (
                             <button
-                                className="bg-third h-[37px] cursor-pointer rounded-full px-[13px] text-[16px] font-bold text-white"
+                                className="bg-third text-body-sm-strong h-[37px] cursor-pointer rounded-full px-[13px] text-white"
                                 type="button"
                                 key={keyword}
                                 onClick={() => onQueryChange(keyword)}
@@ -104,7 +104,7 @@ export const RecommendationControls = ({
                             const selected = activeTab === key;
                             return (
                                 <button
-                                    className={`h-[39px] cursor-pointer rounded-[10px] text-[16px] font-bold transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
+                                    className={`text-body-sm-strong h-[39px] cursor-pointer rounded-[10px] transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
                                     type="button"
                                     key={key}
                                     aria-pressed={selected}
@@ -120,7 +120,7 @@ export const RecommendationControls = ({
                 {!searchOpen && (
                     <div className="mt-[21px] flex items-center justify-between">
                         <button
-                            className="flex cursor-pointer items-center gap-1 text-[16px] font-bold"
+                            className="text-body-sm-strong flex cursor-pointer items-center gap-1"
                             type="button"
                             aria-haspopup="dialog"
                             onClick={onOpenSort}
@@ -129,7 +129,7 @@ export const RecommendationControls = ({
                             <ChevronDownIcon />
                         </button>
 
-                        <label className="flex cursor-pointer items-center gap-2 text-[16px] font-bold">
+                        <label className="text-body-sm-strong flex cursor-pointer items-center gap-2">
                             중복허용
                             <input
                                 className="peer sr-only"
@@ -191,7 +191,7 @@ export const RecommendationSortSheet = ({
                     {recommendationSortOptions.map(({ key, label }) => (
                         <li className="border-line border-b" key={key}>
                             <button
-                                className="flex h-[46px] w-full cursor-pointer items-center justify-between text-[16px] font-bold"
+                                className="text-body-sm-strong flex h-[46px] w-full cursor-pointer items-center justify-between"
                                 type="button"
                                 aria-pressed={sortOption === key}
                                 onClick={() => onSelect(key)}

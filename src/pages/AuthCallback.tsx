@@ -83,7 +83,7 @@ const AuthCallback = () => {
             <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col items-center justify-center px-6">
                 {error ? (
                     <>
-                        <p className="text-text-muted text-center text-[16px] font-medium">
+                        <p className="text-text-muted text-body-sm text-center">
                             {error}
                         </p>
                         <Button
@@ -96,7 +96,7 @@ const AuthCallback = () => {
                         </Button>
                     </>
                 ) : (
-                    <p className="text-text-muted text-[16px] font-medium">
+                    <p className="text-text-muted text-body-sm">
                         로그인 중이에요...
                     </p>
                 )}

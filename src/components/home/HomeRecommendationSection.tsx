@@ -23,11 +23,8 @@ export const HomeSection = ({
         className={`ml-[7px] w-[calc(100%-14px)] max-w-[328px] ${className ?? ""}`}
     >
         <div className="flex items-center justify-between">
-            <h2 className="text-[24px] leading-normal font-bold">{title}</h2>
-            <Link
-                className="text-text-muted text-[16px] leading-none font-bold"
-                to={to}
-            >
+            <h2 className="text-heading-section">{title}</h2>
+            <Link className="text-body-sm-strong text-text-muted" to={to}>
                 {linkLabel}
             </Link>
         </div>
@@ -63,10 +60,10 @@ const RecommendationCard = ({
             state={{ bottomNavPath: "/" }}
         >
             <div className="pr-[76px]">
-                <p className="text-text-subtle text-[13px] leading-none font-bold">
+                <p className="text-label-medium text-text-subtle">
                     {recommendation.agency}
                 </p>
-                <h3 className="mt-[6px] truncate text-[16px] leading-none font-bold">
+                <h3 className="text-title mt-[6px] truncate">
                     {recommendation.name}
                 </h3>
                 <RecommendationAssessment
@@ -77,12 +74,12 @@ const RecommendationCard = ({
                     }
                 />
                 {recommendation.uncomputable && (
-                    <p className="text-warning mt-2 truncate text-[11px] leading-none font-semibold">
+                    <p className="text-label text-warning mt-2 truncate">
                         {recommendation.uncomputableReasons[0] ??
                             "세부 조건을 추가로 확인해주세요"}
                     </p>
                 )}
-                <p className="text-success mt-3 truncate text-[16px] leading-none font-bold">
+                <p className="text-body-strong text-success mt-3 truncate">
                     {formatAmountRange(
                         recommendation.estimatedAmountMin,
                         recommendation.estimatedAmountMax
@@ -91,12 +88,12 @@ const RecommendationCard = ({
             </div>
 
             <span
-                className={`absolute top-[15px] right-[21px] rounded-[13px] px-[7px] py-[6px] text-[13px] leading-none font-bold ${badgeClassName}`}
+                className={`text-label-strong absolute top-[15px] right-[21px] rounded-[13px] px-[7px] py-[6px] ${badgeClassName}`}
             >
                 {badgeLabel}
             </span>
             {recommendation.deadline && (
-                <span className="text-text-muted absolute right-[21px] bottom-[16px] text-[13px] leading-none font-medium">
+                <span className="text-label text-text-muted absolute right-[21px] bottom-[16px]">
                     {formatDeadline(recommendation.deadline)}
                 </span>
             )}
@@ -120,7 +117,7 @@ export const HomeRecommendationContent = ({
             />
         ))}
         {recommendations.length === 0 && (
-            <p className="text-text-muted py-6 text-center text-[13px] font-semibold">
+            <p className="text-body-sm text-text-muted py-6 text-center">
                 아직 조건에 맞는 지원금이 없어요
             </p>
         )}

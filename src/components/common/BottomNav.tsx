@@ -36,7 +36,7 @@ const BottomNav = ({ activePath }: { activePath?: string }) => (
                         }
                     >
                         <Icon className="size-[27px]" />
-                        <span className="text-center text-[11px] leading-none font-bold text-black/40">
+                        <span className="text-caption-strong text-center text-black/40">
                             {label}
                         </span>
                     </NavLink>

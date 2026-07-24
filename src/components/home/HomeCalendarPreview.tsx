@@ -50,12 +50,12 @@ export const HomeCalendarPreview = ({
 
     return (
         <article className="ml-[15px] h-[267px] w-[calc(100%-23px)] max-w-[305px] rounded-[20px] bg-white px-4 pt-4 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
-            <header className="flex items-center gap-2 text-[13px] font-bold">
+            <header className="text-label-strong flex items-center gap-2">
                 <span>{year}년</span>
                 <span>{month}월</span>
             </header>
 
-            <div className="text-text-muted mt-[13px] grid grid-cols-7 text-center text-[13px] leading-none font-bold">
+            <div className="text-label-medium text-text-muted mt-[13px] grid grid-cols-7 text-center">
                 {WEEK_DAYS.map((day) => (
                     <span key={day}>{day}</span>
                 ))}
@@ -70,7 +70,7 @@ export const HomeCalendarPreview = ({
 
                     return (
                         <button
-                            className={`relative flex h-[36.8px] cursor-pointer items-center justify-center rounded-full text-[13px] font-bold ${
+                            className={`text-label-medium relative flex h-[36.8px] cursor-pointer items-center justify-center rounded-full ${
                                 muted
                                     ? "text-text-strong/15"
                                     : isSelected

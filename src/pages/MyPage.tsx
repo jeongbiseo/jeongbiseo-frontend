@@ -220,10 +220,10 @@ const MyPage = () => {
                 >
                     <span className="bg-secondary size-[46px] shrink-0 rounded-full" />
                     <span className="ml-[18px] min-w-0 flex-1">
-                        <strong className="block text-[16px]">
+                        <strong className="text-title block">
                             {user?.name ?? "사용자"} 님
                         </strong>
-                        <span className="text-text-subtle mt-1.5 block truncate text-[13px] font-bold">
+                        <span className="text-text-subtle text-label-strong mt-1.5 block truncate">
                             {profileStatus === "ready" && profile
                                 ? `소셜 계정 · ${profile.sido.replace("특별시", "")} ${profile.sigungu} · ${employmentLabel}`
                                 : profileStatus === "error"
@@ -238,7 +238,7 @@ const MyPage = () => {
 
                 {profileStatus === "error" && (
                     <button
-                        className="text-primary mt-2 w-full text-center text-[13px] font-bold"
+                        className="text-primary text-label-strong mt-2 w-full text-center"
                         type="button"
                         onClick={() =>
                             setProfileReloadKey((previous) => previous + 1)
@@ -264,11 +264,11 @@ const MyPage = () => {
                             }
                         >
                             <strong
-                                className={`block text-[28px] leading-none ${item.emphasized ? "text-success" : "text-black"}`}
+                                className={`text-heading-page block ${item.emphasized ? "text-success" : "text-black"}`}
                             >
                                 {item.value}
                             </strong>
-                            <span className="text-text-muted mt-2 block text-[13px] font-bold">
+                            <span className="text-text-muted text-label-strong mt-2 block">
                                 {item.label}
                             </span>
                         </button>
@@ -277,11 +277,11 @@ const MyPage = () => {
 
                 {summaryStatus === "error" && (
                     <div className="mt-3 text-center">
-                        <p className="text-text-muted text-[12px] font-semibold">
+                        <p className="text-text-muted text-caption-strong">
                             일부 건수를 불러오지 못했어요
                         </p>
                         <button
-                            className="text-primary mt-1 text-[13px] font-bold"
+                            className="text-primary text-label-strong mt-1"
                             type="button"
                             onClick={() =>
                                 setSummaryReloadKey((previous) => previous + 1)
@@ -300,7 +300,7 @@ const MyPage = () => {
                         >
                             {group.map((item, index) => (
                                 <button
-                                    className={`flex h-[60px] w-full cursor-pointer items-center justify-between px-[29px] text-left text-[20px] font-semibold ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
+                                    className={`text-body-strong flex h-[60px] w-full cursor-pointer items-center justify-between px-[29px] text-left ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
                                     type="button"
                                     key={item.label}
                                     onClick={() => handleMenuClick(item)}

@@ -33,14 +33,12 @@ export const HomeSummaryCard = ({
             <SummaryDecoration />
 
             <div className="relative z-10">
-                <p className="text-[16px] leading-normal font-bold">
-                    지금 신청 가능한 지원금
-                </p>
-                <p className="mt-[13px] text-[36px] leading-normal font-bold tracking-[-0.02em]">
+                <p className="text-title">지금 신청 가능한 지원금</p>
+                <p className="text-display-number mt-[13px]">
                     {total.totalCount}건
                 </p>
 
-                <div className="mt-[13px] flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] font-bold">
+                <div className="text-label-strong mt-[13px] flex flex-wrap items-center gap-x-3 gap-y-2">
                     <span>
                         {hasConfirmedAmount
                             ? `금액 확정 ${total.itemCount}건`
@@ -60,7 +58,7 @@ export const HomeSummaryCard = ({
                         `금액 미확정 ${unconfirmed}`,
                     ].map((label) => (
                         <span
-                            className="rounded-full bg-[#32e5a9] px-2 py-[5px] text-[12px] leading-none font-bold whitespace-nowrap"
+                            className="text-caption-strong rounded-full bg-[#32e5a9] px-2 py-[5px] whitespace-nowrap"
                             key={label}
                         >
                             {label}
@@ -68,12 +66,10 @@ export const HomeSummaryCard = ({
                     ))}
                 </div>
 
-                <p className="mt-[11px] text-[11px] leading-none font-medium">
-                    {total.notice}
-                </p>
+                <p className="text-label mt-[11px]">{total.notice}</p>
 
                 <Link
-                    className="mt-[13px] flex w-fit items-center gap-[5px] text-[13px] leading-none font-bold"
+                    className="text-label-strong mt-[13px] flex w-fit items-center gap-[5px]"
                     to="/available-policies"
                 >
                     지원금 살펴보기

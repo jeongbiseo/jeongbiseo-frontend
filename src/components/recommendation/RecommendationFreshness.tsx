@@ -30,12 +30,12 @@ export const RecommendationFreshness = ({
             role={isStale ? "note" : undefined}
         >
             <p
-                className={`text-[11px] font-semibold ${isStale ? "text-warning" : "text-text-muted"}`}
+                className={`text-label-medium ${isStale ? "text-warning" : "text-text-muted"}`}
             >
                 데이터 기준 {updatedAtFormatter.format(updatedAt)}
             </p>
             {isStale && (
-                <p className="text-text-body mt-1 text-[11px] leading-[1.4] font-medium">
+                <p className="text-text-body text-label mt-1">
                     최신 데이터 갱신이 지연되고 있어요. 신청 전 공식 공고를
                     확인해주세요.
                 </p>

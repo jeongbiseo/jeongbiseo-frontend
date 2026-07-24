@@ -64,14 +64,12 @@ const Withdrawal = () => {
         <>
             <MyPageLayout className="px-[39px] pt-[39px]">
                 <BackButton className="-ml-[7px]" />
-                <h1 className="mt-0 -ml-[7px] text-[24px] font-bold">
-                    회원 탈퇴
-                </h1>
+                <h1 className="text-heading-page mt-0 -ml-[7px]">회원 탈퇴</h1>
 
-                <h2 className="mt-8 text-[16px] font-bold">
+                <h2 className="text-title mt-8">
                     탈퇴하기 전에 꼭 확인해 주세요
                 </h2>
-                <ul className="border-green-normal text-text-muted mt-4 flex min-h-[147px] list-disc flex-col justify-center space-y-3 rounded-[20px] border-[0.5px] bg-white px-10 py-4 text-[13px] leading-[1.45] font-semibold">
+                <ul className="border-green-normal text-text-muted text-label-medium mt-4 flex min-h-[147px] list-disc flex-col justify-center space-y-3 rounded-[20px] border-[0.5px] bg-white px-10 py-4">
                     <li>
                         탈퇴 시 기존에 보관했던 즐겨찾기 내역이 모두 삭제되며,
                         복구할 수 없습니다
@@ -82,13 +80,13 @@ const Withdrawal = () => {
                     </li>
                 </ul>
 
-                <h2 className="mt-8 text-[16px] font-bold">
+                <h2 className="text-title mt-8">
                     탈퇴하시는 이유가 궁금해요(선택)
                 </h2>
                 <div className="border-green-normal mt-3 flex h-[94px] flex-col justify-center rounded-[20px] border-[0.5px] bg-white px-[30px] py-2">
                     {withdrawalReasons.map((reason) => (
                         <label
-                            className={`flex cursor-pointer items-center gap-3 py-1 text-[13px] font-bold ${selectedReasons.includes(reason) ? "text-black" : "text-text-muted"}`}
+                            className={`text-label-strong flex cursor-pointer items-center gap-3 py-1 ${selectedReasons.includes(reason) ? "text-black" : "text-text-muted"}`}
                             key={reason}
                         >
                             <input
@@ -108,7 +106,7 @@ const Withdrawal = () => {
                     ))}
                 </div>
 
-                <label className="border-green-normal mt-7 flex min-h-[68px] cursor-pointer items-center gap-4 rounded-[15px] border-[0.5px] bg-white px-5 py-4 text-[13px] leading-[1.45] font-bold">
+                <label className="border-green-normal text-label-strong mt-7 flex min-h-[68px] cursor-pointer items-center gap-4 rounded-[15px] border-[0.5px] bg-white px-5 py-4">
                     <input
                         className="peer sr-only"
                         type="checkbox"
@@ -126,7 +124,7 @@ const Withdrawal = () => {
                 </label>
 
                 <button
-                    className="bg-danger disabled:bg-danger-disabled mt-36 h-[40px] w-full cursor-pointer rounded-[10px] text-[16px] font-bold text-white disabled:cursor-not-allowed"
+                    className="bg-danger disabled:bg-danger-disabled text-body-sm-strong mt-36 h-[40px] w-full cursor-pointer rounded-[10px] text-white disabled:cursor-not-allowed"
                     type="button"
                     disabled={!noticeAgreed || withdrawing}
                     onClick={() => setConfirmOpen(true)}

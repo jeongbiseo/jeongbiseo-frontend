@@ -144,19 +144,19 @@ const AvailablePolicies = () => {
         <main className="bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[29px] pt-[29px] pb-[96px]">
                 <BackButton className="-ml-1" />
-                <h1 className="mt-[2px] ml-[10px] text-[24px] leading-normal font-bold">
+                <h1 className="text-heading-page mt-[2px] ml-[10px]">
                     지금 신청 가능한 지원금
                 </h1>
 
                 {state.status === "loading" && (
-                    <p className="text-text-muted mt-10 text-center text-[13px] font-bold">
+                    <p className="text-text-muted text-label-strong mt-10 text-center">
                         불러오는 중이에요...
                     </p>
                 )}
 
                 {state.status === "error" && (
                     <div className="mt-10 text-center">
-                        <p className="text-text-muted text-[13px] font-bold">
+                        <p className="text-text-muted text-label-strong">
                             정보를 불러오지 못했어요.
                         </p>
                         <Button
@@ -204,18 +204,18 @@ const AvailablePoliciesContent = ({
     return (
         <>
             <div className="mt-[9px] rounded-[15px] px-[10px] py-[8px]">
-                <p className="text-text-muted text-[13px] leading-normal font-bold">
+                <p className="text-text-muted text-label-strong">
                     전체{" "}
-                    <strong className="text-text-strong text-[16px]">
+                    <strong className="text-text-strong text-title">
                         {sections.totalCount}건
                     </strong>{" "}
                     중 금액 확정{" "}
-                    <strong className="text-text-strong text-[16px]">
+                    <strong className="text-text-strong text-title">
                         {sections.confirmedCount}건
                     </strong>{" "}
                     · 합계 최대 {sections.confirmedMaximum}
                 </p>
-                <p className="text-text-muted/50 mt-[7px] text-[11px] leading-normal font-medium">
+                <p className="text-text-muted/50 text-caption mt-[7px]">
                     {notice}
                 </p>
                 <div className="mt-[11px] flex items-center gap-[14px]">
@@ -280,7 +280,7 @@ const CountBadge = ({
 
     return (
         <span
-            className={`rounded-full px-2 py-[5px] text-[12px] leading-normal font-bold whitespace-nowrap ${toneClassNames[tone]}`}
+            className={`text-caption-strong rounded-full px-2 py-[5px] whitespace-nowrap ${toneClassNames[tone]}`}
         >
             {children}
         </span>
@@ -297,9 +297,7 @@ const PolicyListSection = ({
     className?: string;
 }) => (
     <section className={className}>
-        <h2 className="text-text-muted ml-[9px] text-[16px] leading-normal font-bold">
-            {title}
-        </h2>
+        <h2 className="text-text-muted text-title ml-[9px]">{title}</h2>
         {items.length > 0 ? (
             <div className="mx-auto mt-[14px] flex w-full max-w-[306px] flex-col gap-[14px]">
                 {items.map((item) => (
@@ -307,7 +305,7 @@ const PolicyListSection = ({
                 ))}
             </div>
         ) : (
-            <p className="text-text-muted mt-5 text-center text-[13px] font-bold">
+            <p className="text-text-muted text-label-strong mt-5 text-center">
                 표시할 지원금이 없습니다.
             </p>
         )}

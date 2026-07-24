@@ -32,12 +32,10 @@ export const RecommendationPolicyCard = ({
                 to={`/policies/${policy.id}`}
                 state={{ bottomNavPath: "/recommend" }}
             >
-                <p className="pr-10 text-[13px] leading-none font-bold text-[#8e98a8]">
+                <p className="text-label-medium pr-10 text-[#8e98a8]">
                     {policy.organization}
                 </p>
-                <h2 className="mt-[6px] pr-10 text-[16px] leading-tight font-bold">
-                    {policy.title}
-                </h2>
+                <h2 className="text-title mt-[6px] pr-10">{policy.title}</h2>
                 {hasAssessment && (
                     <RecommendationAssessment
                         className="mt-3"
@@ -48,16 +46,16 @@ export const RecommendationPolicyCard = ({
                     />
                 )}
                 {policy.eligibilitySummary && (
-                    <p className="text-text-muted mt-2 line-clamp-2 text-[11px] leading-[1.45] font-medium whitespace-pre-line">
+                    <p className="text-text-muted text-label mt-2 line-clamp-2 whitespace-pre-line">
                         {policy.eligibilitySummary}
                     </p>
                 )}
                 <div className="mt-3 flex items-end justify-between gap-3">
-                    <p className="text-green-dark text-[16px] leading-none font-bold">
+                    <p className="text-green-dark text-body-strong">
                         {policy.amountLabel ?? "산정 불가"}
                     </p>
                     <span
-                        className={`shrink-0 rounded-[13px] px-[9px] py-[6px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : scheduled ? "bg-green-light text-green-dark" : "bg-disabled text-text-muted"}`}
+                        className={`text-label-strong shrink-0 rounded-[13px] px-[9px] py-[6px] ${urgent ? "bg-danger-light text-danger" : scheduled ? "bg-green-light text-green-dark" : "bg-disabled text-text-muted"}`}
                     >
                         {policy.deadlineLabel}
                     </span>

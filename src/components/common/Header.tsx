@@ -26,7 +26,7 @@ const Header = ({ title, showBack = false, onBack, right }: HeaderProps) => {
     };
 
     return (
-        <header className="flex h-[34px] w-full items-center justify-between">
+        <header className="flex min-h-9 w-full items-center justify-between">
             <div className="flex min-w-0 flex-1 items-center gap-2">
                 {showBack && (
                     <button
@@ -52,9 +52,7 @@ const Header = ({ title, showBack = false, onBack, right }: HeaderProps) => {
                     </button>
                 )}
                 {title && (
-                    <h1 className="truncate text-[24px] leading-none font-bold">
-                        {title}
-                    </h1>
+                    <h1 className="text-heading-page truncate">{title}</h1>
                 )}
             </div>
 

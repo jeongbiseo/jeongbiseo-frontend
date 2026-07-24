@@ -13,9 +13,7 @@ export const RouteLoading = ({
                 className="border-disabled border-t-primary size-9 animate-spin rounded-full border-[3px]"
                 aria-hidden="true"
             />
-            <p className="text-text-muted mt-4 text-[13px] font-bold">
-                {message}
-            </p>
+            <p className="text-text-muted text-label-strong mt-4">{message}</p>
         </section>
     </main>
 );

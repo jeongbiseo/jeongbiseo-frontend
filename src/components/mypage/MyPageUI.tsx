@@ -140,12 +140,10 @@ export const ConfirmDialog = ({
                 aria-modal="true"
                 aria-labelledby="confirm-dialog-title"
             >
-                <h2 className="text-[16px] font-bold" id="confirm-dialog-title">
+                <h2 className="text-title" id="confirm-dialog-title">
                     {title}
                 </h2>
-                <p
-                    className={`text-text-muted text-[13px] font-bold ${external ? "mt-[11px] leading-normal" : "mt-[11px]"}`}
-                >
+                <p className="text-text-muted text-label-strong mt-[11px]">
                     {description}
                 </p>
                 <div
@@ -153,14 +151,14 @@ export const ConfirmDialog = ({
                 >
                     <button
                         data-dialog-initial-focus
-                        className="border-text-muted h-[26px] cursor-pointer rounded-[5px] border-[0.5px] px-[14px] text-[13px] font-bold"
+                        className="border-text-muted text-label-strong h-[26px] cursor-pointer rounded-[5px] border-[0.5px] px-[14px]"
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className="bg-green-normal h-[26px] cursor-pointer rounded-[5px] px-[14px] text-[13px] font-bold text-white"
+                        className="bg-green-normal text-label-strong h-[26px] cursor-pointer rounded-[5px] px-[14px] text-white"
                         type="button"
                         onClick={onConfirm}
                     >

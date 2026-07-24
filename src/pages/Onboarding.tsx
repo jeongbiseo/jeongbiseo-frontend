@@ -213,7 +213,7 @@ const Onboarding = () => {
                         style={{ width: `${(step / 3) * 100}%` }}
                     />
                 </div>
-                <p className="text-text-subtle mt-2 text-[13px] font-bold">
+                <p className="text-text-subtle text-label-strong mt-2">
                     {step}/3 단계
                 </p>
 
@@ -240,7 +240,7 @@ const Onboarding = () => {
                 </div>
 
                 {errors.root && (
-                    <p className="text-danger mt-4 text-center text-[13px] font-semibold">
+                    <p className="text-danger text-label-medium mt-4 text-center">
                         {errors.root.message}
                     </p>
                 )}
@@ -254,7 +254,7 @@ const Onboarding = () => {
                 </Button>
                 {step > 1 && (
                     <button
-                        className="mx-auto mt-4 cursor-pointer text-[12px] text-[#9a9a9a] underline underline-offset-2 disabled:opacity-50"
+                        className="text-caption mx-auto mt-4 cursor-pointer text-[#9a9a9a] underline underline-offset-2 disabled:opacity-50"
                         type="button"
                         disabled={isSubmitting}
                         onClick={handleSkip}

@@ -42,9 +42,9 @@ export const HomeSectionError = ({
         className={`flex flex-col items-center justify-center bg-white px-6 text-center ${className}`}
         role="alert"
     >
-        <p className="text-text-muted text-[13px] font-bold">{message}</p>
+        <p className="text-body-sm text-text-muted">{message}</p>
         <button
-            className="border-primary text-primary mt-4 h-9 rounded-full border px-5 text-[12px] font-bold"
+            className="text-label-strong border-primary text-primary mt-4 min-h-9 rounded-full border px-5"
             type="button"
             onClick={onRetry}
         >

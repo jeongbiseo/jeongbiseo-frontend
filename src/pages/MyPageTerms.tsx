@@ -103,19 +103,19 @@ const MyPageTerms = () => {
         <>
             <MyPageLayout className="px-[31px] pt-[31px]">
                 <BackButton className="ml-0" />
-                <h1 className="mt-0 text-[24px] font-bold">
+                <h1 className="text-heading-page mt-0">
                     이용약관 · 개인정보처리방침
                 </h1>
 
                 {status === "loading" && (
-                    <p className="text-text-muted mt-10 text-center text-[13px] font-bold">
+                    <p className="text-text-muted text-label-strong mt-10 text-center">
                         약관 정보를 불러오는 중이에요...
                     </p>
                 )}
 
                 {status === "error" && (
                     <div className="mt-10 text-center">
-                        <p className="text-text-muted text-[13px] font-bold">
+                        <p className="text-text-muted text-label-strong">
                             약관 정보를 불러오지 못했어요.
                         </p>
                         <Button
@@ -140,10 +140,10 @@ const MyPageTerms = () => {
                                 onClick={() => setSelectedTerm(term.key)}
                             >
                                 <span>
-                                    <strong className="block text-[16px]">
+                                    <strong className="text-title block">
                                         {term.label}
                                     </strong>
-                                    <span className="text-text-muted mt-2 block text-[13px] font-bold">
+                                    <span className="text-text-muted text-label-strong mt-2 block">
                                         {getConsentLabel(term.type)}
                                     </span>
                                 </span>
@@ -156,7 +156,7 @@ const MyPageTerms = () => {
                 )}
 
                 {status === "ready" && (
-                    <label className="border-green-normal mx-[7px] mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border-[0.5px] bg-white px-5 text-[16px] font-bold">
+                    <label className="border-green-normal text-body-sm-strong mx-[7px] mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border-[0.5px] bg-white px-5">
                         마케팅 정보 수신 동의
                         <input
                             className="peer sr-only"
@@ -244,12 +244,12 @@ const TermsDetailSheet = ({
                     <div className="mt-5 flex items-start justify-between gap-4">
                         <div>
                             <h2
-                                className="text-[20px] font-bold"
+                                className="text-heading-section"
                                 id="terms-detail-title"
                             >
                                 {title}
                             </h2>
-                            <p className="text-text-subtle mt-1 text-[13px] font-bold">
+                            <p className="text-text-subtle text-label-strong mt-1">
                                 버전 1.0.0 · 최종 수정 2026.06.01
                             </p>
                         </div>
@@ -265,25 +265,23 @@ const TermsDetailSheet = ({
                 </div>
 
                 <div className="terms-detail-scrollbar min-h-0 overflow-y-auto px-6 pb-10">
-                    <p className="text-text-body mt-6 text-[13px] leading-[1.7]">
+                    <p className="text-text-body text-label mt-6">
                         {detail.summary}
                     </p>
                     <div className="mt-6 flex flex-col gap-6">
                         {detail.sections.map((section) => (
                             <section key={section.title}>
-                                <h3 className="text-[16px] font-bold">
-                                    {section.title}
-                                </h3>
+                                <h3 className="text-title">{section.title}</h3>
                                 {section.paragraphs?.map((paragraph) => (
                                     <p
-                                        className="text-text-secondary mt-2 text-[13px] leading-[1.7]"
+                                        className="text-text-secondary text-label mt-2"
                                         key={paragraph}
                                     >
                                         {paragraph}
                                     </p>
                                 ))}
                                 {section.bullets && (
-                                    <ul className="text-text-secondary mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6]">
+                                    <ul className="text-text-secondary text-label mt-2 list-disc space-y-1.5 pl-5">
                                         {section.bullets.map((bullet) => (
                                             <li key={bullet}>{bullet}</li>
                                         ))}

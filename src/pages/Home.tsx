@@ -179,10 +179,10 @@ const Home = () => {
         <main className="bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-5 pt-5 pb-[104px]">
                 <header className="px-[7px]">
-                    <p className="text-text-muted text-[16px] leading-normal font-bold">
+                    <p className="text-body-sm-strong text-text-muted">
                         {user?.name ?? "회원"}님, 반가워요
                     </p>
-                    <h1 className="mt-[10px] text-[24px] leading-[1.25] font-bold whitespace-pre-line">
+                    <h1 className="text-heading-page mt-[10px] whitespace-pre-line">
                         {"지금 신청 가능한 지원금을\n모아봤어요"}
                     </h1>
                 </header>

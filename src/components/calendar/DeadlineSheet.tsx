@@ -70,10 +70,10 @@ const DeadlineSheet = ({
                 <header
                     className={`${isCalendarPage ? "mt-[17px]" : "mt-[25px]"} flex w-[335px] max-w-full shrink-0 items-end justify-between`}
                 >
-                    <h2 className="text-[16px] leading-none font-bold">
+                    <h2 className="text-title">
                         {Number(month)}월 {Number(day)}일 마감
                     </h2>
-                    <span className="text-[13px] leading-none font-bold text-black/30">
+                    <span className="text-label-strong text-black/30">
                         {items.length}건
                     </span>
                 </header>
@@ -106,17 +106,17 @@ const DeadlineSheet = ({
                                         {isCalendarPage ? (
                                             <>
                                                 <span
-                                                    className={`flex h-[43px] w-[45px] shrink-0 items-center justify-center rounded-[20px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
+                                                    className={`text-label-strong flex h-[43px] w-[45px] shrink-0 items-center justify-center rounded-[20px] ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
                                                 >
                                                     {item.dDay === 0
                                                         ? "D-0"
                                                         : `D-${item.dDay}`}
                                                 </span>
                                                 <span className="ml-[11px] min-w-0 flex-1">
-                                                    <strong className="block truncate text-[13px] leading-normal font-bold">
+                                                    <strong className="text-label-strong block truncate">
                                                         {item.name}
                                                     </strong>
-                                                    <span className="mt-1 block text-[13px] leading-normal font-bold text-black/50">
+                                                    <span className="text-label-strong mt-1 block text-black/50">
                                                         {Number(month)}.
                                                         {Number(day)} 마감
                                                     </span>
@@ -125,11 +125,11 @@ const DeadlineSheet = ({
                                             </>
                                         ) : (
                                             <>
-                                                <span className="block truncate text-[16px] leading-normal font-bold">
+                                                <span className="text-title block truncate">
                                                     {item.name}
                                                 </span>
                                                 <span
-                                                    className={`absolute top-[22px] right-[21px] rounded-[13px] px-[7px] py-[6px] text-[13px] leading-none font-bold ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
+                                                    className={`text-label-strong absolute top-[22px] right-[21px] rounded-[13px] px-[7px] py-[6px] ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
                                                 >
                                                     {item.dDay === 0
                                                         ? "D-0"
@@ -143,7 +143,7 @@ const DeadlineSheet = ({
                         })}
                     </ul>
                 ) : (
-                    <p className="text-text-muted mt-8 text-center text-[13px] font-medium">
+                    <p className="text-text-muted text-label-medium mt-8 text-center">
                         이 날짜에 마감되는 지원금이 없어요
                     </p>
                 )}

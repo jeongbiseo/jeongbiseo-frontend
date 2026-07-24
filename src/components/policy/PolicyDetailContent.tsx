@@ -50,10 +50,10 @@ export const PolicyDetailContent = ({
             <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[39px] pt-[39px] pb-[104px]">
                 <article className="border-primary bg-green-light relative min-h-[124px] rounded-[10px] border-[0.5px] px-[21px] pt-[18px] pb-[15px]">
                     <div className="pr-8">
-                        <h1 className="text-green-darker text-[24px] leading-normal font-bold">
+                        <h1 className="text-green-darker text-heading-page">
                             {subsidy.name}
                         </h1>
-                        <p className="text-text-subtle mt-0.5 text-[13px] leading-normal font-bold">
+                        <p className="text-text-subtle text-label-strong mt-0.5">
                             {subsidy.agency ?? "담당기관 정보 없음"}
                             {categoryLabel ? ` / ${categoryLabel}` : ""}
                         </p>
@@ -83,7 +83,7 @@ export const PolicyDetailContent = ({
                             .filter((tag): tag is string => Boolean(tag))
                             .map((tag) => (
                                 <span
-                                    className="bg-third rounded-full px-[10px] py-[6px] text-[13px] leading-none font-bold text-white"
+                                    className="bg-third text-label-strong rounded-full px-[10px] py-[6px] text-white"
                                     key={tag}
                                 >
                                     {tag}
@@ -98,7 +98,7 @@ export const PolicyDetailContent = ({
                         expanded={openSections.has("eligibility")}
                         onToggle={() => onToggleSection("eligibility")}
                     >
-                        <p className="text-text-muted text-[13px] leading-[1.6] font-medium whitespace-pre-line">
+                        <p className="text-text-muted text-label-medium whitespace-pre-line">
                             {subsidy.eligibilityText ??
                                 "자격조건 정보가 없습니다."}
                         </p>
@@ -177,8 +177,8 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
                 className="bg-surface-soft mt-4 rounded-[10px] p-3"
                 role="status"
             >
-                <h3 className="text-[12px] font-bold">AI 해석 준비 중</h3>
-                <p className="text-text-muted mt-1.5 text-[11px] leading-[1.5] font-medium">
+                <h3 className="text-caption-strong">AI 해석 준비 중</h3>
+                <p className="text-text-muted text-caption mt-1.5">
                     검증된 AI 해석이 준비되기 전까지 기존 금액 정보를
                     제공해드려요.
                 </p>
@@ -189,7 +189,7 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
     const explanation = subsidy.aiExplanation;
     return (
         <div className="bg-surface-soft mt-4 rounded-[10px] p-3">
-            <h3 className="text-[12px] font-bold">AI 금액 해석 근거</h3>
+            <h3 className="text-caption-strong">AI 금액 해석 근거</h3>
             <DetailRows
                 rows={[
                     ...(explanation.amountValue !== null
@@ -227,7 +227,7 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
                 ]}
             />
             {explanation.evidence && (
-                <p className="text-text-muted mt-3 text-[11px] leading-[1.5] font-medium whitespace-pre-line">
+                <p className="text-text-muted text-caption mt-3 whitespace-pre-line">
                     근거: {explanation.evidence}
                 </p>
             )}
@@ -253,9 +253,7 @@ const PolicyAccordion = ({
             aria-expanded={expanded}
             onClick={onToggle}
         >
-            <span className="text-[20px] leading-normal font-bold">
-                {title}
-            </span>
+            <span className="text-heading-section">{title}</span>
             <ChevronDownIcon expanded={expanded} className="h-3 w-[19px]" />
         </button>
         <div
@@ -275,7 +273,7 @@ const DetailRows = ({
 }: {
     rows: Array<{ label: string; value: string }>;
 }) => (
-    <dl className="text-text-muted flex flex-col gap-2 text-[13px] leading-normal font-bold">
+    <dl className="text-text-muted text-label-strong flex flex-col gap-2">
         {rows.map(({ label, value }) => (
             <div className="flex items-start justify-between gap-4" key={label}>
                 <dt className="shrink-0">{label}</dt>

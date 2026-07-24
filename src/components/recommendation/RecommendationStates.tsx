@@ -10,12 +10,12 @@ export const RecommendationSkeleton = () => (
 
 export const LoadErrorState = ({ onRetry }: { onRetry: () => void }) => (
     <div className="mx-auto mt-14 w-full max-w-[330px] px-[14px] text-center">
-        <h2 className="text-[20px] font-bold">추천 정보를 불러오지 못했어요</h2>
-        <p className="text-text-muted mt-2 text-[13px] font-bold">
+        <h2 className="text-heading-section">추천 정보를 불러오지 못했어요</h2>
+        <p className="text-text-muted text-body-sm mt-2">
             잠시 후 다시 시도해주세요
         </p>
         <button
-            className="bg-primary mt-5 cursor-pointer rounded-[12px] px-5 py-3 text-[13px] font-bold text-white"
+            className="bg-primary text-label-strong mt-5 cursor-pointer rounded-[12px] px-5 py-3 text-white"
             type="button"
             onClick={onRetry}
         >
@@ -30,13 +30,13 @@ export const EmptyRecommendation = ({
     onEditProfile: () => void;
 }) => (
     <div className="mx-auto mt-6 w-full max-w-[330px]">
-        <h2 className="text-[20px] font-bold">추천 지원금 0건</h2>
-        <p className="text-text-muted mt-2 text-[13px] font-bold">
+        <h2 className="text-heading-section">추천 지원금 0건</h2>
+        <p className="text-text-muted text-body-sm mt-2">
             현재 입력하신 조건에 맞는 지원금을 찾지 못했어요
         </p>
-        <div className="border-primary mx-auto mt-[25px] h-[216px] w-full max-w-[302px] rounded-[20px] border-[0.5px] px-[21px] pt-6">
-            <h3 className="text-[20px] font-bold">이런 이유일 수 있어요</h3>
-            <ol className="text-text-muted mt-[15px] list-decimal space-y-[15px] pl-5 text-[13px] leading-normal font-bold">
+        <div className="border-primary mx-auto mt-[25px] min-h-[216px] w-full max-w-[302px] rounded-[20px] border-[0.5px] px-[21px] pt-6 pb-6">
+            <h3 className="text-title">이런 이유일 수 있어요</h3>
+            <ol className="text-text-muted text-body-sm mt-[15px] list-decimal space-y-[15px] pl-5">
                 <li>
                     거주지·고용상태·연령 조건이 지원 자격과 맞지 않을 수 있어요.
                 </li>
@@ -51,7 +51,7 @@ export const EmptyRecommendation = ({
             </ol>
         </div>
         <button
-            className="bg-primary mx-auto mt-[25px] block h-[55px] w-full max-w-[302px] cursor-pointer rounded-[15px] text-[20px] font-bold text-white shadow-[3px_11px_8px_var(--color-green-light-active)] active:scale-[0.99]"
+            className="bg-primary text-body-strong mx-auto mt-[25px] block h-[55px] w-full max-w-[302px] cursor-pointer rounded-[15px] text-white shadow-[3px_11px_8px_var(--color-green-light-active)] active:scale-[0.99]"
             type="button"
             onClick={onEditProfile}
         >
@@ -68,10 +68,8 @@ export const SimpleEmptyState = ({
     description: string;
 }) => (
     <div className="mx-auto mt-14 w-full max-w-[330px] px-[14px] text-center">
-        <h2 className="text-[20px] font-bold">{title}</h2>
-        <p className="text-text-muted mt-2 text-[13px] font-bold">
-            {description}
-        </p>
+        <h2 className="text-heading-section">{title}</h2>
+        <p className="text-text-muted text-body-sm mt-2">{description}</p>
     </div>
 );
 
@@ -84,10 +82,8 @@ export const SearchEmptyState = () => (
             <SearchIcon className="size-[39px]" />
         </div>
         <div className="flex w-full max-w-[313px] flex-col items-center gap-[15px]">
-            <h2 className="text-[24px] leading-none font-bold">
-                검색 내역이 없어요
-            </h2>
-            <p className="text-text-muted text-[20px] leading-normal font-semibold">
+            <h2 className="text-heading-page">검색 내역이 없어요</h2>
+            <p className="text-text-muted text-body">
                 단어의 철자나 띄어쓰기가 맞는지
                 <br />
                 다시 확인해 주세요
@@ -103,10 +99,10 @@ export const FavoriteEmptyState = () => (
     >
         <FavoriteStarIcon />
         <div className="mt-[45px] flex w-full flex-col gap-[15px]">
-            <h2 className="text-[24px] leading-none font-bold">
+            <h2 className="text-heading-page">
                 아직 즐겨찾기한 지원금이 없어요
             </h2>
-            <p className="text-text-muted text-[20px] leading-normal font-semibold">
+            <p className="text-text-muted text-body">
                 마음에 드는 지원금을 담아보세요
             </p>
         </div>

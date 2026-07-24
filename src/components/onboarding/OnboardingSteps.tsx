@@ -153,7 +153,7 @@ export const OnboardingStepOne = ({
                             ))}
                         </Select>
                         {fieldState.error && (
-                            <p className="text-danger col-span-3 mt-1 text-[12px] font-semibold">
+                            <p className="text-danger text-caption-strong col-span-3 mt-1">
                                 {fieldState.error.message}
                             </p>
                         )}
@@ -161,7 +161,7 @@ export const OnboardingStepOne = ({
                 )}
             />
         </div>
-        <div className="bg-green-light-hover text-green-normal-hover mt-3 flex h-[36px] items-center rounded-[10px] px-4 text-[13px] font-bold">
+        <div className="bg-green-light-hover text-green-normal-hover text-label-strong mt-3 flex h-[36px] items-center rounded-[10px] px-4">
             만 {age}세로 계산돼요
         </div>
 
@@ -265,7 +265,7 @@ export const OnboardingStepOne = ({
                         const selected = field.value === value;
                         return (
                             <button
-                                className={`relative h-[45px] cursor-pointer rounded-[10px] border-[0.5px] text-[13px] font-bold ${selected ? "border-green-normal-hover bg-green-light-hover text-green-normal-hover" : "border-[#808080] bg-white"}`}
+                                className={`text-label-strong relative h-[45px] cursor-pointer rounded-[10px] border-[0.5px] ${selected ? "border-green-normal-hover bg-green-light-hover text-green-normal-hover" : "border-[#808080] bg-white"}`}
                                 type="button"
                                 key={value}
                                 aria-pressed={selected}
@@ -283,7 +283,7 @@ export const OnboardingStepOne = ({
                 </div>
             )}
         />
-        <div className="bg-warning-light text-warning mt-4 flex min-h-[59px] items-center rounded-[10px] px-4 text-[13px] leading-[1.45] font-bold">
+        <div className="bg-warning-light text-warning text-label-strong mt-4 flex min-h-[59px] items-center rounded-[10px] px-4">
             연령, 거주지, 고용상태는 지원금 추천 조건 매칭에 꼭 필요한
             <br />
             필수 정보예요
@@ -352,7 +352,7 @@ export const OnboardingStepTwo = ({
                         >
                             −
                         </CounterButton>
-                        <span className="text-[16px] font-bold">{size}명</span>
+                        <span className="text-body-sm-strong">{size}명</span>
                         <CounterButton
                             size="compact"
                             label="가구원 수 늘리기"
@@ -468,7 +468,7 @@ export const OnboardingStepThree = ({
                     />
                 </svg>
                 <input
-                    className="focus:border-primary focus-visible:outline-primary h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] bg-white pr-4 pl-11 text-[13px] font-bold outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
+                    className="focus:border-primary focus-visible:outline-primary text-label-strong h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] bg-white pr-4 pl-11 outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
                     aria-label="기수령 지원금 검색"
                     value={query}
                     placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -485,7 +485,7 @@ export const OnboardingStepThree = ({
                     })),
                 ].map(({ label, value }) => (
                     <button
-                        className={`shrink-0 cursor-pointer rounded-full px-[10px] py-[6px] text-[13px] leading-[16px] font-bold whitespace-nowrap ${selectedCategory === value ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
+                        className={`text-label-strong shrink-0 cursor-pointer rounded-full px-[10px] py-[6px] whitespace-nowrap ${selectedCategory === value ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
                         type="button"
                         key={value ?? "all"}
                         aria-pressed={selectedCategory === value}
@@ -496,7 +496,7 @@ export const OnboardingStepThree = ({
                 ))}
             </div>
             {categoryStatus === "loading" && categories.length === 0 && (
-                <p className="text-text-muted mt-2 text-[12px] font-semibold">
+                <p className="text-text-muted text-caption-strong mt-2">
                     카테고리를 불러오는 중이에요
                 </p>
             )}
@@ -554,11 +554,11 @@ export const OnboardingStepThree = ({
                                         {selected && "✓"}
                                     </span>
                                     <span>
-                                        <strong className="block text-[16px]">
+                                        <strong className="text-title block">
                                             {subsidy.name}
                                         </strong>
                                         {subsidy.agency && (
-                                            <span className="text-text-subtle mt-[6px] block text-[13px] font-bold">
+                                            <span className="text-text-subtle text-label-strong mt-[6px] block">
                                                 {subsidy.agency}
                                             </span>
                                         )}
@@ -568,7 +568,7 @@ export const OnboardingStepThree = ({
                         })}
 
                         {subsidies.length === 0 && (
-                            <p className="py-8 text-center text-[13px] text-[#999]">
+                            <p className="text-label py-8 text-center text-[#999]">
                                 {searching
                                     ? "지원금을 불러오는 중이에요"
                                     : "검색 결과가 없어요"}
@@ -591,10 +591,8 @@ const StepHeading = ({
     description: string;
 }) => (
     <header>
-        <p className="text-primary text-[13px] font-bold">{eyebrow}</p>
-        <h1 className="mt-2 text-[24px] leading-[1.25] font-bold">{title}</h1>
-        <p className="text-text-subtle mt-2 text-[13px] font-bold">
-            {description}
-        </p>
+        <p className="text-primary text-label-strong">{eyebrow}</p>
+        <h1 className="text-heading-page mt-2">{title}</h1>
+        <p className="text-text-subtle text-label-strong mt-2">{description}</p>
     </header>
 );
