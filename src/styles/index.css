@@ -9,6 +9,18 @@
     text-rendering: optimizeLegibility;
 }
 
+/* 캐럿 탐색이 일반 텍스트에 입력 커서처럼 표시되지 않도록 숨깁니다. */
+body {
+    caret-color: transparent;
+}
+
+/* 실제 텍스트 입력 영역에서는 입력 위치를 확인할 수 있어야 합니다. */
+input,
+textarea,
+[contenteditable]:not([contenteditable="false"]) {
+    caret-color: auto;
+}
+
 @theme {
     /* 폰트 */
     --font-sans:
