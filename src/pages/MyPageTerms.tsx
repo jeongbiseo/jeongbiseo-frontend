@@ -211,61 +211,65 @@ const TermsDetailSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="max-h-[86svh] w-full max-w-[390px] overflow-y-auto rounded-t-[28px] bg-white px-6 pt-4 pb-10"
+                className="flex max-h-[86svh] w-full max-w-[390px] flex-col overflow-hidden rounded-t-[28px] bg-white"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="terms-detail-title"
             >
-                <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
-                <div className="mt-5 flex items-start justify-between gap-4">
-                    <div>
-                        <h2
-                            className="text-[20px] font-bold"
-                            id="terms-detail-title"
+                <div className="shrink-0 px-6 pt-4">
+                    <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
+                    <div className="mt-5 flex items-start justify-between gap-4">
+                        <div>
+                            <h2
+                                className="text-[20px] font-bold"
+                                id="terms-detail-title"
+                            >
+                                {title}
+                            </h2>
+                            <p className="text-text-subtle mt-1 text-[13px] font-bold">
+                                버전 1.0.0 · 최종 수정 2026.06.01
+                            </p>
+                        </div>
+                        <button
+                            data-dialog-initial-focus
+                            className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
+                            type="button"
+                            aria-label="약관 상세 닫기"
+                            onClick={onClose}
                         >
-                            {title}
-                        </h2>
-                        <p className="text-text-subtle mt-1 text-[13px] font-bold">
-                            버전 1.0.0 · 최종 수정 2026.06.01
-                        </p>
+                            ×
+                        </button>
                     </div>
-                    <button
-                        data-dialog-initial-focus
-                        className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
-                        type="button"
-                        aria-label="약관 상세 닫기"
-                        onClick={onClose}
-                    >
-                        ×
-                    </button>
                 </div>
 
-                <p className="text-text-body mt-6 text-[13px] leading-[1.7]">
-                    {detail.summary}
-                </p>
-                <div className="mt-6 flex flex-col gap-6">
-                    {detail.sections.map((section) => (
-                        <section key={section.title}>
-                            <h3 className="text-[16px] font-bold">
-                                {section.title}
-                            </h3>
-                            {section.paragraphs?.map((paragraph) => (
-                                <p
-                                    className="text-text-secondary mt-2 text-[13px] leading-[1.7]"
-                                    key={paragraph}
-                                >
-                                    {paragraph}
-                                </p>
-                            ))}
-                            {section.bullets && (
-                                <ul className="text-text-secondary mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6]">
-                                    {section.bullets.map((bullet) => (
-                                        <li key={bullet}>{bullet}</li>
-                                    ))}
-                                </ul>
-                            )}
-                        </section>
-                    ))}
+                <div className="terms-detail-scrollbar min-h-0 overflow-y-auto px-6 pb-10">
+                    <p className="text-text-body mt-6 text-[13px] leading-[1.7]">
+                        {detail.summary}
+                    </p>
+                    <div className="mt-6 flex flex-col gap-6">
+                        {detail.sections.map((section) => (
+                            <section key={section.title}>
+                                <h3 className="text-[16px] font-bold">
+                                    {section.title}
+                                </h3>
+                                {section.paragraphs?.map((paragraph) => (
+                                    <p
+                                        className="text-text-secondary mt-2 text-[13px] leading-[1.7]"
+                                        key={paragraph}
+                                    >
+                                        {paragraph}
+                                    </p>
+                                ))}
+                                {section.bullets && (
+                                    <ul className="text-text-secondary mt-2 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6]">
+                                        {section.bullets.map((bullet) => (
+                                            <li key={bullet}>{bullet}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </section>
+                        ))}
+                    </div>
                 </div>
             </section>
         </div>
