@@ -155,14 +155,14 @@ export const ConfirmDialog = ({
                 >
                     <button
                         data-dialog-initial-focus
-                        className="border-text-muted text-label-strong rounded-control px-container min-h-11 cursor-pointer border-[0.5px]"
+                        className="border-text-muted text-label-strong rounded-control px-container-compact min-h-11 cursor-pointer border-[0.5px]"
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className="bg-green-normal text-label-strong rounded-control px-container min-h-11 cursor-pointer text-white"
+                        className="bg-green-normal text-label-strong rounded-control px-container-compact min-h-11 cursor-pointer text-white"
                         type="button"
                         onClick={onConfirm}
                     >

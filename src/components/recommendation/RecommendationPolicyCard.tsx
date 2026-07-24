@@ -32,10 +32,10 @@ export const RecommendationPolicyCard = ({
                 to={`/policies/${policy.id}`}
                 state={{ bottomNavPath: "/recommend" }}
             >
-                <p className="text-label-medium pr-10 text-[#8e98a8]">
+                <p className="text-label-medium pr-12 text-[#8e98a8]">
                     {policy.organization}
                 </p>
-                <h2 className="text-title mt-layout-tight pr-10">
+                <h2 className="text-title mt-layout-tight pr-12">
                     {policy.title}
                 </h2>
                 {hasAssessment && (
@@ -70,7 +70,7 @@ export const RecommendationPolicyCard = ({
             </Link>
 
             <button
-                className="focus-visible:outline-primary absolute top-3 right-4 flex size-8 cursor-pointer items-center justify-center focus-visible:rounded focus-visible:outline-2 disabled:cursor-wait disabled:opacity-60"
+                className="focus-visible:outline-primary rounded-control absolute top-0.5 right-0.5 flex size-11 cursor-pointer items-center justify-center focus-visible:outline-2 disabled:cursor-wait disabled:opacity-60"
                 type="button"
                 disabled={favoriteUpdating}
                 aria-busy={favoriteUpdating}
@@ -87,7 +87,7 @@ export const RecommendationPolicyCard = ({
 };
 
 const StarIcon = ({ filled }: { filled: boolean }) => (
-    <svg className="size-icon-md" viewBox="0 0 24 24" aria-hidden="true">
+    <svg className="size-7" viewBox="0 0 24 24" aria-hidden="true">
         <path
             d="m12 1.8 3.1 6.3 7 .9-5.1 4.9 1.3 6.9-6.3-3.3-6.3 3.3 1.3-6.9L1.9 9l7-.9L12 1.8Z"
             fill={filled ? "var(--color-secondary)" : "var(--color-disabled)"}
