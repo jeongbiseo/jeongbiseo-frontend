@@ -73,12 +73,12 @@ npm run preview
 
 소셜 로그인 제공자 콘솔에는 다음 Redirect URI를 등록합니다.
 
-| 환경       | 카카오                                                       | Google                                                        |
-| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------- |
-| Local      | `http://localhost:5173/auth/callback/kakao`                  | `http://localhost:5173/auth/callback/google`                  |
-| Production | `https://jeongbiseo-frontend.vercel.app/auth/callback/kakao` | `https://jeongbiseo-frontend.vercel.app/auth/callback/google` |
+| 환경       | 카카오                                          | Google                                           |
+| ---------- | ----------------------------------------------- | ------------------------------------------------ |
+| Local      | `http://localhost:5173/auth/callback/kakao`     | `http://localhost:5173/auth/callback/google`     |
+| Production | `https://app.cartlab.store/auth/callback/kakao` | `https://app.cartlab.store/auth/callback/google` |
 
-Vercel Production 환경의 `VITE_APP_URL`은 `https://jeongbiseo-frontend.vercel.app`으로 설정합니다. Preview 배포에서 소셜 로그인을 사용하려면 해당 Preview Origin도 각 제공자 콘솔에 별도로 등록해야 합니다.
+Vercel Production 환경의 `VITE_APP_URL`은 `https://app.cartlab.store`로 설정합니다. 운영 빌드는 다른 Origin으로 접근하면 현재 경로와 쿼리를 유지한 채 이 주소로 이동해 OAuth 임시 정보가 서로 다른 도메인에 나뉘지 않도록 합니다. Preview 배포에서 소셜 로그인을 사용하려면 Preview Origin과 Redirect URI를 제공자 콘솔에 별도로 등록하고 Preview 전용 `VITE_APP_URL`을 설정해야 합니다.
 
 ## 💻 개발 환경 설정 (필수!)
 

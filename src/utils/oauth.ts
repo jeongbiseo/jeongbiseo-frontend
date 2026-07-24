@@ -35,7 +35,7 @@ const STORAGE_PREFIX = "oauth:";
 
 type PendingOAuth = { codeVerifier: string; state: string };
 
-const getAppOrigin = () => {
+export const getAppOrigin = () => {
     const configuredOrigin = import.meta.env.VITE_APP_URL?.trim().replace(
         /\/+$/,
         ""
