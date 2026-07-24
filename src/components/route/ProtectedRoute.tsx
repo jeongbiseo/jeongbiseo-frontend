@@ -12,6 +12,7 @@ import { Navigate, useLocation } from "react-router-dom";
 
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     const isLogin = useAuthStore((state) => state.isLogin);
+    const user = useAuthStore((state) => state.user);
     const authInitialized = useAuthStore((state) => state.authInitialized);
     const location = useLocation();
 
@@ -23,6 +24,14 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
     // 부팅 이후 로그인 상태가 아니면, 로그인 페이지로 이동
     if (!isLogin) {
         return <Navigate to="/login" replace state={{ from: location }} />;
+    }
+
+    const onboardingFlow =
+        location.pathname === "/terms" || location.pathname === "/onboarding";
+
+    // 온보딩 전에는 홈 API가 호출되기 전에 가입 절차로 되돌립니다.
+    if (!user?.onboardingCompleted && !onboardingFlow) {
+        return <Navigate to="/terms" replace />;
     }
 
     return children;
