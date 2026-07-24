@@ -355,7 +355,7 @@ export const MyPageProfileForm = ({
                 </div>
 
                 <button
-                    className="bg-green-normal mt-[14px] h-[39px] w-[190px] cursor-pointer rounded-[15px] text-[16px] font-bold text-white shadow-[3px_2px_7px_var(--color-green-light-active)]"
+                    className="bg-green-normal mx-auto mt-[14px] block h-[39px] w-[190px] cursor-pointer rounded-[15px] text-[16px] font-bold text-white shadow-[3px_2px_7px_var(--color-green-light-active)]"
                     type="button"
                     disabled={receivedLoading || receivedError}
                     onClick={onOpenBenefitSheet}
