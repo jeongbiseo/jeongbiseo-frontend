@@ -19,9 +19,16 @@ import { getCalendarApi } from "@/api/calendarApi";
 import { getRecommendationsApi } from "@/api/recommendationApi";
 import DeadlineSheet from "@/components/calendar/DeadlineSheet";
 import { HomeCalendarPreview } from "@/components/home/HomeCalendarPreview";
-import { HomeErrorState, HomeSkeleton } from "@/components/home/HomeLoadState";
 import {
-    HomeRecommendationSection,
+    HomeCalendarError,
+    HomeCalendarSkeleton,
+    HomeRecommendationError,
+    HomeRecommendationSkeleton,
+    HomeSummaryError,
+    HomeSummarySkeleton,
+} from "@/components/home/HomeLoadState";
+import {
+    HomeRecommendationContent,
     HomeSection,
 } from "@/components/home/HomeRecommendationSection";
 import { HomeSummaryCard } from "@/components/home/HomeSummaryCard";
@@ -34,77 +41,139 @@ import type {
 import type { RecommendationItem } from "@/types/recommendation";
 import { useEffect, useState } from "react";
 
-type HomeData = {
+type SummaryData = {
     total: EstimatedTotalResult;
     breakdown: EstimatedBreakdownResult;
-    recommendations: RecommendationItem[];
-    recommendationDataUpdatedAt: string;
-    calendar: CalendarResult | null;
 };
 
-type HomeState =
-    | { status: "loading" }
-    | { status: "error" }
-    | { status: "ready"; data: HomeData };
+type RecommendationData = {
+    recommendations: RecommendationItem[];
+    recommendationDataUpdatedAt: string;
+};
+
+type SectionState<T> =
+    { status: "loading" } | { status: "error" } | { status: "ready"; data: T };
 
 const Home = () => {
     const user = useAuthStore((state) => state.user);
-    const [state, setState] = useState<HomeState>({ status: "loading" });
+    const [summaryState, setSummaryState] = useState<SectionState<SummaryData>>(
+        { status: "loading" }
+    );
+    const [recommendationState, setRecommendationState] = useState<
+        SectionState<RecommendationData>
+    >({ status: "loading" });
+    const [calendarState, setCalendarState] = useState<
+        SectionState<CalendarResult>
+    >({ status: "loading" });
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
-    const [reloadKey, setReloadKey] = useState(0);
+    const [summaryReloadKey, setSummaryReloadKey] = useState(0);
+    const [recommendationReloadKey, setRecommendationReloadKey] = useState(0);
+    const [calendarReloadKey, setCalendarReloadKey] = useState(0);
 
     useEffect(() => {
         let active = true;
 
-        const load = async () => {
-            const today = new Date();
-
+        const loadSummary = async () => {
             try {
-                const [total, breakdown, recommendations] = await Promise.all([
+                const [total, breakdown] = await Promise.all([
                     getEstimatedTotalApi(),
                     getEstimatedBreakdownApi(),
-                    getRecommendationsApi(3),
                 ]);
-
-                // 캘린더는 실패해도 홈 전체가 막히지 않도록 따로 처리합니다.
-                const calendar = await getCalendarApi(
-                    today.getFullYear(),
-                    today.getMonth() + 1
-                ).catch(() => null);
 
                 if (!active) return;
 
-                if (
-                    !total.isSuccess ||
-                    !breakdown.isSuccess ||
-                    !recommendations.isSuccess
-                ) {
-                    setState({ status: "error" });
-                    return;
+                if (!total.isSuccess || !breakdown.isSuccess) {
+                    throw new Error("예상 지원금 조회에 실패했습니다.");
                 }
 
-                setState({
+                setSummaryState({
                     status: "ready",
                     data: {
                         total: total.result,
                         breakdown: breakdown.result,
-                        recommendations: recommendations.result.items,
-                        recommendationDataUpdatedAt:
-                            recommendations.result.dataUpdatedAt,
-                        calendar: calendar?.isSuccess ? calendar.result : null,
                     },
                 });
-            } catch {
-                if (active) setState({ status: "error" });
+            } catch (error) {
+                console.error(error);
+                if (active) setSummaryState({ status: "error" });
             }
         };
 
-        void load();
+        void loadSummary();
 
         return () => {
             active = false;
         };
-    }, [reloadKey]);
+    }, [summaryReloadKey]);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadRecommendations = async () => {
+            try {
+                const response = await getRecommendationsApi(3);
+
+                if (!active) return;
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                setRecommendationState({
+                    status: "ready",
+                    data: {
+                        recommendations: response.result.items,
+                        recommendationDataUpdatedAt:
+                            response.result.dataUpdatedAt,
+                    },
+                });
+            } catch (error) {
+                console.error(error);
+                if (active) setRecommendationState({ status: "error" });
+            }
+        };
+
+        void loadRecommendations();
+
+        return () => {
+            active = false;
+        };
+    }, [recommendationReloadKey]);
+
+    useEffect(() => {
+        let active = true;
+
+        const loadCalendar = async () => {
+            const today = new Date();
+
+            try {
+                const response = await getCalendarApi(
+                    today.getFullYear(),
+                    today.getMonth() + 1
+                );
+
+                if (!active) return;
+
+                if (!response.isSuccess) {
+                    throw new Error(response.message);
+                }
+
+                setCalendarState({
+                    status: "ready",
+                    data: response.result,
+                });
+            } catch (error) {
+                console.error(error);
+                if (active) setCalendarState({ status: "error" });
+            }
+        };
+
+        void loadCalendar();
+
+        return () => {
+            active = false;
+        };
+    }, [calendarReloadKey]);
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
@@ -118,54 +187,87 @@ const Home = () => {
                     </h1>
                 </header>
 
-                {state.status === "loading" && <HomeSkeleton />}
-
-                {state.status === "error" && (
-                    <HomeErrorState
+                {summaryState.status === "loading" && <HomeSummarySkeleton />}
+                {summaryState.status === "error" && (
+                    <HomeSummaryError
                         onRetry={() => {
-                            setState({ status: "loading" });
-                            setReloadKey((key) => key + 1);
+                            setSummaryState({ status: "loading" });
+                            setSummaryReloadKey((key) => key + 1);
                         }}
                     />
                 )}
+                {summaryState.status === "ready" && (
+                    <HomeSummaryCard
+                        total={summaryState.data.total}
+                        breakdown={summaryState.data.breakdown}
+                    />
+                )}
 
-                {state.status === "ready" && (
-                    <>
-                        <HomeSummaryCard
-                            total={state.data.total}
-                            breakdown={state.data.breakdown}
+                <HomeSection
+                    className="mt-[37px]"
+                    title="AI 추천 지원금"
+                    linkLabel="전체보기"
+                    to="/recommend"
+                >
+                    {recommendationState.status === "loading" && (
+                        <HomeRecommendationSkeleton />
+                    )}
+                    {recommendationState.status === "error" && (
+                        <HomeRecommendationError
+                            onRetry={() => {
+                                setRecommendationState({ status: "loading" });
+                                setRecommendationReloadKey((key) => key + 1);
+                            }}
                         />
-
-                        <HomeRecommendationSection
-                            recommendations={state.data.recommendations}
+                    )}
+                    {recommendationState.status === "ready" && (
+                        <HomeRecommendationContent
+                            recommendations={
+                                recommendationState.data.recommendations
+                            }
                             dataUpdatedAt={
-                                state.data.recommendationDataUpdatedAt
+                                recommendationState.data
+                                    .recommendationDataUpdatedAt
                             }
                         />
+                    )}
+                </HomeSection>
 
-                        <HomeSection
-                            className="mt-[37px]"
-                            title="마감 캘린더"
-                            linkLabel="자세히 보기"
-                            to="/calendar"
-                        >
-                            <div className="pt-2">
-                                <HomeCalendarPreview
-                                    calendar={state.data.calendar}
-                                    selectedDate={selectedDate}
-                                    onSelectDate={setSelectedDate}
-                                />
-                            </div>
-                        </HomeSection>
-                    </>
-                )}
+                <HomeSection
+                    className="mt-[37px]"
+                    title="마감 캘린더"
+                    linkLabel="자세히 보기"
+                    to="/calendar"
+                >
+                    {calendarState.status === "loading" && (
+                        <HomeCalendarSkeleton />
+                    )}
+                    {calendarState.status === "error" && (
+                        <HomeCalendarError
+                            onRetry={() => {
+                                setSelectedDate(null);
+                                setCalendarState({ status: "loading" });
+                                setCalendarReloadKey((key) => key + 1);
+                            }}
+                        />
+                    )}
+                    {calendarState.status === "ready" && (
+                        <div className="pt-2">
+                            <HomeCalendarPreview
+                                calendar={calendarState.data}
+                                selectedDate={selectedDate}
+                                onSelectDate={setSelectedDate}
+                            />
+                        </div>
+                    )}
+                </HomeSection>
             </section>
 
-            {selectedDate && state.status === "ready" && (
+            {selectedDate && calendarState.status === "ready" && (
                 <DeadlineSheet
                     date={selectedDate}
                     items={
-                        state.data.calendar?.days.find(
+                        calendarState.data.days.find(
                             ({ date }) => date === selectedDate
                         )?.items ?? []
                     }
