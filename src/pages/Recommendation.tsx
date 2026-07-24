@@ -147,20 +147,18 @@ const Recommendation = () => {
     const [favoritePolicies, setFavoritePolicies] = useState<
         RecommendationPolicy[]
     >([]);
-    const [favoritesLoading, setFavoritesLoading] = useState(false);
+    const [favoritesLoading, setFavoritesLoading] = useState(true);
     const [favoritesError, setFavoritesError] = useState(false);
     const [favoritesReloadKey, setFavoritesReloadKey] = useState(0);
-    const [favoritesInitialized, setFavoritesInitialized] = useState(false);
     const favoriteIdsRef = useRef<Set<number>>(new Set());
     const [favoriteUpdatingIds, setFavoriteUpdatingIds] = useState<Set<number>>(
         () => new Set()
     );
-    const [receivedIds, setReceivedIds] = useState<number[]>([]);
     const receivedIdsRef = useRef<Set<number>>(new Set());
     const [receivedStatus, setReceivedStatus] = useState<
         "loading" | "ready" | "error"
     >("loading");
-    const [receivedReloadKey, setReceivedReloadKey] = useState(0);
+    const allLoadMoreRequestRef = useRef(0);
     const [activeTab, setActiveTab] = useState<RecommendationTab>(() =>
         getInitialTab(searchParams.get("tab"))
     );
@@ -186,21 +184,17 @@ const Recommendation = () => {
     }, [activeTab, allPolicies, favoritePolicies, recommendedPolicies]);
 
     const loading =
-        receivedStatus === "loading" ||
-        favoritesLoading ||
-        (activeTab === "recommended"
+        activeTab === "recommended"
             ? recommendationLoading
             : activeTab === "all"
               ? allLoading && allPolicies.length === 0
-              : false);
+              : favoritesLoading;
     const loadError =
-        receivedStatus === "error" ||
-        favoritesError ||
-        (activeTab === "recommended"
+        activeTab === "recommended"
             ? recommendationError
             : activeTab === "all"
               ? allError
-              : false);
+              : favoritesError;
 
     const visiblePolicies = useMemo(() => {
         const normalizedQuery = query.replace(/\s+/g, "").toLowerCase();
@@ -317,14 +311,18 @@ const Recommendation = () => {
                 const markReceived = (previous: RecommendationPolicy[]) =>
                     reconcileReceivedPolicies(previous, idSet);
 
-                setReceivedIds(ids);
                 setRecommendedPolicies(markReceived);
                 setAllPolicies(markReceived);
                 setFavoritePolicies(markReceived);
                 setReceivedStatus("ready");
             } catch (error) {
                 console.error(error);
-                if (active) setReceivedStatus("error");
+                if (active) {
+                    setReceivedStatus("error");
+                    setToastMessage(
+                        "기수령 지원금 상태를 불러오지 못했습니다."
+                    );
+                }
             }
         };
 
@@ -333,11 +331,9 @@ const Recommendation = () => {
         return () => {
             active = false;
         };
-    }, [receivedReloadKey]);
+    }, []);
 
     useEffect(() => {
-        if (!favoritesInitialized) return;
-
         let active = true;
 
         const loadRecommendations = async () => {
@@ -357,9 +353,14 @@ const Recommendation = () => {
                 if (!active) return;
 
                 const favoriteIds = [...favoriteIdsRef.current];
+                const currentReceivedIds = [...receivedIdsRef.current];
                 setRecommendedPolicies(
                     response.result.items.map((item) =>
-                        toRecommendationPolicy(item, favoriteIds, receivedIds)
+                        toRecommendationPolicy(
+                            item,
+                            favoriteIds,
+                            currentReceivedIds
+                        )
                     )
                 );
                 setRecommendationDataUpdatedAt(response.result.dataUpdatedAt);
@@ -376,20 +377,17 @@ const Recommendation = () => {
         return () => {
             active = false;
         };
-    }, [
-        allowDuplicates,
-        favoritesInitialized,
-        receivedIds,
-        recommendationReloadKey,
-    ]);
+    }, [allowDuplicates, recommendationReloadKey]);
 
     useEffect(() => {
-        if (activeTab !== "all" || !favoritesInitialized) return;
+        if (activeTab !== "all") return;
 
         let active = true;
+        allLoadMoreRequestRef.current += 1;
         const timer = window.setTimeout(() => {
             const loadAllPolicies = async () => {
                 setAllLoading(true);
+                setAllLoadingMore(false);
                 setAllError(false);
 
                 try {
@@ -407,9 +405,10 @@ const Recommendation = () => {
                     if (!active) return;
 
                     const favoriteIds = [...favoriteIdsRef.current];
+                    const currentReceivedIds = [...receivedIdsRef.current];
                     setAllPolicies(
                         response.result.content.map((item) =>
-                            toAllPolicy(item, favoriteIds, receivedIds)
+                            toAllPolicy(item, favoriteIds, currentReceivedIds)
                         )
                     );
                     setAllPage(response.result.page);
@@ -427,20 +426,15 @@ const Recommendation = () => {
 
         return () => {
             active = false;
+            allLoadMoreRequestRef.current += 1;
             window.clearTimeout(timer);
         };
-    }, [
-        activeTab,
-        allReloadKey,
-        favoritesInitialized,
-        query,
-        receivedIds,
-        sortOption,
-    ]);
+    }, [activeTab, allReloadKey, query, sortOption]);
 
     const loadMoreAllPolicies = async () => {
-        if (allLoadingMore || allLast) return;
+        if (allLoading || allLoadingMore || allLast) return;
 
+        const requestId = ++allLoadMoreRequestRef.current;
         setAllLoadingMore(true);
 
         try {
@@ -455,9 +449,12 @@ const Recommendation = () => {
                 throw new Error(response.message);
             }
 
+            if (requestId !== allLoadMoreRequestRef.current) return;
+
             const favoriteIds = [...favoriteIdsRef.current];
+            const currentReceivedIds = [...receivedIdsRef.current];
             const nextPolicies = response.result.content.map((item) =>
-                toAllPolicy(item, favoriteIds, receivedIds)
+                toAllPolicy(item, favoriteIds, currentReceivedIds)
             );
             setAllPolicies((previous) =>
                 mergeUniquePolicies(previous, nextPolicies)
@@ -465,10 +462,13 @@ const Recommendation = () => {
             setAllPage(response.result.page);
             setAllLast(response.result.last);
         } catch (error) {
+            if (requestId !== allLoadMoreRequestRef.current) return;
             console.error(error);
             setToastMessage("지원금을 더 불러오지 못했습니다.");
         } finally {
-            setAllLoadingMore(false);
+            if (requestId === allLoadMoreRequestRef.current) {
+                setAllLoadingMore(false);
+            }
         }
     };
 
@@ -478,7 +478,6 @@ const Recommendation = () => {
         const loadFavorites = async () => {
             setFavoritesLoading(true);
             setFavoritesError(false);
-            setFavoritesInitialized(false);
 
             try {
                 const response = await getFavoritesApi();
@@ -507,10 +506,12 @@ const Recommendation = () => {
                 setAllPolicies((previous) =>
                     reconcilePolicyFavorites(previous, favoriteIdSet)
                 );
-                setFavoritesInitialized(true);
             } catch (error) {
                 console.error(error);
-                if (active) setFavoritesError(true);
+                if (active) {
+                    setFavoritesError(true);
+                    setToastMessage("관심 지원금 상태를 불러오지 못했습니다.");
+                }
             } finally {
                 if (active) setFavoritesLoading(false);
             }
@@ -571,15 +572,7 @@ const Recommendation = () => {
                     ) : loadError ? (
                         <LoadErrorState
                             onRetry={() => {
-                                if (receivedStatus === "error") {
-                                    setReceivedReloadKey(
-                                        (previous) => previous + 1
-                                    );
-                                } else if (favoritesError) {
-                                    setFavoritesReloadKey(
-                                        (previous) => previous + 1
-                                    );
-                                } else if (activeTab === "recommended") {
+                                if (activeTab === "recommended") {
                                     setRecommendationReloadKey(
                                         (previous) => previous + 1
                                     );
@@ -601,9 +594,11 @@ const Recommendation = () => {
                                 <RecommendationPolicyCard
                                     key={policy.id}
                                     policy={policy}
-                                    favoriteUpdating={favoriteUpdatingIds.has(
-                                        policy.id
-                                    )}
+                                    favoriteUpdating={
+                                        favoritesLoading ||
+                                        favoritesError ||
+                                        favoriteUpdatingIds.has(policy.id)
+                                    }
                                     onFavoriteToggle={toggleFavorite}
                                 />
                             ))}
@@ -611,7 +606,7 @@ const Recommendation = () => {
                                 <button
                                     className="border-primary text-primary mt-2 h-[44px] cursor-pointer rounded-[12px] border bg-white text-[13px] font-bold disabled:cursor-not-allowed disabled:opacity-60"
                                     type="button"
-                                    disabled={allLoadingMore}
+                                    disabled={allLoading || allLoadingMore}
                                     onClick={() => void loadMoreAllPolicies()}
                                 >
                                     {allLoadingMore

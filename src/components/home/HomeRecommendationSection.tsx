@@ -104,32 +104,25 @@ const RecommendationCard = ({
     );
 };
 
-export const HomeRecommendationSection = ({
+export const HomeRecommendationContent = ({
     recommendations,
     dataUpdatedAt,
 }: {
     recommendations: RecommendationItem[];
     dataUpdatedAt: string;
 }) => (
-    <HomeSection
-        className="mt-[37px]"
-        title="AI 추천 지원금"
-        linkLabel="전체보기"
-        to="/recommend"
-    >
-        <div className="ml-[15px] flex w-[calc(100%-23px)] max-w-[305px] flex-col gap-[18px]">
-            <RecommendationFreshness dataUpdatedAt={dataUpdatedAt} />
-            {recommendations.map((recommendation) => (
-                <RecommendationCard
-                    key={recommendation.subsidyId}
-                    recommendation={recommendation}
-                />
-            ))}
-            {recommendations.length === 0 && (
-                <p className="text-text-muted py-6 text-center text-[13px] font-semibold">
-                    아직 조건에 맞는 지원금이 없어요
-                </p>
-            )}
-        </div>
-    </HomeSection>
+    <div className="ml-[15px] flex w-[calc(100%-23px)] max-w-[305px] flex-col gap-[18px]">
+        <RecommendationFreshness dataUpdatedAt={dataUpdatedAt} />
+        {recommendations.map((recommendation) => (
+            <RecommendationCard
+                key={recommendation.subsidyId}
+                recommendation={recommendation}
+            />
+        ))}
+        {recommendations.length === 0 && (
+            <p className="text-text-muted py-6 text-center text-[13px] font-semibold">
+                아직 조건에 맞는 지원금이 없어요
+            </p>
+        )}
+    </div>
 );
