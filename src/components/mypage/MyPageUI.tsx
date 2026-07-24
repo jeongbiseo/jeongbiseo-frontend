@@ -127,6 +127,9 @@ export const ConfirmDialog = ({
     if (!open) return null;
 
     const external = variant === "external";
+    const actionButtonSize = external
+        ? "h-11"
+        : "relative h-10 before:absolute before:inset-x-0 before:-inset-y-0.5 before:content-['']";
 
     return (
         <div
@@ -155,14 +158,14 @@ export const ConfirmDialog = ({
                 >
                     <button
                         data-dialog-initial-focus
-                        className="border-text-muted text-label-strong rounded-control px-container-compact min-h-11 cursor-pointer border-[0.5px]"
+                        className={`border-text-muted text-label-strong rounded-control px-container-compact cursor-pointer border-[0.5px] ${actionButtonSize}`}
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className="bg-green-normal text-label-strong rounded-control px-container-compact min-h-11 cursor-pointer text-white"
+                        className={`bg-green-normal text-label-strong rounded-control px-container-compact cursor-pointer text-white ${actionButtonSize}`}
                         type="button"
                         onClick={onConfirm}
                     >

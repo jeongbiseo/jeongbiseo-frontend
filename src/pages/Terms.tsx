@@ -295,7 +295,7 @@ const Terms = () => {
                         </div>
 
                         <button
-                            className="bg-green-normal focus-visible:outline-third text-body-strong rounded-control mt-4 h-[52px] w-full cursor-pointer text-white focus-visible:outline-3 focus-visible:outline-offset-2"
+                            className="bg-green-normal focus-visible:outline-third text-body-strong rounded-control mt-4 h-[52px] w-full shrink-0 cursor-pointer text-white focus-visible:outline-3 focus-visible:outline-offset-2"
                             type="button"
                             onClick={() => setSelectedAgreement(null)}
                         >

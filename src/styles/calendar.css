@@ -63,8 +63,20 @@
 
 /* 오늘: 검정 채움 */
 .jeongbiseo-calendar .react-calendar__tile--now {
-    background: #000;
+    isolation: isolate;
+    background: transparent;
     color: #fff;
+}
+
+.jeongbiseo-calendar .react-calendar__tile--now::before {
+    position: absolute;
+    z-index: -1;
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border-radius: 50%;
+    background: #000;
+    content: "";
 }
 
 /* 선택한 날짜: 최신 디자인처럼 숫자만 초록색으로 강조합니다. */
