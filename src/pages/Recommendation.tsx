@@ -593,7 +593,10 @@ const Recommendation = () => {
                             }}
                         />
                     ) : visiblePolicies.length > 0 ? (
-                        <div className="mx-auto mt-7 flex w-full max-w-[298px] flex-col gap-4">
+                        <div
+                            className="recommendation-tab-fade-in mx-auto mt-7 flex w-full max-w-[298px] flex-col gap-4"
+                            key={activeTab}
+                        >
                             {visiblePolicies.map((policy) => (
                                 <RecommendationPolicyCard
                                     key={policy.id}

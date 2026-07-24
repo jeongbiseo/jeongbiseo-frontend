@@ -47,6 +47,10 @@
     font-size: 13px;
     font-weight: 700;
     line-height: 38px;
+    transition:
+        color 180ms ease-out,
+        background-color 180ms ease-out,
+        transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .jeongbiseo-calendar .react-calendar__tile:enabled:hover,
@@ -67,6 +71,7 @@
     border: 0;
     background: transparent;
     color: var(--color-green-normal-hover);
+    transform: scale(1.08);
 }
 
 .jeongbiseo-calendar .react-calendar__month-view__days__day--weekend {
@@ -98,9 +103,61 @@
     background: var(--color-primary);
 }
 
+.calendar-select-menu {
+    max-height: 208px;
+    scrollbar-width: thin;
+    scrollbar-color: #b8c5c1 transparent;
+    animation: calendar-select-menu-open 160ms cubic-bezier(0.22, 1, 0.36, 1)
+        both;
+}
+
+@keyframes calendar-select-menu-open {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes calendar-month-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.calendar-month-fade-in {
+    animation: calendar-month-fade-in 200ms ease-out both;
+}
+
 /* 검정으로 채워지는 오늘 타일에서는 마커를 흰색으로 표시합니다. */
 .jeongbiseo-calendar
     .react-calendar__tile--now:not(.react-calendar__tile--active)
     .calendar-deadline-marker {
     background: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .calendar-select-menu {
+        animation: none;
+    }
+
+    .calendar-month-fade-in {
+        animation: none;
+    }
+
+    .jeongbiseo-calendar .react-calendar__tile {
+        transition: none;
+    }
+
+    .jeongbiseo-calendar .react-calendar__tile--active {
+        transform: none;
+    }
 }

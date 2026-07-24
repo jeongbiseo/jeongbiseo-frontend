@@ -126,7 +126,7 @@ export const ConfirmDialog = ({
 
     return (
         <div
-            className={`fixed inset-0 z-50 flex items-center justify-center px-9 ${external ? "bg-black/25" : "bg-black/20"}`}
+            className={`confirm-dialog-backdrop-enter fixed inset-0 z-50 flex items-center justify-center px-9 ${external ? "bg-black/25" : "bg-black/20"}`}
             role="presentation"
             onClick={(event) => {
                 if (event.target === event.currentTarget) onCancel();
@@ -135,7 +135,7 @@ export const ConfirmDialog = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`w-full rounded-[10px] bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-[21px] pt-[25px] pb-[13px] text-left" : "min-h-[135px] max-w-[317px] px-10 pt-[22px] pb-[13px] text-center"}`}
+                className={`confirm-dialog-enter w-full rounded-[10px] bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-[21px] pt-[25px] pb-[13px] text-left" : "min-h-[135px] max-w-[317px] px-10 pt-[22px] pb-[13px] text-center"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="confirm-dialog-title"

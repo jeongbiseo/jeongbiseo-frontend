@@ -6,6 +6,7 @@
 import type { CalendarDayElement } from "@/types/calendar";
 import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const DeadlineSheet = ({
@@ -22,32 +23,48 @@ const DeadlineSheet = ({
     onClose: () => void;
 }) => {
     const [, month, day] = date.split("-");
-    const dialogRef = useDialogAccessibility<HTMLElement>(true, onClose);
+    const [closing, setClosing] = useState(false);
     const isCalendarPage = bottomNavPath === "/calendar";
+    const handleClose = () => {
+        if (closing) return;
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            onClose();
+            return;
+        }
+
+        setClosing(true);
+    };
+    const dialogRef = useDialogAccessibility<HTMLElement>(true, handleClose);
 
     return (
         <>
             <button
-                className="fixed inset-0 bottom-[57px] z-20 cursor-default bg-[#bababa]/60"
+                className={`${closing ? "deadline-sheet-backdrop-exit" : "deadline-sheet-backdrop-enter"} fixed inset-0 bottom-[57px] z-20 cursor-default bg-[#bababa]/60`}
                 type="button"
                 aria-label="마감 목록 닫기"
-                onClick={onClose}
+                onClick={handleClose}
             />
 
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`fixed bottom-[57px] left-1/2 z-30 flex max-h-[calc(100svh-57px)] w-full max-w-[390px] -translate-x-1/2 flex-col items-center rounded-t-[30px] bg-white px-[21px] ${isCalendarPage ? "h-[347px] pt-4" : "h-[302px] pt-[22px]"}`}
+                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} fixed bottom-[57px] left-1/2 z-30 flex max-h-[calc(100svh-57px)] w-full max-w-[390px] -translate-x-1/2 flex-col items-center rounded-t-[30px] bg-white px-[21px] ${isCalendarPage ? "h-[347px] pt-4" : "h-[302px] pt-[22px]"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-label={`${Number(month)}월 ${Number(day)}일 마감 목록`}
+                onAnimationEnd={(event) => {
+                    if (closing && event.target === event.currentTarget) {
+                        onClose();
+                    }
+                }}
             >
                 <button
                     data-dialog-initial-focus
                     className="block h-1 w-[39px] shrink-0 cursor-pointer rounded-full bg-[#d9d9d9]"
                     type="button"
                     aria-label="마감 목록 닫기"
-                    onClick={onClose}
+                    onClick={handleClose}
                 />
 
                 <header

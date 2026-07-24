@@ -32,7 +32,7 @@ const BottomNav = ({ activePath }: { activePath?: string }) => (
                         to={to}
                         end={end}
                         className={({ isActive }) =>
-                            `flex flex-col items-center gap-[7px] ${isActive || activePath === to ? "text-black" : "text-third/50"}`
+                            `bottom-nav-link flex flex-col items-center gap-[7px] transition-colors duration-200 ${isActive || activePath === to ? "text-black" : "text-third/50"}`
                         }
                     >
                         <Icon className="size-[27px]" />

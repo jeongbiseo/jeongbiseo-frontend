@@ -130,7 +130,7 @@ const Home = () => {
                 )}
 
                 {state.status === "ready" && (
-                    <>
+                    <div className="content-fade-in">
                         <HomeSummaryCard
                             total={state.data.total}
                             breakdown={state.data.breakdown}
@@ -157,7 +157,7 @@ const Home = () => {
                                 />
                             </div>
                         </HomeSection>
-                    </>
+                    </div>
                 )}
             </section>
 
