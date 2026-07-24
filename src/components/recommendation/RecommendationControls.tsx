@@ -70,7 +70,7 @@ export const RecommendationControls = ({
                 </div>
 
                 {searchOpen && (
-                    <div className="relative mt-4">
+                    <div className="recommendation-search-enter relative mt-4">
                         <SearchIcon className="absolute top-1/2 left-4 size-[18px] -translate-y-1/2" />
                         <input
                             ref={searchInputRef}
@@ -86,7 +86,7 @@ export const RecommendationControls = ({
                 )}
 
                 {searchOpen ? (
-                    <div className="mt-[14px] flex items-center gap-[9px] px-px">
+                    <div className="recommendation-search-enter mt-[14px] flex items-center gap-[9px] px-px">
                         {recommendationSearchKeywords.map((keyword) => (
                             <button
                                 className="bg-third h-[37px] cursor-pointer rounded-full px-[13px] text-[16px] font-bold text-white"
@@ -172,7 +172,7 @@ export const RecommendationSortSheet = ({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-[#bababa]/60"
+            className="recommendation-sort-backdrop-enter fixed inset-0 z-50 flex items-end justify-center bg-[#bababa]/60"
             role="presentation"
             onClick={(event) => {
                 if (event.target === event.currentTarget) onClose();
@@ -181,7 +181,7 @@ export const RecommendationSortSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="w-full max-w-[390px] rounded-t-[30px] bg-white px-[21px] pt-[22px] pb-8"
+                className="recommendation-sort-sheet-enter w-full max-w-[390px] rounded-t-[30px] bg-white px-[21px] pt-[22px] pb-8"
                 role="dialog"
                 aria-modal="true"
                 aria-label="정렬 방식 선택"

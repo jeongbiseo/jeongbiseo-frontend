@@ -197,10 +197,12 @@ const Home = () => {
                     />
                 )}
                 {summaryState.status === "ready" && (
-                    <HomeSummaryCard
-                        total={summaryState.data.total}
-                        breakdown={summaryState.data.breakdown}
-                    />
+                    <div className="content-fade-in">
+                        <HomeSummaryCard
+                            total={summaryState.data.total}
+                            breakdown={summaryState.data.breakdown}
+                        />
+                    </div>
                 )}
 
                 <HomeSection
@@ -221,15 +223,17 @@ const Home = () => {
                         />
                     )}
                     {recommendationState.status === "ready" && (
-                        <HomeRecommendationContent
-                            recommendations={
-                                recommendationState.data.recommendations
-                            }
-                            dataUpdatedAt={
-                                recommendationState.data
-                                    .recommendationDataUpdatedAt
-                            }
-                        />
+                        <div className="content-fade-in">
+                            <HomeRecommendationContent
+                                recommendations={
+                                    recommendationState.data.recommendations
+                                }
+                                dataUpdatedAt={
+                                    recommendationState.data
+                                        .recommendationDataUpdatedAt
+                                }
+                            />
+                        </div>
                     )}
                 </HomeSection>
 
@@ -252,7 +256,7 @@ const Home = () => {
                         />
                     )}
                     {calendarState.status === "ready" && (
-                        <div className="pt-2">
+                        <div className="content-fade-in pt-2">
                             <HomeCalendarPreview
                                 calendar={calendarState.data}
                                 selectedDate={selectedDate}
