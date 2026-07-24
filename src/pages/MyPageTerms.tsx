@@ -11,15 +11,16 @@ import {
 } from "@/components/mypage/MyPageUI";
 import { agreementDetails, type AgreementKey } from "@/constants/termsContent";
 import { useDialogAccessibility } from "@/hooks/useDialogAccessibility";
-import type { TermConsentItem, TermConsentType } from "@/types/terms";
 import { useEffect, useState } from "react";
 
 const MyPageTerms = () => {
     const [status, setStatus] = useState<"loading" | "ready" | "error">(
         "loading"
     );
-    const [termConsents, setTermConsents] = useState<TermConsentItem[]>([]);
     const [marketingAgreed, setMarketingAgreed] = useState(false);
+    const [marketingConsentUpdatedAt, setMarketingConsentUpdatedAt] = useState<
+        string | null
+    >(null);
     const [marketingSaving, setMarketingSaving] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -28,12 +29,10 @@ const MyPageTerms = () => {
     const terms = [
         {
             key: "service" as const,
-            type: "SERVICE" as const,
             label: "서비스 이용약관",
         },
         {
             key: "privacy" as const,
-            type: "PRIVACY" as const,
             label: "개인정보 처리방침",
         },
     ];
@@ -48,8 +47,10 @@ const MyPageTerms = () => {
                 if (!response.isSuccess) throw new Error(response.message);
                 if (!active) return;
 
-                setTermConsents(response.result.terms);
                 setMarketingAgreed(response.result.marketingConsent);
+                setMarketingConsentUpdatedAt(
+                    response.result.marketingConsentUpdatedAt
+                );
                 setStatus("ready");
             } catch (error) {
                 console.error(error);
@@ -64,17 +65,12 @@ const MyPageTerms = () => {
         };
     }, [reloadKey]);
 
-    const getConsent = (type: TermConsentType) =>
-        termConsents.find((term) => term.type === type);
+    const getConsentLabel = () => {
+        if (!marketingConsentUpdatedAt) return "동의 내역 없음";
 
-    const getConsentLabel = (type: TermConsentType) => {
-        const consent = getConsent(type);
-        if (!consent?.agreed) return "동의 내역 없음";
-        if (!consent.agreedAt) return "동의 완료";
-
-        const date = new Date(consent.agreedAt);
+        const date = new Date(marketingConsentUpdatedAt);
         if (Number.isNaN(date.getTime())) return "동의 완료";
-        return `동의 ${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+        return `최근 동의 ${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
     };
 
     const handleMarketingChange = async (agreed: boolean) => {
@@ -89,6 +85,7 @@ const MyPageTerms = () => {
             if (!response.isSuccess) throw new Error(response.message);
 
             setMarketingAgreed(response.result.agreed);
+            setMarketingConsentUpdatedAt(response.result.updatedAt);
             setToastMessage("마케팅 수신 동의를 변경했어요.");
         } catch (error) {
             console.error(error);
@@ -144,7 +141,7 @@ const MyPageTerms = () => {
                                         {term.label}
                                     </strong>
                                     <span className="text-text-muted mt-2 block text-[13px] font-bold">
-                                        {getConsentLabel(term.type)}
+                                        {getConsentLabel()}
                                     </span>
                                 </span>
                                 <span className="text-text-muted">
