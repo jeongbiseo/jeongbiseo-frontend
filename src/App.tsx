@@ -8,6 +8,7 @@ import { reissueAccessToken } from "@/api/axiosInstance";
 import { getMyInfoApi } from "@/api/memberApi";
 import BottomNav from "@/components/common/BottomNav";
 import { useAuthStore } from "@/stores/authStore";
+import type { UserProfile } from "@/types/auth";
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
@@ -42,6 +43,32 @@ const getPageTitle = (pathname: string) => {
     return pageTitles[pathname] ?? "정비서";
 };
 
+let authBootstrapPromise: Promise<UserProfile> | null = null;
+
+/**
+ * 앱 부팅 중 인증 복구 요청을 하나로 공유합니다.
+ * 개발 환경의 StrictMode나 여러 렌더링 경로에서 동시에 호출돼도
+ * refresh token 회전과 회원 정보 조회가 한 번만 실행됩니다.
+ */
+const bootstrapAuthentication = () => {
+    if (!authBootstrapPromise) {
+        authBootstrapPromise = (async () => {
+            await reissueAccessToken();
+            const response = await getMyInfoApi();
+
+            if (!response.isSuccess) {
+                throw new Error(response.message);
+            }
+
+            return response.result;
+        })().finally(() => {
+            authBootstrapPromise = null;
+        });
+    }
+
+    return authBootstrapPromise;
+};
+
 function App() {
     const { pathname, state: locationState } = useLocation();
     const policyDetail = pathname.startsWith("/policies/");
@@ -54,6 +81,8 @@ function App() {
                 ?.bottomNavPath ?? "/recommend")
           : undefined;
     const authInitialized = useAuthStore((state) => state.authInitialized);
+    const publicAuthPath =
+        pathname === "/login" || pathname.startsWith("/auth/callback/");
 
     useEffect(() => {
         document.title = getPageTitle(pathname);
@@ -62,6 +91,13 @@ function App() {
     useEffect(() => {
         if (authInitialized) return;
 
+        // 로그인 전과 OAuth 콜백에서는 아직 refresh cookie가 없을 수 있습니다.
+        // 이 경로의 인증은 콜백 페이지가 직접 완료하므로 부팅 reissue를 생략합니다.
+        if (publicAuthPath) {
+            useAuthStore.getState().setAuthInitialized(true);
+            return;
+        }
+
         let active = true;
 
         const bootstrapAuth = async () => {
@@ -69,14 +105,8 @@ function App() {
                 useAuthStore.getState();
 
             try {
-                await reissueAccessToken();
-                const response = await getMyInfoApi();
-
-                if (!response.isSuccess) {
-                    throw new Error(response.message);
-                }
-
-                if (active) login(response.result);
+                const user = await bootstrapAuthentication();
+                if (active) login(user);
             } catch {
                 if (active) logout();
             } finally {
@@ -89,7 +119,7 @@ function App() {
         return () => {
             active = false;
         };
-    }, [authInitialized]);
+    }, [authInitialized, publicAuthPath]);
 
     return (
         <>

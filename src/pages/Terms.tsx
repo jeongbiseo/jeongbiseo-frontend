@@ -191,13 +191,14 @@ const Terms = () => {
                         </ul>
                     </div>
 
-                    <Button
-                        className="mt-auto mb-[clamp(32px,11.9svh,112px)] max-w-[325px] self-center"
-                        disabled={!requiredAgreed || submitting}
-                        onClick={() => void handleContinue()}
-                    >
-                        {submitting ? "저장 중..." : "동의하고 시작하기"}
-                    </Button>
+                    <div className="pt-layout-group mt-auto mb-[clamp(32px,11.9svh,112px)] w-full max-w-[325px] self-center">
+                        <Button
+                            disabled={!requiredAgreed || submitting}
+                            onClick={() => void handleContinue()}
+                        >
+                            {submitting ? "저장 중..." : "동의하고 시작하기"}
+                        </Button>
+                    </div>
                 </section>
             </main>
 

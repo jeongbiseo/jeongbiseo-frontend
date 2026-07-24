@@ -93,6 +93,21 @@ axiosInstance.interceptors.response.use(
 
         originalRequest._retry = true;
 
+        const currentAccessToken = useAuthStore.getState().accessToken;
+        const requestAuthorization = String(
+            originalRequest.headers.Authorization ?? ""
+        );
+
+        // 다른 요청이 이미 토큰을 갱신했다면 refresh token을 다시 회전시키지 않고
+        // 최신 access token으로 실패한 요청만 한 번 재시도합니다.
+        if (
+            currentAccessToken &&
+            requestAuthorization !== `Bearer ${currentAccessToken}`
+        ) {
+            originalRequest.headers.Authorization = `Bearer ${currentAccessToken}`;
+            return axiosInstance(originalRequest);
+        }
+
         try {
             const accessToken = await reissueAccessToken();
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;

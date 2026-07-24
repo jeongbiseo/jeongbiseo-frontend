@@ -66,8 +66,8 @@ const AuthCallback = () => {
                 useAuthStore.getState().login(me.result);
                 useAuthStore.getState().setAuthInitialized(true);
 
-                // 온보딩 완료 → 홈 / 미완료 → 약관동의부터 시작
-                navigate(login.result.onboardingCompleted ? "/" : "/terms", {
+                // 최종 회원 조회 결과를 기준으로 이동해 로그인 응답과의 상태 경합을 막습니다.
+                navigate(me.result.onboardingCompleted ? "/" : "/terms", {
                     replace: true,
                 });
             } catch {

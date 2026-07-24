@@ -1,3 +1,4 @@
+import ChevronDownIcon from "@/components/common/ChevronDownIcon";
 import type { ReactNode } from "react";
 
 export const FieldLabel = ({
@@ -50,21 +51,26 @@ export const FormSelect = <T extends string | number>({
     border?: "default" | "soft" | "strong";
     size?: "default" | "onboarding" | "compact";
 }) => (
-    <select
-        className={`${border === "soft" ? "border-[0.5px] border-[#d8d8d8]" : border === "strong" ? "border-[0.5px] border-[#808080]" : "border-line-strong border"} ${size === "onboarding" ? "h-[50px]" : size === "compact" ? "h-[47px]" : "h-[48px]"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled text-label-strong rounded-control px-container w-full cursor-pointer bg-white outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
-        value={value}
-        aria-label={ariaLabel}
-        disabled={disabled}
-        onChange={(event) =>
-            onChange(
-                (typeof value === "number"
-                    ? Number(event.target.value)
-                    : event.target.value) as T
-            )
-        }
-    >
-        {children}
-    </select>
+    <div className="relative w-full">
+        <select
+            className={`${border === "soft" ? "border-[0.5px] border-[#d8d8d8]" : border === "strong" ? "border-[0.5px] border-[#808080]" : "border-line-strong border"} ${size === "onboarding" ? "h-[50px]" : size === "compact" ? "h-[47px]" : "h-[48px]"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled text-label-strong rounded-control pl-container w-full cursor-pointer appearance-none bg-white pr-10 outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
+            value={value}
+            aria-label={ariaLabel}
+            disabled={disabled}
+            onChange={(event) =>
+                onChange(
+                    (typeof value === "number"
+                        ? Number(event.target.value)
+                        : event.target.value) as T
+                )
+            }
+        >
+            {children}
+        </select>
+        <span className="text-text-muted pointer-events-none absolute top-1/2 right-4 -translate-y-1/2">
+            <ChevronDownIcon />
+        </span>
+    </div>
 );
 
 export const CounterButton = ({
