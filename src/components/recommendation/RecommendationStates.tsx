@@ -1,7 +1,7 @@
 import { SearchIcon } from "@/components/recommendation/RecommendationIcons";
 
 export const RecommendationSkeleton = () => (
-    <div className="gap-layout-component mx-auto mt-6 flex w-full max-w-[298px] animate-pulse flex-col">
+    <div className="gap-layout-component mx-auto mt-6 flex w-[calc(100%-48px)] max-w-[342px] animate-pulse flex-col">
         {[0, 1, 2].map((item) => (
             <div className="bg-disabled rounded-card h-[164px]" key={item} />
         ))}
@@ -34,7 +34,7 @@ export const EmptyRecommendation = ({
         <p className="text-text-muted text-body-sm mt-2">
             현재 입력하신 조건에 맞는 지원금을 찾지 못했어요
         </p>
-        <div className="border-primary rounded-card mx-auto mt-6 min-h-[216px] w-full max-w-[302px] border-[0.5px] p-4">
+        <div className="border-primary rounded-card p-container mx-auto mt-6 min-h-[216px] w-full max-w-[302px] border-[0.5px]">
             <h3 className="text-title">이런 이유일 수 있어요</h3>
             <ol className="text-text-muted text-body-sm mt-layout-related space-y-layout-related list-decimal pl-5">
                 <li>

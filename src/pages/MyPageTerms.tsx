@@ -134,7 +134,7 @@ const MyPageTerms = () => {
                     <div className="border-primary rounded-card mt-6 overflow-hidden border-[0.5px] bg-white">
                         {terms.map((term, index) => (
                             <button
-                                className={`flex h-[72px] w-full cursor-pointer items-center justify-between px-4 text-left ${index > 0 ? "border-line border-t" : ""}`}
+                                className={`px-container flex h-[72px] w-full cursor-pointer items-center justify-between text-left ${index > 0 ? "border-line border-t" : ""}`}
                                 type="button"
                                 key={term.key}
                                 onClick={() => setSelectedTerm(term.key)}
@@ -156,7 +156,7 @@ const MyPageTerms = () => {
                 )}
 
                 {status === "ready" && (
-                    <label className="border-green-normal text-body-sm-strong rounded-control mt-6 flex h-[57px] cursor-pointer items-center justify-between border-[0.5px] bg-white px-4">
+                    <label className="border-green-normal text-body-sm-strong rounded-control px-container mt-6 flex h-[57px] cursor-pointer items-center justify-between border-[0.5px] bg-white">
                         마케팅 정보 수신 동의
                         <input
                             className="peer sr-only"

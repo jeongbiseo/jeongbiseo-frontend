@@ -51,7 +51,7 @@ export const FormSelect = <T extends string | number>({
     size?: "default" | "onboarding" | "compact";
 }) => (
     <select
-        className={`${border === "soft" ? "border-[0.5px] border-[#d8d8d8]" : border === "strong" ? "border-[0.5px] border-[#808080]" : "border-line-strong border"} ${size === "onboarding" ? "h-[50px]" : size === "compact" ? "h-[47px]" : "h-[48px]"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled text-label-strong rounded-control w-full cursor-pointer bg-white px-3 outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
+        className={`${border === "soft" ? "border-[0.5px] border-[#d8d8d8]" : border === "strong" ? "border-[0.5px] border-[#808080]" : "border-line-strong border"} ${size === "onboarding" ? "h-[50px]" : size === "compact" ? "h-[47px]" : "h-[48px]"} focus:border-primary focus-visible:outline-primary disabled:bg-disabled text-label-strong rounded-control px-container w-full cursor-pointer bg-white outline-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-not-allowed`}
         value={value}
         aria-label={ariaLabel}
         disabled={disabled}

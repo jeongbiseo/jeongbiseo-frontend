@@ -49,7 +49,7 @@ export const HomeCalendarPreview = ({
         `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
     return (
-        <article className="rounded-panel mx-auto h-[267px] w-full max-w-[305px] bg-white px-4 pt-4 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+        <article className="rounded-panel px-container pt-container mx-auto h-[267px] w-full bg-white shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
             <header className="text-label-strong flex items-center gap-2">
                 <span>{year}년</span>
                 <span>{month}월</span>

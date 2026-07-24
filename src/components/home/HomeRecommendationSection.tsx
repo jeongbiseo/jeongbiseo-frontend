@@ -19,7 +19,7 @@ export const HomeSection = ({
     className?: string;
     children: ReactNode;
 }) => (
-    <section className={`mx-auto w-full max-w-[328px] ${className ?? ""}`}>
+    <section className={`mx-auto w-full ${className ?? ""}`}>
         <div className="flex items-center justify-between">
             <h2 className="text-heading-section">{title}</h2>
             <Link className="text-body-sm-strong text-text-muted" to={to}>
@@ -53,7 +53,7 @@ const RecommendationCard = ({
 
     return (
         <Link
-            className="border-primary rounded-card relative block min-h-[150px] border-[0.5px] bg-white p-4"
+            className="border-primary rounded-card p-container relative block min-h-[150px] border-[0.5px] bg-white"
             to={`/policies/${recommendation.subsidyId}`}
             state={{ bottomNavPath: "/" }}
         >
@@ -65,7 +65,7 @@ const RecommendationCard = ({
                     {recommendation.name}
                 </h3>
                 <RecommendationAssessment
-                    className="mt-3"
+                    className="mt-layout-inline"
                     confirmedMatchCount={recommendation.confirmedMatchCount}
                     unverifiedConditionCount={
                         recommendation.unverifiedConditionCount
@@ -106,7 +106,7 @@ export const HomeRecommendationContent = ({
     recommendations: RecommendationItem[];
     dataUpdatedAt: string;
 }) => (
-    <div className="gap-layout-component mx-auto flex w-full max-w-[305px] flex-col">
+    <div className="gap-layout-component mx-auto flex w-full flex-col">
         <RecommendationFreshness dataUpdatedAt={dataUpdatedAt} />
         {recommendations.map((recommendation) => (
             <RecommendationCard

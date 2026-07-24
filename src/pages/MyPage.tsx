@@ -213,7 +213,7 @@ const MyPage = () => {
                 <Header title="마이페이지" />
 
                 <button
-                    className="border-primary rounded-card mt-6 flex h-[90px] w-full cursor-pointer items-center border-[0.5px] bg-white px-4 text-left"
+                    className="border-primary rounded-card px-container mt-6 flex h-[90px] w-full cursor-pointer items-center border-[0.5px] bg-white text-left"
                     type="button"
                     disabled={profileStatus !== "ready"}
                     onClick={() => navigate("/mypage/edit")}
@@ -251,7 +251,7 @@ const MyPage = () => {
                 <div className="gap-layout-related mt-6 grid grid-cols-2">
                     {summaryItems.map((item) => (
                         <button
-                            className="border-primary rounded-card h-[90px] cursor-pointer border-[0.5px] bg-white px-4 text-left transition active:scale-[0.99]"
+                            className="border-primary rounded-card px-container h-[90px] cursor-pointer border-[0.5px] bg-white text-left transition active:scale-[0.99]"
                             type="button"
                             key={item.label}
                             onClick={() =>
@@ -300,7 +300,7 @@ const MyPage = () => {
                         >
                             {group.map((item, index) => (
                                 <button
-                                    className={`text-body-sm-strong flex h-[60px] w-full cursor-pointer items-center justify-between px-5 text-left ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
+                                    className={`text-body-sm-strong px-container flex h-[60px] w-full cursor-pointer items-center justify-between text-left ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
                                     type="button"
                                     key={item.label}
                                     onClick={() => handleMenuClick(item)}

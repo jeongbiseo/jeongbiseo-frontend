@@ -48,7 +48,7 @@ export const PolicyDetailContent = ({
     return (
         <main className="content-fade-in bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground text-text-strong px-page-inline pt-page-top min-h-svh w-full max-w-[390px] pb-[104px]">
-                <article className="border-primary bg-green-light rounded-card relative min-h-[124px] border-[0.5px] p-4">
+                <article className="border-primary bg-green-light rounded-card p-container relative min-h-[124px] border-[0.5px]">
                     <div className="pr-8">
                         <h1 className="text-green-darker text-heading-section">
                             {subsidy.name}
@@ -174,7 +174,7 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
     if (!subsidy.aiExplanation) {
         return (
             <div
-                className="bg-surface-soft rounded-card mt-3 p-3"
+                className="bg-surface-soft rounded-card p-container-compact mt-3"
                 role="status"
             >
                 <h3 className="text-label-strong">AI 해석 준비 중</h3>
@@ -188,7 +188,7 @@ const AiExplanation = ({ subsidy }: { subsidy: SubsidyDetailResult }) => {
 
     const explanation = subsidy.aiExplanation;
     return (
-        <div className="bg-surface-soft rounded-card mt-3 p-3">
+        <div className="bg-surface-soft rounded-card p-container-compact mt-3">
             <h3 className="text-label-strong">AI 금액 해석 근거</h3>
             <DetailRows
                 rows={[
@@ -248,7 +248,7 @@ const PolicyAccordion = ({
 }) => (
     <article className="border-primary rounded-card overflow-hidden border-[0.5px] bg-white">
         <button
-            className="flex h-[61px] w-full cursor-pointer items-center justify-between px-4 text-left"
+            className="px-container flex h-[61px] w-full cursor-pointer items-center justify-between text-left"
             type="button"
             aria-expanded={expanded}
             onClick={onToggle}
@@ -262,7 +262,7 @@ const PolicyAccordion = ({
             aria-hidden={!expanded}
         >
             <div className="overflow-hidden">
-                <div className="px-4 pb-4">{children}</div>
+                <div className="px-container pb-container">{children}</div>
             </div>
         </div>
     </article>

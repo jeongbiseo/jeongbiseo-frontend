@@ -139,7 +139,7 @@ export const ConfirmDialog = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`confirm-dialog-enter rounded-panel w-full bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-5 py-4 text-left" : "min-h-[135px] max-w-[317px] px-6 py-4 text-center"}`}
+                className={`confirm-dialog-enter rounded-panel p-container min-h-[135px] w-full max-w-[317px] bg-white shadow-lg ${external ? "text-left" : "text-center"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="confirm-dialog-title"
@@ -155,14 +155,14 @@ export const ConfirmDialog = ({
                 >
                     <button
                         data-dialog-initial-focus
-                        className="border-text-muted text-label-strong rounded-badge h-[26px] cursor-pointer border-[0.5px] px-3"
+                        className="border-text-muted text-label-strong rounded-control px-container min-h-11 cursor-pointer border-[0.5px]"
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className="bg-green-normal text-label-strong rounded-badge h-[26px] cursor-pointer px-3 text-white"
+                        className="bg-green-normal text-label-strong rounded-control px-container min-h-11 cursor-pointer text-white"
                         type="button"
                         onClick={onConfirm}
                     >

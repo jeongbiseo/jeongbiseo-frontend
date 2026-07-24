@@ -101,6 +101,11 @@ textarea,
     --spacing-page-inline: 1.5rem;
     --spacing-page-top: 1.5rem;
 
+    /* 역할형 컨테이너 내부 여백 */
+    --spacing-container-compact: 0.75rem;
+    --spacing-container: 1rem;
+    --spacing-container-comfortable: 1.5rem;
+
     /* 역할형 모서리 반경 */
     --radius-badge: 0.375rem;
     --radius-control: 0.625rem;

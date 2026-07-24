@@ -330,7 +330,7 @@ const MonthSelect = ({
 
                         return (
                             <button
-                                className={`text-label-medium rounded-badge block h-[32px] w-full cursor-pointer px-2 text-left whitespace-nowrap transition-colors ${
+                                className={`text-label-medium rounded-badge block min-h-11 w-full cursor-pointer px-2 text-left whitespace-nowrap transition-colors ${
                                     selected
                                         ? "bg-green-light text-success"
                                         : "hover:bg-surface-soft"
@@ -356,7 +356,7 @@ const MonthSelect = ({
 };
 
 const MarkerLegend = () => (
-    <aside className="border-primary text-label rounded-card mt-4 flex min-h-[35px] items-center border-[0.5px] bg-white px-4 py-1">
+    <aside className="border-primary text-label rounded-card px-container mt-4 flex min-h-[35px] items-center border-[0.5px] bg-white py-1">
         <span>마감 마커:</span>
         <span className="ml-layout-inline flex items-center gap-1">
             <span className="bg-primary size-[10px] rounded-full" />
@@ -378,7 +378,7 @@ const DeadlineCard = ({ item }: { item: CalendarDayElement }) => {
 
     return (
         <Link
-            className="border-primary rounded-card relative block h-[107px] border-[0.5px] bg-white p-4"
+            className="border-primary rounded-card p-container relative block h-[107px] border-[0.5px] bg-white"
             to={`/policies/${item.subsidyId}`}
             state={{ bottomNavPath: "/calendar" }}
         >
@@ -399,7 +399,7 @@ const DeadlineCard = ({ item }: { item: CalendarDayElement }) => {
 };
 
 const CalendarEmptyState = () => (
-    <div className="border-line rounded-card mt-4 flex min-h-[152px] flex-col items-center justify-center border bg-white px-6 text-center">
+    <div className="border-line rounded-card px-container-comfortable mt-4 flex min-h-[152px] flex-col items-center justify-center border bg-white text-center">
         <p className="text-title">예정된 마감 지원금이 없어요</p>
         <p className="text-text-muted text-label-medium mt-2">
             다른 날짜나 달을 선택해 확인해보세요

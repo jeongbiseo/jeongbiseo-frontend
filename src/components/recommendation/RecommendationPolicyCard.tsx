@@ -26,7 +26,7 @@ export const RecommendationPolicyCard = ({
         policy.unverifiedConditionCount !== null;
 
     return (
-        <article className="border-primary rounded-card relative min-h-[107px] border-[0.5px] bg-white p-4">
+        <article className="border-primary rounded-card p-container relative min-h-[107px] border-[0.5px] bg-white">
             <Link
                 className="block"
                 to={`/policies/${policy.id}`}
@@ -40,7 +40,7 @@ export const RecommendationPolicyCard = ({
                 </h2>
                 {hasAssessment && (
                     <RecommendationAssessment
-                        className="mt-3"
+                        className="mt-layout-inline"
                         confirmedMatchCount={policy.confirmedMatchCount!}
                         unverifiedConditionCount={
                             policy.unverifiedConditionCount!

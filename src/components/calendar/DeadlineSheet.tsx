@@ -96,7 +96,7 @@ const DeadlineSheet = ({
                                         className={
                                             isCalendarPage
                                                 ? "border-line flex h-[74px] w-full items-center border-b"
-                                                : "border-primary rounded-card relative flex h-[73px] w-[312px] max-w-full items-center border-[0.5px] bg-white px-4 pr-[72px]"
+                                                : "border-primary rounded-card px-container relative flex h-[73px] w-[312px] max-w-full items-center border-[0.5px] bg-white pr-[72px]"
                                         }
                                         to={`/policies/${item.subsidyId}`}
                                         state={{ bottomNavPath }}

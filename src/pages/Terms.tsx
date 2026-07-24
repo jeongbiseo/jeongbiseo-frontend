@@ -125,7 +125,7 @@ const Terms = () => {
 
                     <div className="mt-layout-group w-full max-w-[325px] self-center">
                         <button
-                            className="focus-visible:outline-primary gap-layout-inline flex cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+                            className="focus-visible:outline-primary gap-layout-inline flex min-h-11 cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                             type="button"
                             role="checkbox"
                             aria-checked={allAgreed}
@@ -163,7 +163,7 @@ const Terms = () => {
                                     key={key}
                                 >
                                     <button
-                                        className="focus-visible:outline-primary gap-layout-related flex min-w-0 cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        className="focus-visible:outline-primary gap-layout-related flex min-h-11 min-w-0 cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                                         type="button"
                                         role="checkbox"
                                         aria-checked={agreements[key]}
@@ -177,7 +177,7 @@ const Terms = () => {
                                     </button>
 
                                     <button
-                                        className="text-text-muted/70 focus-visible:outline-primary text-label-strong ml-2 shrink-0 cursor-pointer underline underline-offset-2 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        className="text-text-muted/70 focus-visible:outline-primary text-label-strong ml-2 min-h-11 shrink-0 cursor-pointer underline underline-offset-2 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                                         type="button"
                                         aria-haspopup="dialog"
                                         onClick={() =>
@@ -256,7 +256,7 @@ const Terms = () => {
                             </button>
                         </header>
 
-                        <div className="bg-ground text-label rounded-card mt-4 flex-1 overflow-y-auto p-4 text-[#606060]">
+                        <div className="bg-ground text-label rounded-card p-container mt-4 flex-1 overflow-y-auto text-[#606060]">
                             <p className="text-label-medium text-[#303030]">
                                 {selectedAgreementDetail.summary}
                             </p>

@@ -29,16 +29,16 @@ export const HomeSummaryCard = ({
     const { voucherLike, unconfirmed } = countBadges(breakdown);
 
     return (
-        <article className="bg-primary rounded-panel relative mx-auto mt-4 min-h-[262px] w-full max-w-[305px] overflow-hidden px-4 py-6 text-white">
+        <article className="bg-primary rounded-panel px-container py-container-comfortable relative mx-auto mt-4 min-h-[262px] w-full overflow-hidden text-white">
             <SummaryDecoration />
 
             <div className="relative z-10">
                 <p className="text-title">지금 신청 가능한 지원금</p>
-                <p className="text-display-number mt-layout-inline">
+                <p className="text-display-number mt-layout-tight">
                     {total.totalCount}건
                 </p>
 
-                <div className="text-label-strong mt-layout-related gap-x-layout-related gap-y-layout-inline flex flex-wrap items-center">
+                <div className="text-label-strong mt-layout-inline gap-x-layout-related gap-y-layout-inline flex flex-wrap items-center">
                     <span>
                         {hasConfirmedAmount
                             ? `금액 확정 ${total.itemCount}건`

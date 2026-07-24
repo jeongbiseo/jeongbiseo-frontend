@@ -89,7 +89,7 @@ export const RecommendationControls = ({
                     <div className="recommendation-search-enter mt-layout-related gap-layout-inline flex items-center px-px">
                         {recommendationSearchKeywords.map((keyword) => (
                             <button
-                                className="bg-third text-body-sm-strong rounded-badge h-[37px] cursor-pointer px-3 text-white"
+                                className="bg-third text-body-sm-strong rounded-control px-container-compact min-h-11 cursor-pointer text-white"
                                 type="button"
                                 key={keyword}
                                 onClick={() => onQueryChange(keyword)}
@@ -104,7 +104,7 @@ export const RecommendationControls = ({
                             const selected = activeTab === key;
                             return (
                                 <button
-                                    className={`text-body-sm-strong rounded-control h-[39px] cursor-pointer transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
+                                    className={`text-body-sm-strong rounded-control min-h-11 cursor-pointer transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
                                     type="button"
                                     key={key}
                                     aria-pressed={selected}

@@ -560,7 +560,7 @@ const Recommendation = () => {
                         !loadError &&
                         activeTab === "recommended" &&
                         recommendationDataUpdatedAt && (
-                            <div className="mx-auto mt-4 w-full max-w-[298px]">
+                            <div className="mx-auto mt-4 w-[calc(100%-48px)] max-w-[342px]">
                                 <RecommendationFreshness
                                     dataUpdatedAt={recommendationDataUpdatedAt}
                                 />
@@ -587,7 +587,7 @@ const Recommendation = () => {
                         />
                     ) : visiblePolicies.length > 0 ? (
                         <div
-                            className="recommendation-tab-fade-in gap-layout-component mx-auto mt-6 flex w-full max-w-[298px] flex-col"
+                            className="recommendation-tab-fade-in gap-layout-component mx-auto mt-6 flex w-[calc(100%-48px)] max-w-[342px] flex-col"
                             key={activeTab}
                         >
                             {visiblePolicies.map((policy) => (

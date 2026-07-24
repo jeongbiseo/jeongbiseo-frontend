@@ -274,7 +274,7 @@ export const MyPageProfileForm = ({
             </p>
 
             <FieldLabel>가구원 수</FieldLabel>
-            <div className="rounded-control flex h-[47px] items-center justify-between border-[0.5px] border-[#808080] bg-white px-5">
+            <div className="rounded-control px-container flex h-[47px] items-center justify-between border-[0.5px] border-[#808080] bg-white">
                 <CounterButton
                     label="가구원 수 줄이기"
                     onClick={() =>
@@ -339,7 +339,7 @@ export const MyPageProfileForm = ({
                         !receivedError &&
                         receivedBenefits.map((benefit) => (
                             <div
-                                className="bg-green-light rounded-card flex h-[53px] items-center justify-between px-4"
+                                className="bg-green-light rounded-card px-container flex h-[53px] items-center justify-between"
                                 key={benefit.id}
                             >
                                 <strong className="text-title">
@@ -358,7 +358,7 @@ export const MyPageProfileForm = ({
                 </div>
 
                 <button
-                    className="bg-green-normal text-body-sm-strong rounded-control mx-auto mt-3 block h-[39px] w-[190px] cursor-pointer text-white shadow-[3px_2px_7px_var(--color-green-light-active)]"
+                    className="bg-green-normal text-body-sm-strong rounded-control mx-auto mt-3 block h-11 w-[190px] cursor-pointer text-white shadow-[3px_2px_7px_var(--color-green-light-active)]"
                     type="button"
                     disabled={receivedLoading || receivedError}
                     onClick={onOpenBenefitSheet}
@@ -368,7 +368,7 @@ export const MyPageProfileForm = ({
             </div>
 
             <button
-                className="bg-third text-body-sm-strong rounded-control mt-8 h-[39px] w-[341px] max-w-full cursor-pointer text-white"
+                className="bg-third text-body-sm-strong rounded-control mt-8 h-11 w-[341px] max-w-full cursor-pointer text-white"
                 type="button"
                 disabled={
                     saving || receivedLoading || receivedError || !regionReady

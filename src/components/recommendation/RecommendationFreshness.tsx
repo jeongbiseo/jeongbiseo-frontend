@@ -26,7 +26,7 @@ export const RecommendationFreshness = ({
 
     return (
         <div
-            className={`rounded-card px-3 py-2.5 ${isStale ? "bg-warning-light" : "bg-surface-soft"} ${className}`}
+            className={`rounded-card px-container-compact py-2.5 ${isStale ? "bg-warning-light" : "bg-surface-soft"} ${className}`}
             role={isStale ? "note" : undefined}
         >
             <p

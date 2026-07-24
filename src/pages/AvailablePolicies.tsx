@@ -144,7 +144,7 @@ const AvailablePolicies = () => {
         <main className="bg-surface-dim flex min-h-svh justify-center">
             <section className="bg-ground text-text-strong px-page-inline pt-page-top min-h-svh w-full max-w-[390px] pb-[96px]">
                 <BackButton className="-ml-1" />
-                <h1 className="text-heading-page mt-0 ml-2">
+                <h1 className="text-heading-page mt-0">
                     지금 신청 가능한 지원금
                 </h1>
 
@@ -203,7 +203,7 @@ const AvailablePoliciesContent = ({
 
     return (
         <>
-            <div className="rounded-card mt-layout-inline px-3 py-2">
+            <div className="rounded-card mt-layout-inline py-2">
                 <p className="text-text-muted text-label-medium">
                     전체{" "}
                     <strong className="text-text-strong text-title">
@@ -243,7 +243,7 @@ const AvailablePoliciesContent = ({
             />
             {sections.voucher.length > 3 && (
                 <button
-                    className="border-primary rounded-badge mx-auto mt-3 flex h-[23px] w-full max-w-[306px] cursor-pointer items-center justify-center border-[0.5px] bg-white"
+                    className="border-primary rounded-control mx-auto mt-3 flex min-h-11 w-full cursor-pointer items-center justify-center border-[0.5px] bg-white"
                     type="button"
                     aria-expanded={voucherExpanded}
                     aria-label={
@@ -299,7 +299,7 @@ const PolicyListSection = ({
     <section className={className}>
         <h2 className="text-text-muted text-title">{title}</h2>
         {items.length > 0 ? (
-            <div className="gap-layout-related mx-auto mt-3 flex w-full max-w-[306px] flex-col">
+            <div className="gap-layout-related mx-auto mt-3 flex w-full flex-col">
                 {items.map((item) => (
                     <SummaryPolicyCard compact item={item} key={item.rowId} />
                 ))}

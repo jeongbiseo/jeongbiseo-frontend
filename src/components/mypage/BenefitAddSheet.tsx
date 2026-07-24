@@ -198,7 +198,7 @@ export const BenefitAddSheet = ({
                             );
                             return (
                                 <button
-                                    className={`rounded-card gap-layout-related flex min-h-[73px] cursor-pointer items-center border-[0.5px] px-4 text-left ${selected ? "border-green-normal-hover bg-green-light-hover" : "border-[#808080] bg-white"}`}
+                                    className={`rounded-card gap-layout-related px-container flex min-h-[73px] cursor-pointer items-center border-[0.5px] text-left ${selected ? "border-green-normal-hover bg-green-light-hover" : "border-[#808080] bg-white"}`}
                                     type="button"
                                     key={benefit.id}
                                     aria-pressed={selected}

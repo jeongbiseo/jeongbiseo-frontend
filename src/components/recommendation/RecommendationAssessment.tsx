@@ -22,7 +22,10 @@ export const RecommendationUncertainty = ({
 }: {
     reasons: string[];
 }) => (
-    <div className="bg-warning-light rounded-card mt-3 px-3 py-2.5" role="note">
+    <div
+        className="bg-warning-light rounded-card px-container-compact mt-3 py-2.5"
+        role="note"
+    >
         <p className="text-warning text-label-strong">추가 확인 필요</p>
         {reasons.length > 0 ? (
             <ul className="text-text-body text-label mt-1.5 list-disc space-y-1 pl-4">
