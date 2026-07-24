@@ -12,7 +12,7 @@ export interface SummaryPolicyItem {
 const valueToneClassNames = {
     success: "text-success",
     muted: "text-text-muted",
-    voucher: "bg-warning-light text-[#936415] rounded-full px-2 py-[5px]",
+    voucher: "bg-warning-light text-[#936415] rounded-badge px-2 py-1",
 };
 
 const SummaryPolicyCard = ({
@@ -23,7 +23,7 @@ const SummaryPolicyCard = ({
     compact?: boolean;
 }) => (
     <Link
-        className={`border-primary focus-visible:outline-primary flex w-full items-center justify-between gap-3 rounded-[10px] border-[0.5px] bg-white focus-visible:outline-2 ${compact ? "text-body-sm min-h-[65px] px-[17px] py-4" : "text-body min-h-[69px] px-[18px] py-4"}`}
+        className={`border-primary focus-visible:outline-primary rounded-card gap-layout-related flex w-full items-center justify-between border-[0.5px] bg-white px-4 focus-visible:outline-2 ${compact ? "text-body-sm min-h-[65px] py-3" : "text-body min-h-[69px] py-4"}`}
         to={`/policies/${item.policyId}`}
         state={{ bottomNavPath: "/" }}
     >

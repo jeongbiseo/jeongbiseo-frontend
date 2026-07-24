@@ -11,7 +11,7 @@ export const MyPageLayout = ({
 }) => (
     <main className="bg-surface-dim flex min-h-svh justify-center">
         <section
-            className={`bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[23px] pt-[23px] pb-[120px] ${className}`}
+            className={`bg-ground text-text-strong px-page-inline pt-page-top min-h-svh w-full max-w-[390px] pb-[120px] ${className}`}
         >
             {children}
         </section>
@@ -130,7 +130,7 @@ export const ConfirmDialog = ({
 
     return (
         <div
-            className={`confirm-dialog-backdrop-enter fixed inset-0 z-50 flex items-center justify-center px-9 ${external ? "bg-black/25" : "bg-black/20"}`}
+            className={`confirm-dialog-backdrop-enter px-page-inline fixed inset-0 z-50 flex items-center justify-center ${external ? "bg-black/25" : "bg-black/20"}`}
             role="presentation"
             onClick={(event) => {
                 if (event.target === event.currentTarget) onCancel();
@@ -139,7 +139,7 @@ export const ConfirmDialog = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`confirm-dialog-enter w-full rounded-[10px] bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-[21px] pt-[25px] pb-[13px] text-left" : "min-h-[135px] max-w-[317px] px-10 pt-[22px] pb-[13px] text-center"}`}
+                className={`confirm-dialog-enter rounded-panel w-full bg-white shadow-lg ${external ? "min-h-[135px] max-w-[317px] px-5 py-4 text-left" : "min-h-[135px] max-w-[317px] px-6 py-4 text-center"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="confirm-dialog-title"
@@ -147,22 +147,22 @@ export const ConfirmDialog = ({
                 <h2 className="text-title" id="confirm-dialog-title">
                     {title}
                 </h2>
-                <p className="text-text-muted text-label-strong mt-[11px]">
+                <p className="text-text-muted text-label-strong mt-layout-inline">
                     {description}
                 </p>
                 <div
-                    className={`flex gap-3 ${external ? "mt-[9px] justify-end" : "mt-[19px] justify-center"}`}
+                    className={`gap-layout-related flex ${external ? "mt-layout-related justify-end" : "mt-layout-component justify-center"}`}
                 >
                     <button
                         data-dialog-initial-focus
-                        className="border-text-muted text-label-strong h-[26px] cursor-pointer rounded-[5px] border-[0.5px] px-[14px]"
+                        className="border-text-muted text-label-strong rounded-badge h-[26px] cursor-pointer border-[0.5px] px-3"
                         type="button"
                         onClick={onCancel}
                     >
                         취소
                     </button>
                     <button
-                        className="bg-green-normal text-label-strong h-[26px] cursor-pointer rounded-[5px] px-[14px] text-white"
+                        className="bg-green-normal text-label-strong rounded-badge h-[26px] cursor-pointer px-3 text-white"
                         type="button"
                         onClick={onConfirm}
                     >

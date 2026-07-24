@@ -19,16 +19,14 @@ export const HomeSection = ({
     className?: string;
     children: ReactNode;
 }) => (
-    <section
-        className={`ml-[7px] w-[calc(100%-14px)] max-w-[328px] ${className ?? ""}`}
-    >
+    <section className={`mx-auto w-full max-w-[328px] ${className ?? ""}`}>
         <div className="flex items-center justify-between">
             <h2 className="text-heading-section">{title}</h2>
             <Link className="text-body-sm-strong text-text-muted" to={to}>
                 {linkLabel}
             </Link>
         </div>
-        <div className="mt-[18px]">{children}</div>
+        <div className="mt-layout-component">{children}</div>
     </section>
 );
 
@@ -55,7 +53,7 @@ const RecommendationCard = ({
 
     return (
         <Link
-            className="border-primary relative block min-h-[150px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]"
+            className="border-primary rounded-card relative block min-h-[150px] border-[0.5px] bg-white p-4"
             to={`/policies/${recommendation.subsidyId}`}
             state={{ bottomNavPath: "/" }}
         >
@@ -63,7 +61,7 @@ const RecommendationCard = ({
                 <p className="text-label-medium text-text-subtle">
                     {recommendation.agency}
                 </p>
-                <h3 className="text-title mt-[6px] truncate">
+                <h3 className="text-title mt-layout-tight truncate">
                     {recommendation.name}
                 </h3>
                 <RecommendationAssessment
@@ -88,12 +86,12 @@ const RecommendationCard = ({
             </div>
 
             <span
-                className={`text-label-strong absolute top-[15px] right-[21px] rounded-[13px] px-[7px] py-[6px] ${badgeClassName}`}
+                className={`text-label-strong rounded-badge absolute top-4 right-4 px-2 py-1 ${badgeClassName}`}
             >
                 {badgeLabel}
             </span>
             {recommendation.deadline && (
-                <span className="text-label text-text-muted absolute right-[21px] bottom-[16px]">
+                <span className="text-label text-text-muted absolute right-4 bottom-4">
                     {formatDeadline(recommendation.deadline)}
                 </span>
             )}
@@ -108,7 +106,7 @@ export const HomeRecommendationContent = ({
     recommendations: RecommendationItem[];
     dataUpdatedAt: string;
 }) => (
-    <div className="ml-[15px] flex w-[calc(100%-23px)] max-w-[305px] flex-col gap-[18px]">
+    <div className="gap-layout-component mx-auto flex w-full max-w-[305px] flex-col">
         <RecommendationFreshness dataUpdatedAt={dataUpdatedAt} />
         {recommendations.map((recommendation) => (
             <RecommendationCard

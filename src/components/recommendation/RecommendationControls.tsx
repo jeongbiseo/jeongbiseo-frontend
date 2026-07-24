@@ -53,7 +53,7 @@ export const RecommendationControls = ({
 
     return (
         <>
-            <header className={searchOpen ? "px-[25px]" : "px-[26px]"}>
+            <header className="px-page-inline">
                 {cameFromMyPage && <BackButton label="마이페이지로 돌아가기" />}
                 <div className="flex items-center justify-between px-0">
                     <h1 className="text-heading-page">
@@ -74,7 +74,7 @@ export const RecommendationControls = ({
                         <SearchIcon className="size-icon-sm absolute top-1/2 left-4 -translate-y-1/2" />
                         <input
                             ref={searchInputRef}
-                            className="focus:border-primary focus-visible:outline-primary text-label-strong h-[49px] w-full rounded-[10px] border border-[#b7b7b7] bg-white pr-4 pl-11 outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
+                            className="focus:border-primary focus-visible:outline-primary text-label-strong rounded-control h-[49px] w-full border border-[#b7b7b7] bg-white pr-4 pl-11 outline-none placeholder:text-[#8e98a8] focus-visible:outline-2 focus-visible:outline-offset-1"
                             aria-label="지원금 검색"
                             value={query}
                             placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -86,10 +86,10 @@ export const RecommendationControls = ({
                 )}
 
                 {searchOpen ? (
-                    <div className="recommendation-search-enter mt-[14px] flex items-center gap-[9px] px-px">
+                    <div className="recommendation-search-enter mt-layout-related gap-layout-inline flex items-center px-px">
                         {recommendationSearchKeywords.map((keyword) => (
                             <button
-                                className="bg-third text-body-sm-strong h-[37px] cursor-pointer rounded-full px-[13px] text-white"
+                                className="bg-third text-body-sm-strong rounded-badge h-[37px] cursor-pointer px-3 text-white"
                                 type="button"
                                 key={keyword}
                                 onClick={() => onQueryChange(keyword)}
@@ -99,12 +99,12 @@ export const RecommendationControls = ({
                         ))}
                     </div>
                 ) : (
-                    <div className="mt-5 grid grid-cols-3 gap-4">
+                    <div className="gap-layout-inline mt-4 grid grid-cols-3">
                         {recommendationTabs.map(({ key, label }) => {
                             const selected = activeTab === key;
                             return (
                                 <button
-                                    className={`text-body-sm-strong h-[39px] cursor-pointer rounded-[10px] transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
+                                    className={`text-body-sm-strong rounded-control h-[39px] cursor-pointer transition-colors ${selected ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
                                     type="button"
                                     key={key}
                                     aria-pressed={selected}
@@ -118,7 +118,7 @@ export const RecommendationControls = ({
                 )}
 
                 {!searchOpen && (
-                    <div className="mt-[21px] flex items-center justify-between">
+                    <div className="mt-4 flex items-center justify-between">
                         <button
                             className="text-body-sm-strong flex cursor-pointer items-center gap-1"
                             type="button"
@@ -148,7 +148,7 @@ export const RecommendationControls = ({
                 )}
             </header>
 
-            {!searchOpen && <div className="bg-line mt-[19px] h-px w-full" />}
+            {!searchOpen && <div className="bg-line mt-4 h-px w-full" />}
         </>
     );
 };
@@ -181,12 +181,12 @@ export const RecommendationSortSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="recommendation-sort-sheet-enter w-full max-w-[390px] rounded-t-[30px] bg-white px-[21px] pt-[22px] pb-8"
+                className="recommendation-sort-sheet-enter rounded-t-sheet px-page-inline w-full max-w-[390px] bg-white pt-4 pb-6"
                 role="dialog"
                 aria-modal="true"
                 aria-label="정렬 방식 선택"
             >
-                <div className="bg-disabled mx-auto mb-[25px] h-1 w-[39px] rounded-full" />
+                <div className="bg-disabled mb-layout-component mx-auto h-1 w-[39px] rounded-full" />
                 <ul>
                     {recommendationSortOptions.map(({ key, label }) => (
                         <li className="border-line border-b" key={key}>

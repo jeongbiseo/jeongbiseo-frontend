@@ -8,10 +8,10 @@ export const RecommendationAssessment = ({
     className?: string;
 }) => (
     <div className={`flex flex-wrap items-center gap-1.5 ${className}`}>
-        <span className="bg-green-light text-green-dark text-caption-strong rounded-full px-2 py-1">
+        <span className="bg-green-light text-green-dark text-caption-strong rounded-badge px-2 py-1">
             확인된 {confirmedMatchCount}개
         </span>
-        <span className="bg-warning-light text-warning text-caption-strong rounded-full px-2 py-1">
+        <span className="bg-warning-light text-warning text-caption-strong rounded-badge px-2 py-1">
             추가 확인 {unverifiedConditionCount}개
         </span>
     </div>
@@ -22,10 +22,7 @@ export const RecommendationUncertainty = ({
 }: {
     reasons: string[];
 }) => (
-    <div
-        className="bg-warning-light mt-3 rounded-[10px] px-3 py-2.5"
-        role="note"
-    >
+    <div className="bg-warning-light rounded-card mt-3 px-3 py-2.5" role="note">
         <p className="text-warning text-label-strong">추가 확인 필요</p>
         {reasons.length > 0 ? (
             <ul className="text-text-body text-label mt-1.5 list-disc space-y-1 pl-4">

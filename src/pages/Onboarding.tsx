@@ -204,7 +204,7 @@ const Onboarding = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong flex min-h-svh w-full max-w-[390px] flex-col px-[26px] pt-6 pb-8">
+            <section className="bg-ground text-text-strong px-page-inline pt-page-top flex min-h-svh w-full max-w-[390px] flex-col pb-6">
                 <Header showBack onBack={handleBack} />
 
                 <div className="bg-line mt-3 h-[6px] overflow-hidden rounded-full">
@@ -217,7 +217,7 @@ const Onboarding = () => {
                     {step}/3 단계
                 </p>
 
-                <div className="mt-5 flex-1">
+                <div className="mt-4 flex-1">
                     {step === 1 && (
                         <OnboardingStepOne
                             control={control}
@@ -246,7 +246,7 @@ const Onboarding = () => {
                 )}
 
                 <Button
-                    className="mt-7"
+                    className="mt-6"
                     disabled={isSubmitting || (step === 1 && !regionReady)}
                     onClick={step === 3 ? handleSubmit(onSubmit) : goNext}
                 >

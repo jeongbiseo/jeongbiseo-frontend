@@ -101,7 +101,7 @@ const MyPageTerms = () => {
 
     return (
         <>
-            <MyPageLayout className="px-[31px] pt-[31px]">
+            <MyPageLayout>
                 <BackButton className="ml-0" />
                 <h1 className="text-heading-page mt-0">
                     이용약관 · 개인정보처리방침
@@ -131,10 +131,10 @@ const MyPageTerms = () => {
                 )}
 
                 {status === "ready" && (
-                    <div className="border-primary mx-[7px] mt-8 overflow-hidden rounded-[20px] border-[0.5px] bg-white">
+                    <div className="border-primary rounded-card mt-6 overflow-hidden border-[0.5px] bg-white">
                         {terms.map((term, index) => (
                             <button
-                                className={`flex h-[79px] w-full cursor-pointer items-center justify-between px-4 text-left ${index > 0 ? "border-line border-t" : ""}`}
+                                className={`flex h-[72px] w-full cursor-pointer items-center justify-between px-4 text-left ${index > 0 ? "border-line border-t" : ""}`}
                                 type="button"
                                 key={term.key}
                                 onClick={() => setSelectedTerm(term.key)}
@@ -143,7 +143,7 @@ const MyPageTerms = () => {
                                     <strong className="text-title block">
                                         {term.label}
                                     </strong>
-                                    <span className="text-text-muted text-label-strong mt-2 block">
+                                    <span className="text-text-muted text-label-strong mt-layout-tight block">
                                         {getConsentLabel(term.type)}
                                     </span>
                                 </span>
@@ -156,7 +156,7 @@ const MyPageTerms = () => {
                 )}
 
                 {status === "ready" && (
-                    <label className="border-green-normal text-body-sm-strong mx-[7px] mt-6 flex h-[57px] cursor-pointer items-center justify-between rounded-[15px] border-[0.5px] bg-white px-5">
+                    <label className="border-green-normal text-body-sm-strong rounded-control mt-6 flex h-[57px] cursor-pointer items-center justify-between border-[0.5px] bg-white px-4">
                         마케팅 정보 수신 동의
                         <input
                             className="peer sr-only"
@@ -223,25 +223,25 @@ const TermsDetailSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} flex max-h-[86svh] w-full max-w-[390px] flex-col overflow-hidden rounded-t-[28px] bg-white`}
+                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} rounded-t-sheet flex max-h-[86svh] w-full max-w-[390px] flex-col overflow-hidden bg-white focus:outline-none`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="terms-detail-title"
+                data-dialog-initial-focus
                 onAnimationEnd={(event) => {
                     if (closing && event.target === event.currentTarget) {
                         onClose();
                     }
                 }}
             >
-                <div className="shrink-0 px-6 pt-4">
+                <div className="px-page-inline shrink-0 pt-4">
                     <button
                         className="bg-disabled mx-auto block h-1 w-[44px] cursor-pointer rounded-full"
                         type="button"
                         aria-label="약관 상세 닫기"
-                        data-dialog-initial-focus
                         onClick={handleClose}
                     />
-                    <div className="mt-5">
+                    <div className="mt-layout-component">
                         <div>
                             <h2
                                 className="text-heading-section"
@@ -256,11 +256,11 @@ const TermsDetailSheet = ({
                     </div>
                 </div>
 
-                <div className="terms-detail-scrollbar min-h-0 overflow-y-auto px-6 pb-10">
-                    <p className="text-text-body text-label mt-6">
+                <div className="terms-detail-scrollbar px-page-inline min-h-0 overflow-y-auto pb-8">
+                    <p className="text-text-body text-label mt-layout-component">
                         {detail.summary}
                     </p>
-                    <div className="mt-6 flex flex-col gap-6">
+                    <div className="mt-layout-group gap-layout-group flex flex-col">
                         {detail.sections.map((section) => (
                             <section key={section.title}>
                                 <h3 className="text-title">{section.title}</h3>

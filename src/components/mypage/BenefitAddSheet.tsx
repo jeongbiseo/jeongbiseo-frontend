@@ -113,24 +113,24 @@ export const BenefitAddSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="max-h-[82svh] w-full max-w-[390px] overflow-y-auto rounded-t-[30px] bg-white px-6 pt-4 pb-8"
+                className="rounded-t-sheet px-page-inline max-h-[82svh] w-full max-w-[390px] overflow-y-auto bg-white pt-4 pb-6"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="benefit-sheet-title"
             >
                 <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
                 <h2
-                    className="text-title mt-5 text-center"
+                    className="text-title mt-layout-component text-center"
                     id="benefit-sheet-title"
                 >
                     기존 수령중인 지원금 추가
                 </h2>
 
-                <div className="relative mt-5">
+                <div className="mt-layout-component relative">
                     <SearchIcon />
                     <input
                         data-dialog-initial-focus
-                        className="placeholder:text-text-subtle focus:border-primary focus-visible:outline-primary text-label-strong h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] pr-4 pl-11 outline-none focus-visible:outline-2 focus-visible:outline-offset-1"
+                        className="placeholder:text-text-subtle focus:border-primary focus-visible:outline-primary text-label-strong rounded-control h-[50px] w-full border-[0.5px] border-[#808080] pr-4 pl-11 outline-none focus-visible:outline-2 focus-visible:outline-offset-1"
                         aria-label="지원금 검색"
                         value={query}
                         placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -147,7 +147,7 @@ export const BenefitAddSheet = ({
                         })),
                     ].map(({ label, value }) => (
                         <button
-                            className={`text-caption-strong shrink-0 cursor-pointer rounded-full px-2.5 py-1.5 ${availableCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
+                            className={`text-caption-strong rounded-badge shrink-0 cursor-pointer px-2.5 py-1.5 ${availableCategory === value ? "bg-third text-white" : "bg-line text-text-body"}`}
                             type="button"
                             key={value ?? "all"}
                             aria-pressed={availableCategory === value}
@@ -176,7 +176,7 @@ export const BenefitAddSheet = ({
                 )}
 
                 <div
-                    className="mt-8 flex flex-col gap-3"
+                    className="gap-layout-related mt-6 flex flex-col"
                     aria-live="polite"
                     aria-busy={searching}
                 >
@@ -198,7 +198,7 @@ export const BenefitAddSheet = ({
                             );
                             return (
                                 <button
-                                    className={`flex min-h-[73px] cursor-pointer items-center gap-[18px] rounded-[10px] border-[0.5px] px-[21px] text-left ${selected ? "border-green-normal-hover bg-green-light-hover" : "border-[#808080] bg-white"}`}
+                                    className={`rounded-card gap-layout-related flex min-h-[73px] cursor-pointer items-center border-[0.5px] px-4 text-left ${selected ? "border-green-normal-hover bg-green-light-hover" : "border-[#808080] bg-white"}`}
                                     type="button"
                                     key={benefit.id}
                                     aria-pressed={selected}
@@ -222,7 +222,7 @@ export const BenefitAddSheet = ({
                                         <strong className="text-title block">
                                             {benefit.title}
                                         </strong>
-                                        <span className="text-text-subtle text-label-strong mt-[6px] block">
+                                        <span className="text-text-subtle text-label-strong mt-layout-tight block">
                                             {benefit.organization}
                                         </span>
                                     </span>
@@ -239,7 +239,7 @@ export const BenefitAddSheet = ({
                 </div>
 
                 <button
-                    className="bg-green-normal disabled:bg-disabled text-body-sm-strong mt-6 h-[48px] w-full cursor-pointer rounded-[14px] text-white disabled:cursor-not-allowed"
+                    className="bg-green-normal disabled:bg-disabled text-body-sm-strong rounded-control mt-6 h-[48px] w-full cursor-pointer text-white disabled:cursor-not-allowed"
                     type="button"
                     disabled={selectedBenefits.length === 0}
                     onClick={handleSave}

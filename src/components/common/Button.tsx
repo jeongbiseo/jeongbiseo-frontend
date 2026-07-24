@@ -45,7 +45,7 @@ const Button = ({
 }: ButtonProps) => (
     <button
         type={type}
-        className={`focus-visible:outline-third disabled:bg-disabled w-full cursor-pointer rounded-[15px] transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:shadow-none disabled:hover:brightness-100 ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        className={`focus-visible:outline-third disabled:bg-disabled rounded-control w-full cursor-pointer transition-transform hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:shadow-none disabled:hover:brightness-100 ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         {...rest}
     >
         {children}

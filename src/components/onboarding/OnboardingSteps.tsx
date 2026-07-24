@@ -161,7 +161,7 @@ export const OnboardingStepOne = ({
                 )}
             />
         </div>
-        <div className="bg-green-light-hover text-green-normal-hover text-label-strong mt-3 flex h-[36px] items-center rounded-[10px] px-4">
+        <div className="bg-green-light-hover text-green-normal-hover text-label-strong rounded-control mt-3 flex h-[36px] items-center px-4">
             만 {age}세로 계산돼요
         </div>
 
@@ -265,7 +265,7 @@ export const OnboardingStepOne = ({
                         const selected = field.value === value;
                         return (
                             <button
-                                className={`text-label-strong relative h-[45px] cursor-pointer rounded-[10px] border-[0.5px] ${selected ? "border-green-normal-hover bg-green-light-hover text-green-normal-hover" : "border-[#808080] bg-white"}`}
+                                className={`text-label-strong rounded-control relative h-[45px] cursor-pointer border-[0.5px] ${selected ? "border-green-normal-hover bg-green-light-hover text-green-normal-hover" : "border-[#808080] bg-white"}`}
                                 type="button"
                                 key={value}
                                 aria-pressed={selected}
@@ -283,7 +283,7 @@ export const OnboardingStepOne = ({
                 </div>
             )}
         />
-        <div className="bg-warning-light text-warning text-label-strong mt-4 flex min-h-[59px] items-center rounded-[10px] px-4">
+        <div className="bg-warning-light text-warning text-label-strong rounded-control mt-4 flex min-h-[59px] items-center px-4">
             연령, 거주지, 고용상태는 지원금 추천 조건 매칭에 꼭 필요한
             <br />
             필수 정보예요
@@ -342,7 +342,7 @@ export const OnboardingStepTwo = ({
             render={({ field }) => {
                 const size = field.value ?? 1;
                 return (
-                    <div className="flex h-[50px] items-center justify-between rounded-[10px] border-[0.5px] border-[#808080] bg-white px-[28px]">
+                    <div className="rounded-control flex h-[50px] items-center justify-between border-[0.5px] border-[#808080] bg-white px-5">
                         <CounterButton
                             size="compact"
                             label="가구원 수 줄이기"
@@ -468,7 +468,7 @@ export const OnboardingStepThree = ({
                     />
                 </svg>
                 <input
-                    className="focus:border-primary focus-visible:outline-primary text-label-strong h-[50px] w-full rounded-[10px] border-[0.5px] border-[#808080] bg-white pr-4 pl-11 outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
+                    className="focus:border-primary focus-visible:outline-primary text-label-strong rounded-control h-[50px] w-full border-[0.5px] border-[#808080] bg-white pr-4 pl-11 outline-none placeholder:text-[#9a9a9a] focus-visible:outline-2 focus-visible:outline-offset-1"
                     aria-label="기수령 지원금 검색"
                     value={query}
                     placeholder="지원금명 또는 기관명으로 검색해보세요"
@@ -485,7 +485,7 @@ export const OnboardingStepThree = ({
                     })),
                 ].map(({ label, value }) => (
                     <button
-                        className={`text-label-strong shrink-0 cursor-pointer rounded-full px-[10px] py-[6px] whitespace-nowrap ${selectedCategory === value ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
+                        className={`text-label-strong rounded-badge shrink-0 cursor-pointer px-2 py-1 whitespace-nowrap ${selectedCategory === value ? "bg-third text-white" : "bg-disabled text-text-muted"}`}
                         type="button"
                         key={value ?? "all"}
                         aria-pressed={selectedCategory === value}
@@ -529,7 +529,7 @@ export const OnboardingStepThree = ({
                             );
                             return (
                                 <button
-                                    className={`flex min-h-[74px] cursor-pointer items-center gap-[18px] rounded-[10px] border-[0.5px] px-[21px] text-left ${selected ? "border-green-normal-hover bg-green-light-hover" : "border-[#808080] bg-white"}`}
+                                    className={`rounded-card gap-layout-related flex min-h-[74px] cursor-pointer items-center border-[0.5px] px-4 text-left ${selected ? "border-green-normal-hover bg-green-light-hover" : "border-[#808080] bg-white"}`}
                                     type="button"
                                     key={subsidy.subsidyId}
                                     aria-pressed={selected}
@@ -558,7 +558,7 @@ export const OnboardingStepThree = ({
                                             {subsidy.name}
                                         </strong>
                                         {subsidy.agency && (
-                                            <span className="text-text-subtle text-label-strong mt-[6px] block">
+                                            <span className="text-text-subtle text-label-strong mt-layout-tight block">
                                                 {subsidy.agency}
                                             </span>
                                         )}

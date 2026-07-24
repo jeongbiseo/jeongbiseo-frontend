@@ -177,12 +177,12 @@ const Home = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-5 pt-5 pb-[104px]">
-                <header className="px-[7px]">
+            <section className="bg-ground text-text-strong px-page-inline pt-page-top min-h-svh w-full max-w-[390px] pb-[104px]">
+                <header>
                     <p className="text-body-sm-strong text-text-muted">
                         {user?.name ?? "회원"}님, 반가워요
                     </p>
-                    <h1 className="text-heading-page mt-[10px] whitespace-pre-line">
+                    <h1 className="text-heading-page mt-layout-inline whitespace-pre-line">
                         {"지금 신청 가능한 지원금을\n모아봤어요"}
                     </h1>
                 </header>
@@ -206,7 +206,7 @@ const Home = () => {
                 )}
 
                 <HomeSection
-                    className="mt-[37px]"
+                    className="mt-layout-section"
                     title="AI 추천 지원금"
                     linkLabel="전체보기"
                     to="/recommend"
@@ -238,7 +238,7 @@ const Home = () => {
                 </HomeSection>
 
                 <HomeSection
-                    className="mt-[37px]"
+                    className="mt-layout-section"
                     title="마감 캘린더"
                     linkLabel="자세히 보기"
                     to="/calendar"

@@ -32,7 +32,7 @@ const BottomNav = ({ activePath }: { activePath?: string }) => (
                         to={to}
                         end={end}
                         className={({ isActive }) =>
-                            `bottom-nav-link focus-visible:outline-primary flex min-w-6 flex-col items-center gap-[7px] rounded-lg transition-colors duration-200 select-none focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 ${isActive || activePath === to ? "text-black" : "text-third/50"}`
+                            `bottom-nav-link focus-visible:outline-primary gap-layout-tight flex min-w-6 flex-col items-center rounded-lg transition-colors duration-200 select-none focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 ${isActive || activePath === to ? "text-black" : "text-third/50"}`
                         }
                     >
                         <Icon className="size-icon-md" />

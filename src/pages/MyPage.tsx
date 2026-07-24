@@ -209,17 +209,17 @@ const MyPage = () => {
 
     return (
         <>
-            <MyPageLayout className="px-[25px] pt-[25px]">
+            <MyPageLayout>
                 <Header title="마이페이지" />
 
                 <button
-                    className="border-primary mt-7 flex h-[90px] w-full cursor-pointer items-center rounded-[20px] border-[0.5px] bg-white px-[25px] text-left"
+                    className="border-primary rounded-card mt-6 flex h-[90px] w-full cursor-pointer items-center border-[0.5px] bg-white px-4 text-left"
                     type="button"
                     disabled={profileStatus !== "ready"}
                     onClick={() => navigate("/mypage/edit")}
                 >
                     <span className="bg-secondary size-[46px] shrink-0 rounded-full" />
-                    <span className="ml-[18px] min-w-0 flex-1">
+                    <span className="ml-layout-related min-w-0 flex-1">
                         <strong className="text-title block">
                             {user?.name ?? "사용자"} 님
                         </strong>
@@ -248,10 +248,10 @@ const MyPage = () => {
                     </button>
                 )}
 
-                <div className="mt-6 grid grid-cols-2 gap-x-[14px] gap-y-[13px]">
+                <div className="gap-layout-related mt-6 grid grid-cols-2">
                     {summaryItems.map((item) => (
                         <button
-                            className="border-primary h-[90px] cursor-pointer rounded-[20px] border-[0.5px] bg-white px-[15px] text-left transition active:scale-[0.99]"
+                            className="border-primary rounded-card h-[90px] cursor-pointer border-[0.5px] bg-white px-4 text-left transition active:scale-[0.99]"
                             type="button"
                             key={item.label}
                             onClick={() =>
@@ -268,7 +268,7 @@ const MyPage = () => {
                             >
                                 {item.value}
                             </strong>
-                            <span className="text-text-muted text-label-medium mt-2 block">
+                            <span className="text-text-muted text-label-medium mt-layout-tight block">
                                 {item.label}
                             </span>
                         </button>
@@ -292,15 +292,15 @@ const MyPage = () => {
                     </div>
                 )}
 
-                <div className="mt-6 flex flex-col gap-6">
+                <div className="gap-layout-group mt-6 flex flex-col">
                     {menuGroups.map((group, groupIndex) => (
                         <div
-                            className="border-primary overflow-hidden rounded-[20px] border-[0.5px] bg-white"
+                            className="border-primary rounded-card overflow-hidden border-[0.5px] bg-white"
                             key={groupIndex}
                         >
                             {group.map((item, index) => (
                                 <button
-                                    className={`text-body-sm-strong flex h-[60px] w-full cursor-pointer items-center justify-between px-[29px] text-left ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
+                                    className={`text-body-sm-strong flex h-[60px] w-full cursor-pointer items-center justify-between px-5 text-left ${index > 0 ? "border-line border-t" : ""} ${item.danger ? "text-danger" : "text-black"}`}
                                     type="button"
                                     key={item.label}
                                     onClick={() => handleMenuClick(item)}

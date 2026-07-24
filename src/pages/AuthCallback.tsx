@@ -80,7 +80,7 @@ const AuthCallback = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col items-center justify-center px-6">
+            <section className="bg-ground px-page-inline flex min-h-svh w-full max-w-[390px] flex-col items-center justify-center">
                 {error ? (
                     <>
                         <p className="text-text-muted text-body-sm text-center">

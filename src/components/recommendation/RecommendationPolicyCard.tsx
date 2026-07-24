@@ -26,7 +26,7 @@ export const RecommendationPolicyCard = ({
         policy.unverifiedConditionCount !== null;
 
     return (
-        <article className="border-primary relative min-h-[107px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]">
+        <article className="border-primary rounded-card relative min-h-[107px] border-[0.5px] bg-white p-4">
             <Link
                 className="block"
                 to={`/policies/${policy.id}`}
@@ -35,7 +35,9 @@ export const RecommendationPolicyCard = ({
                 <p className="text-label-medium pr-10 text-[#8e98a8]">
                     {policy.organization}
                 </p>
-                <h2 className="text-title mt-[6px] pr-10">{policy.title}</h2>
+                <h2 className="text-title mt-layout-tight pr-10">
+                    {policy.title}
+                </h2>
                 {hasAssessment && (
                     <RecommendationAssessment
                         className="mt-3"
@@ -55,7 +57,7 @@ export const RecommendationPolicyCard = ({
                         {policy.amountLabel ?? "산정 불가"}
                     </p>
                     <span
-                        className={`text-label-strong shrink-0 rounded-[13px] px-[9px] py-[6px] ${urgent ? "bg-danger-light text-danger" : scheduled ? "bg-green-light text-green-dark" : "bg-disabled text-text-muted"}`}
+                        className={`text-label-strong rounded-badge shrink-0 px-2 py-1 ${urgent ? "bg-danger-light text-danger" : scheduled ? "bg-green-light text-green-dark" : "bg-disabled text-text-muted"}`}
                     >
                         {policy.deadlineLabel}
                     </span>
@@ -68,7 +70,7 @@ export const RecommendationPolicyCard = ({
             </Link>
 
             <button
-                className="focus-visible:outline-primary absolute top-[12px] right-[21px] flex size-8 cursor-pointer items-center justify-center focus-visible:rounded focus-visible:outline-2 disabled:cursor-wait disabled:opacity-60"
+                className="focus-visible:outline-primary absolute top-3 right-4 flex size-8 cursor-pointer items-center justify-center focus-visible:rounded focus-visible:outline-2 disabled:cursor-wait disabled:opacity-60"
                 type="button"
                 disabled={favoriteUpdating}
                 aria-busy={favoriteUpdating}

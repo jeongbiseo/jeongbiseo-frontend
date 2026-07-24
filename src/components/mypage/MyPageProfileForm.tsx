@@ -107,7 +107,7 @@ export const MyPageProfileForm = ({
             </header>
 
             <FieldLabel>생년월일</FieldLabel>
-            <div className="grid grid-cols-3 gap-[13px]">
+            <div className="gap-layout-inline grid grid-cols-3">
                 <Select
                     ariaLabel="출생 연도"
                     border="strong"
@@ -274,7 +274,7 @@ export const MyPageProfileForm = ({
             </p>
 
             <FieldLabel>가구원 수</FieldLabel>
-            <div className="flex h-[47px] items-center justify-between rounded-[10px] border-[0.5px] border-[#808080] bg-white px-7">
+            <div className="rounded-control flex h-[47px] items-center justify-between border-[0.5px] border-[#808080] bg-white px-5">
                 <CounterButton
                     label="가구원 수 줄이기"
                     onClick={() =>
@@ -299,13 +299,16 @@ export const MyPageProfileForm = ({
                 가구원 수에 따라 주거 · 육아 지원금 범위가 달라져요
             </p>
 
-            <div className="scroll-mt-6 pt-9" ref={receivedSectionRef}>
+            <div className="scroll-mt-6 pt-8" ref={receivedSectionRef}>
                 <h2 className="text-heading-section">기존 수령중인 지원금</h2>
                 <p className="text-text-muted text-label mt-2">
                     이미 받고 있는 지원금을 선택하면 중복 추천을 줄여드립니다
                 </p>
 
-                <div className="mt-4 flex flex-col gap-3" aria-live="polite">
+                <div
+                    className="gap-layout-related mt-4 flex flex-col"
+                    aria-live="polite"
+                >
                     {receivedLoading && (
                         <p className="text-text-subtle text-label-medium py-4 text-center">
                             기수령 지원금을 불러오는 중이에요
@@ -336,14 +339,14 @@ export const MyPageProfileForm = ({
                         !receivedError &&
                         receivedBenefits.map((benefit) => (
                             <div
-                                className="bg-green-light flex h-[53px] items-center justify-between rounded-[10px] px-[23px]"
+                                className="bg-green-light rounded-card flex h-[53px] items-center justify-between px-4"
                                 key={benefit.id}
                             >
                                 <strong className="text-title">
                                     {benefit.title}
                                 </strong>
                                 <button
-                                    className="border-green-darker text-label-strong cursor-pointer rounded-[10px] border-[0.5px] bg-white px-[10px] py-[5px]"
+                                    className="border-green-darker text-label-strong rounded-badge cursor-pointer border-[0.5px] bg-white px-2 py-1"
                                     type="button"
                                     aria-label={`${benefit.title} 삭제`}
                                     onClick={() => onRemoveReceived(benefit.id)}
@@ -355,7 +358,7 @@ export const MyPageProfileForm = ({
                 </div>
 
                 <button
-                    className="bg-green-normal text-body-sm-strong mx-auto mt-[14px] block h-[39px] w-[190px] cursor-pointer rounded-[15px] text-white shadow-[3px_2px_7px_var(--color-green-light-active)]"
+                    className="bg-green-normal text-body-sm-strong rounded-control mx-auto mt-3 block h-[39px] w-[190px] cursor-pointer text-white shadow-[3px_2px_7px_var(--color-green-light-active)]"
                     type="button"
                     disabled={receivedLoading || receivedError}
                     onClick={onOpenBenefitSheet}
@@ -365,7 +368,7 @@ export const MyPageProfileForm = ({
             </div>
 
             <button
-                className="bg-third text-body-sm-strong mt-9 h-[39px] w-[341px] max-w-full cursor-pointer rounded-[15px] text-white"
+                className="bg-third text-body-sm-strong rounded-control mt-8 h-[39px] w-[341px] max-w-full cursor-pointer text-white"
                 type="button"
                 disabled={
                     saving || receivedLoading || receivedError || !regionReady

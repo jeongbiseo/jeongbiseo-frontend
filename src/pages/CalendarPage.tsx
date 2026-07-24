@@ -120,15 +120,15 @@ const CalendarPage = () => {
 
     return (
         <main className="bg-surface-dim flex min-h-svh justify-center">
-            <section className="bg-ground text-text-strong min-h-svh w-full max-w-[390px] px-[35px] pt-[35px] pb-[104px]">
-                <header className="px-[10px]">
+            <section className="bg-ground text-text-strong px-page-inline pt-page-top min-h-svh w-full max-w-[390px] pb-[104px]">
+                <header>
                     <h1 className="text-heading-section">마감 캘린더</h1>
-                    <p className="text-caption-strong mt-[5px] text-[#4b4b4b]">
+                    <p className="text-caption-strong mt-layout-tight text-[#4b4b4b]">
                         즐겨찾기한 지원금 마감 일정이에요!
                     </p>
                 </header>
 
-                <div className="mt-[18px]">
+                <div className="mt-layout-component">
                     <div className="relative mx-auto w-full max-w-[320px]">
                         <div className="absolute top-[17px] left-[17px] z-10 flex items-center gap-2">
                             <MonthSelect
@@ -198,7 +198,7 @@ const CalendarPage = () => {
 
                 <MarkerLegend />
 
-                <section className="mt-[18px]">
+                <section className="mt-layout-group">
                     <h2 className="text-title">마감일순</h2>
 
                     {state.status === "loading" && (
@@ -226,7 +226,7 @@ const CalendarPage = () => {
 
                     {state.status === "ready" &&
                         (upcomingItems.length > 0 ? (
-                            <div className="mt-[21px] flex flex-col gap-4">
+                            <div className="gap-layout-component mt-4 flex flex-col">
                                 {upcomingItems.map((item) => (
                                     <DeadlineCard
                                         key={item.subsidyId}
@@ -320,7 +320,7 @@ const MonthSelect = ({
 
             {open && (
                 <div
-                    className="calendar-select-menu absolute top-[25px] left-0 z-30 min-w-[68px] overflow-y-auto rounded-[10px] border border-[#e5e5e5] bg-white p-1 shadow-[0_6px_18px_rgb(0_0_0/14%)]"
+                    className="calendar-select-menu rounded-control absolute top-[25px] left-0 z-30 min-w-[68px] overflow-y-auto border border-[#e5e5e5] bg-white p-1 shadow-[0_6px_18px_rgb(0_0_0/14%)]"
                     role="listbox"
                     aria-label={label}
                     ref={menuRef}
@@ -330,7 +330,7 @@ const MonthSelect = ({
 
                         return (
                             <button
-                                className={`text-label-medium block h-[32px] w-full cursor-pointer rounded-[7px] px-2 text-left whitespace-nowrap transition-colors ${
+                                className={`text-label-medium rounded-badge block h-[32px] w-full cursor-pointer px-2 text-left whitespace-nowrap transition-colors ${
                                     selected
                                         ? "bg-green-light text-success"
                                         : "hover:bg-surface-soft"
@@ -356,13 +356,13 @@ const MonthSelect = ({
 };
 
 const MarkerLegend = () => (
-    <aside className="border-primary text-label mt-[22px] flex min-h-[35px] items-center rounded-[10px] border-[0.5px] bg-white px-[17px] py-1">
+    <aside className="border-primary text-label rounded-card mt-4 flex min-h-[35px] items-center border-[0.5px] bg-white px-4 py-1">
         <span>마감 마커:</span>
-        <span className="ml-[9px] flex items-center gap-1">
+        <span className="ml-layout-inline flex items-center gap-1">
             <span className="bg-primary size-[10px] rounded-full" />
             1건
         </span>
-        <span className="ml-[9px] flex items-center gap-1">
+        <span className="ml-layout-inline flex items-center gap-1">
             <span className="flex gap-[2px]">
                 <span className="bg-primary size-[10px] rounded-full" />
                 <span className="bg-primary size-[10px] rounded-full" />
@@ -378,19 +378,19 @@ const DeadlineCard = ({ item }: { item: CalendarDayElement }) => {
 
     return (
         <Link
-            className="border-primary relative block h-[107px] rounded-[20px] border-[0.5px] bg-white px-[21px] py-[15px]"
+            className="border-primary rounded-card relative block h-[107px] border-[0.5px] bg-white p-4"
             to={`/policies/${item.subsidyId}`}
             state={{ bottomNavPath: "/calendar" }}
         >
             <div className="pr-[76px]">
                 <h3 className="text-title mt-[2px] truncate">{item.name}</h3>
-                <p className="text-text-muted text-label-medium mt-[13px]">
+                <p className="text-text-muted text-label-medium mt-layout-inline">
                     {`${Number(month)}.${Number(day)} 마감`}
                 </p>
             </div>
 
             <span
-                className={`text-label-strong absolute top-[15px] right-[27px] rounded-[13px] px-[7px] py-[6px] ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
+                className={`text-label-strong rounded-badge absolute top-4 right-4 px-2 py-1 ${urgent ? "bg-danger-light text-danger" : "bg-green-light text-success"}`}
             >
                 {item.dDay === 0 ? "D-Day" : `D-${item.dDay}`}
             </span>
@@ -399,7 +399,7 @@ const DeadlineCard = ({ item }: { item: CalendarDayElement }) => {
 };
 
 const CalendarEmptyState = () => (
-    <div className="border-line mt-[21px] flex min-h-[152px] flex-col items-center justify-center rounded-[20px] border bg-white px-6 text-center">
+    <div className="border-line rounded-card mt-4 flex min-h-[152px] flex-col items-center justify-center border bg-white px-6 text-center">
         <p className="text-title">예정된 마감 지원금이 없어요</p>
         <p className="text-text-muted text-label-medium mt-2">
             다른 날짜나 달을 선택해 확인해보세요

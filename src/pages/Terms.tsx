@@ -114,18 +114,18 @@ const Terms = () => {
     return (
         <>
             <main className="bg-surface-dim flex min-h-svh justify-center">
-                <section className="bg-ground flex min-h-svh w-full max-w-[390px] flex-col px-8 pt-8 pb-8">
+                <section className="bg-ground px-page-inline pt-page-top flex min-h-svh w-full max-w-[390px] flex-col pb-6">
                     <Header showBack />
 
-                    <h1 className="text-heading-page mt-3 -ml-[6px] text-black">
+                    <h1 className="text-heading-page mt-layout-inline text-black">
                         서비스 이용을 위해
                         <br />
                         약관에 동의해주세요
                     </h1>
 
-                    <div className="mt-[34px] w-full max-w-[325px] self-center">
+                    <div className="mt-layout-group w-full max-w-[325px] self-center">
                         <button
-                            className="focus-visible:outline-primary flex cursor-pointer items-center gap-[11px] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+                            className="focus-visible:outline-primary gap-layout-inline flex cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                             type="button"
                             role="checkbox"
                             aria-checked={allAgreed}
@@ -156,14 +156,14 @@ const Terms = () => {
 
                         <div className="bg-disabled mt-4 h-px w-full" />
 
-                        <ul className="mt-4 flex flex-col gap-[23px]">
+                        <ul className="gap-layout-component mt-4 flex flex-col">
                             {agreementItems.map(({ key, label, required }) => (
                                 <li
                                     className="flex w-full items-center justify-between"
                                     key={key}
                                 >
                                     <button
-                                        className="focus-visible:outline-primary flex min-w-0 cursor-pointer items-center gap-[18px] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        className="focus-visible:outline-primary gap-layout-related flex min-w-0 cursor-pointer items-center focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2"
                                         type="button"
                                         role="checkbox"
                                         aria-checked={agreements[key]}
@@ -214,7 +214,7 @@ const Terms = () => {
                     <section
                         ref={termsDialogRef}
                         tabIndex={-1}
-                        className="flex max-h-[75svh] min-h-[360px] w-full max-w-[390px] flex-col rounded-t-[24px] bg-white px-6 pt-6 pb-8 shadow-2xl"
+                        className="rounded-t-sheet px-page-inline flex max-h-[75svh] min-h-[360px] w-full max-w-[390px] flex-col bg-white pt-4 pb-6 shadow-2xl"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="terms-detail-title"
@@ -256,7 +256,7 @@ const Terms = () => {
                             </button>
                         </header>
 
-                        <div className="bg-ground text-label mt-6 flex-1 overflow-y-auto rounded-[15px] p-5 text-[#606060]">
+                        <div className="bg-ground text-label rounded-card mt-4 flex-1 overflow-y-auto p-4 text-[#606060]">
                             <p className="text-label-medium text-[#303030]">
                                 {selectedAgreementDetail.summary}
                             </p>
@@ -294,7 +294,7 @@ const Terms = () => {
                         </div>
 
                         <button
-                            className="bg-green-normal focus-visible:outline-third text-body-strong mt-5 h-[52px] w-full cursor-pointer rounded-[15px] text-white focus-visible:outline-3 focus-visible:outline-offset-2"
+                            className="bg-green-normal focus-visible:outline-third text-body-strong rounded-control mt-4 h-[52px] w-full cursor-pointer text-white focus-visible:outline-3 focus-visible:outline-offset-2"
                             type="button"
                             onClick={() => setSelectedAgreement(null)}
                         >
