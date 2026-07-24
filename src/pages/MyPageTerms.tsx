@@ -172,10 +172,12 @@ const MyPageTerms = () => {
                 )}
             </MyPageLayout>
 
-            <TermsDetailSheet
-                termKey={selectedTerm}
-                onClose={() => setSelectedTerm(null)}
-            />
+            {selectedTerm && (
+                <TermsDetailSheet
+                    termKey={selectedTerm}
+                    onClose={() => setSelectedTerm(null)}
+                />
+            )}
             <Toast
                 message={toastMessage}
                 onDismiss={() => setToastMessage(null)}
@@ -188,13 +190,23 @@ const TermsDetailSheet = ({
     termKey,
     onClose,
 }: {
-    termKey: AgreementKey | null;
+    termKey: AgreementKey;
     onClose: () => void;
 }) => {
-    const open = termKey !== null;
-    const dialogRef = useDialogAccessibility<HTMLElement>(open, onClose);
+    const [closing, setClosing] = useState(false);
 
-    if (!termKey) return null;
+    const handleClose = () => {
+        if (closing) return;
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            onClose();
+            return;
+        }
+
+        setClosing(true);
+    };
+
+    const dialogRef = useDialogAccessibility<HTMLElement>(true, handleClose);
 
     const detail = agreementDetails[termKey];
     const title =
@@ -202,22 +214,33 @@ const TermsDetailSheet = ({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/30"
+            className={`${closing ? "deadline-sheet-backdrop-exit" : "deadline-sheet-backdrop-enter"} fixed inset-0 z-50 flex items-end justify-center bg-black/30`}
             role="presentation"
             onClick={(event) => {
-                if (event.target === event.currentTarget) onClose();
+                if (event.target === event.currentTarget) handleClose();
             }}
         >
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className="flex max-h-[86svh] w-full max-w-[390px] flex-col overflow-hidden rounded-t-[28px] bg-white"
+                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} flex max-h-[86svh] w-full max-w-[390px] flex-col overflow-hidden rounded-t-[28px] bg-white`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="terms-detail-title"
+                onAnimationEnd={(event) => {
+                    if (closing && event.target === event.currentTarget) {
+                        onClose();
+                    }
+                }}
             >
                 <div className="shrink-0 px-6 pt-4">
-                    <div className="bg-disabled mx-auto h-1 w-[44px] rounded-full" />
+                    <button
+                        className="bg-disabled mx-auto block h-1 w-[44px] cursor-pointer rounded-full"
+                        type="button"
+                        aria-label="약관 상세 닫기"
+                        data-dialog-initial-focus
+                        onClick={handleClose}
+                    />
                     <div className="mt-5 flex items-start justify-between gap-4">
                         <div>
                             <h2
@@ -231,11 +254,10 @@ const TermsDetailSheet = ({
                             </p>
                         </div>
                         <button
-                            data-dialog-initial-focus
                             className="bg-surface-soft flex size-8 cursor-pointer items-center justify-center rounded-full text-[20px]"
                             type="button"
                             aria-label="약관 상세 닫기"
-                            onClick={onClose}
+                            onClick={handleClose}
                         >
                             ×
                         </button>
