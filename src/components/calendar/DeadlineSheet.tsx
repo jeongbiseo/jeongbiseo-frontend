@@ -40,7 +40,7 @@ const DeadlineSheet = ({
     return (
         <>
             <button
-                className={`${closing ? "deadline-sheet-backdrop-exit" : "deadline-sheet-backdrop-enter"} fixed inset-0 bottom-[57px] z-20 cursor-default bg-[#bababa]/60`}
+                className={`${closing ? "deadline-sheet-backdrop-exit" : "deadline-sheet-backdrop-enter"} fixed inset-0 bottom-16 z-20 cursor-default bg-[#bababa]/60`}
                 type="button"
                 aria-label="마감 목록 닫기"
                 onClick={handleClose}
@@ -49,7 +49,7 @@ const DeadlineSheet = ({
             <section
                 ref={dialogRef}
                 tabIndex={-1}
-                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} rounded-t-sheet px-page-inline fixed bottom-[57px] left-1/2 z-30 flex max-h-[calc(100svh-57px)] w-full max-w-[390px] -translate-x-1/2 flex-col items-center bg-white focus:outline-none ${isCalendarPage ? "h-[347px] pt-4" : "h-[302px] pt-4"}`}
+                className={`${closing ? "deadline-sheet-exit" : "deadline-sheet-enter"} rounded-t-sheet px-page-inline fixed bottom-16 left-1/2 z-30 flex max-h-[calc(100svh-64px)] w-full max-w-[390px] -translate-x-1/2 flex-col items-center bg-white focus:outline-none ${isCalendarPage ? "h-[347px] pt-4" : "h-[302px] pt-4"}`}
                 role="dialog"
                 aria-modal="true"
                 aria-label={`${Number(month)}월 ${Number(day)}일 마감 목록`}

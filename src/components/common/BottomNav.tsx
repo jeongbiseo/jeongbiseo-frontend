@@ -24,7 +24,7 @@ const navItems: NavItem[] = [
 ];
 
 const BottomNav = ({ activePath }: { activePath?: string }) => (
-    <nav className="fixed bottom-0 left-1/2 z-40 h-[57px] w-full max-w-[390px] -translate-x-1/2 border-t border-[#eee] bg-white">
+    <nav className="fixed bottom-0 left-1/2 z-40 h-16 w-full max-w-[390px] -translate-x-1/2 border-t border-[#eee] bg-white">
         <ul className="flex h-full items-center justify-around">
             {navItems.map(({ to, label, Icon, end }) => (
                 <li key={to}>

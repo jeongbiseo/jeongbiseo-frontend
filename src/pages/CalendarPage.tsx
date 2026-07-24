@@ -302,7 +302,7 @@ const MonthSelect = ({
     return (
         <div className="relative flex items-center" ref={containerRef}>
             <button
-                className="focus-visible:outline-primary text-label-medium cursor-pointer bg-transparent pr-4 focus-visible:outline-2"
+                className="focus-visible:outline-primary text-label-medium gap-layout-tight flex cursor-pointer items-center bg-transparent focus-visible:outline-2"
                 type="button"
                 aria-label={label}
                 aria-haspopup="listbox"
@@ -310,13 +310,8 @@ const MonthSelect = ({
                 onClick={() => setOpen((current) => !current)}
             >
                 {format(value)}
-            </button>
-            <span
-                className="pointer-events-none absolute right-0"
-                aria-hidden="true"
-            >
                 <ChevronDownIcon expanded={open} />
-            </span>
+            </button>
 
             {open && (
                 <div
@@ -356,7 +351,7 @@ const MonthSelect = ({
 };
 
 const MarkerLegend = () => (
-    <aside className="border-primary text-label rounded-card px-container mt-4 flex min-h-[35px] items-center border-[0.5px] bg-white py-1">
+    <aside className="border-primary text-label rounded-card px-container mx-auto mt-4 flex min-h-[35px] w-full max-w-[320px] items-center border-[0.5px] bg-white py-1">
         <span>마감 마커:</span>
         <span className="ml-layout-inline flex items-center gap-1">
             <span className="bg-primary size-[10px] rounded-full" />
@@ -378,12 +373,12 @@ const DeadlineCard = ({ item }: { item: CalendarDayElement }) => {
 
     return (
         <Link
-            className="border-primary rounded-card p-container relative block h-[107px] border-[0.5px] bg-white"
+            className="border-primary rounded-card p-container relative block border-[0.5px] bg-white"
             to={`/policies/${item.subsidyId}`}
             state={{ bottomNavPath: "/calendar" }}
         >
             <div className="pr-[76px]">
-                <h3 className="text-title mt-[2px] truncate">{item.name}</h3>
+                <h3 className="text-title truncate">{item.name}</h3>
                 <p className="text-text-muted text-label-medium mt-layout-inline">
                     {`${Number(month)}.${Number(day)} 마감`}
                 </p>
